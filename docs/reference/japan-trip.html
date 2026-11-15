@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Japan Trip 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF0F3; --surface:#FFFFFF; --ink:#18202F; --muted:#5A6375; --line:#D6DAE1;
+  --accent:#27378A; --accent-ink:#FFFFFF; --done:#2F7A49; --skip:#9198A4; --now:#D2281E; --warn:#9A6A00;
+  --osaka:#E5171F; --nara:#7E4FB0; --kyoto:#00968F; --tokyo:#4A8410; --on-c:#FFFFFF; --fuji:#2563A8;
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#10131A; --surface:#1A1F2B; --ink:#E9ECF2; --muted:#9BA3B5; --line:#2C3344;
+  --accent:#9AABFF; --accent-ink:#10131A; --done:#5CC27F; --skip:#6E7686; --now:#FF5A4E; --warn:#E6B444;
+  --osaka:#FF4A50; --nara:#B48BE6; --kyoto:#2CC6BE; --tokyo:#9AD34A; --fuji:#5B9BE6; --on-c:#10131A;
+  color-scheme:dark; }}
+:root[data-theme="dark"]{
+  --bg:#10131A; --surface:#1A1F2B; --ink:#E9ECF2; --muted:#9BA3B5; --line:#2C3344;
+  --accent:#9AABFF; --accent-ink:#10131A; --done:#5CC27F; --skip:#6E7686; --now:#FF5A4E; --warn:#E6B444;
+  --osaka:#FF4A50; --nara:#B48BE6; --kyoto:#2CC6BE; --tokyo:#9AD34A; --fuji:#5B9BE6; --on-c:#10131A;
+  color-scheme:dark; }
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:680px;margin:0 auto;padding:0 16px 110px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:680px;margin:0 auto;padding:12px 16px 10px}
+.title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-size:1.05rem;white-space:nowrap;font-weight:900;margin:0;letter-spacing:.01em}
+.sync{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--skip);display:inline-block}
+.sync.on i{background:var(--done)} .sync.warn i{background:var(--warn)}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-top:10px;overflow:hidden}
+.bar b{display:block;height:100%;background:var(--done);width:0;transition:width .3s}
+.bar-label{font-size:.78rem;color:var(--muted);margin-top:4px;display:flex;justify-content:space-between}
+/* day strip: station-number badges */
+.days{display:flex;gap:10px;overflow-x:auto;padding:14px 16px 6px;margin:0 -16px;scrollbar-width:none;scroll-snap-type:x proximity}
+.days::-webkit-scrollbar{display:none}
+.days-wrap{position:relative}
+.days{cursor:grab}
+.days.dragging{cursor:grabbing;scroll-snap-type:none;user-select:none}
+.days-nav{display:none;position:absolute;top:22px;z-index:2;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.days-nav svg{width:18px;height:18px}
+.days-nav.prev{left:-6px}.days-nav.next{right:-6px}
+.days-nav[disabled]{opacity:0;pointer-events:none}
+@media (hover:hover) and (pointer:fine){.days-nav{display:flex}.days{padding-left:40px;padding-right:40px}
+  .days-wrap::before,.days-wrap::after{content:"";position:absolute;top:0;bottom:0;width:48px;z-index:1;pointer-events:none}
+  .days-wrap::before{left:-16px;background:linear-gradient(to right,var(--bg) 55%,transparent)}
+  .days-wrap::after{right:-16px;background:linear-gradient(to left,var(--bg) 55%,transparent)}}
+.daybtn{flex:0 0 auto;scroll-snap-align:center;background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted)}
+.badge{width:52px;height:52px;border-radius:12px;background:var(--surface);border:5px solid var(--c);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;color:var(--ink)}
+.badge small{font-size:.62rem;font-weight:700;opacity:.75}
+.badge strong{font-size:1.2rem;font-weight:900}
+.daybtn .dt{font-size:.72rem;font-variant-numeric:tabular-nums}
+.daybtn[aria-current="true"] .badge{background:var(--c);color:var(--on-c)}
+.daybtn[aria-current="true"] .dt{color:var(--ink);font-weight:700}
+.daybtn .ring{width:52px;height:3px;border-radius:2px;background:var(--line);overflow:hidden}
+.daybtn .ring b{display:block;height:100%;background:var(--done)}
+.dayhead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:14px 0 4px}
+.dayhead h2{margin:0;font-size:1.6rem;font-weight:900;line-height:1.15}
+.dayhead .meta{color:var(--muted);font-size:.9rem}
+.citytag{display:inline-block;background:var(--c);color:#fff;font-weight:700;font-size:.78rem;padding:2px 8px;border-radius:6px;margin-right:6px;vertical-align:2px;color:var(--on-c)}
+.today-btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:8px 14px;font-weight:700;font-size:.85rem;white-space:nowrap}
+.banner{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--now);border-radius:10px;padding:10px 12px;margin:12px 0 4px;font-size:.92rem}
+.banner b{font-weight:700}
+/* rail timeline */
+.rail{list-style:none;margin:10px 0 0;padding:0;position:relative}
+.stop{display:grid;grid-template-columns:52px 34px 1fr;align-items:start;position:relative}
+.stop .time{font-variant-numeric:tabular-nums;font-weight:700;font-size:.92rem;padding-top:12px;color:var(--ink)}
+.stop .track{position:relative;align-self:stretch;display:flex;justify-content:center}
+.stop .track::before{content:"";position:absolute;top:0;bottom:0;width:6px;background:var(--c);left:50%;transform:translateX(-50%)}
+.stop:first-child .track::before{top:18px}
+.stop:last-child .track::before{bottom:auto;height:18px}
+.dot{position:relative;z-index:1;margin-top:8px;width:26px;height:26px;border-radius:50%;background:var(--surface);border:4px solid var(--c);padding:0;display:flex;align-items:center;justify-content:center}
+.dot svg{width:14px;height:14px;display:none}
+.stop[data-s="done"] .dot{background:var(--done);border-color:var(--done)}
+.stop[data-s="done"] .dot .ic-done{display:block}
+.stop[data-s="skip"] .dot{background:var(--skip);border-color:var(--skip)}
+.stop[data-s="skip"] .dot .ic-skip{display:block}
+.stop[data-s="skip"] .card .name{text-decoration:line-through;color:var(--muted)}
+.stop.is-now .dot{box-shadow:0 0 0 5px color-mix(in srgb,var(--now) 30%,transparent);border-color:var(--now)}
+@media (prefers-reduced-motion:no-preference){.stop.is-now .dot{animation:pulse 2s ease-in-out infinite}}
+@keyframes pulse{50%{box-shadow:0 0 0 9px color-mix(in srgb,var(--now) 10%,transparent)}}
+.card{margin:4px 0 10px 4px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.card > button.head{all:unset;box-sizing:border-box;display:block;width:100%;padding:10px 12px;cursor:pointer;border-radius:10px}
+.card > button.head:focus-visible{outline:3px solid var(--accent)}
+.name{font-weight:700;line-height:1.35}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{font-size:.74rem;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:var(--muted)}
+.tag.halal{border-color:var(--done);color:var(--done)}
+.tag.ticket{border-color:var(--warn);color:var(--warn)}
+.tag.now{background:var(--now);border-color:var(--now);color:#fff;font-weight:700}
+.tag.next{border-color:var(--now);color:var(--now);font-weight:700}
+.tag.note{border-style:dashed}
+.detail{padding:0 12px 12px;display:none;border-top:1px solid var(--line)}
+.card.open .detail{display:block}
+.drow{margin-top:10px;font-size:.9rem}
+.drow .k{font-size:.76rem;color:var(--muted);display:block}
+.maps{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.maps a{font-size:.84rem;color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px}
+.maps a svg{width:13px;height:13px}
+textarea{width:100%;min-height:64px;border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:8px;resize:vertical;font-size:.9rem}
+.status-row{display:flex;gap:6px;margin-top:10px}
+.status-row button{flex:1;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 4px;font-size:.84rem;font-weight:500}
+.status-row button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+/* shop + ideas */
+h2.sec{font-size:1.4rem;font-weight:900;margin:18px 0 6px}
+.sub{color:var(--muted);font-size:.88rem;margin:0 0 12px}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.field{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.field label{display:block;font-size:.76rem;color:var(--muted)}
+.field input{width:100%;border:0;background:none;font-size:1.1rem;font-weight:700;padding:2px 0;font-variant-numeric:tabular-nums}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:14px}
+.sum div{padding:10px;border-left:1px solid var(--line)} .sum div:first-child{border-left:0}
+.sum span{display:block;font-size:.74rem;color:var(--muted)}
+.sum strong{font-size:1.05rem;font-variant-numeric:tabular-nums}
+.sum .neg{color:var(--now)} .sum .pos{color:var(--done)}
+.items{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.item{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.check{width:26px;height:26px;border-radius:7px;border:2px solid var(--line);background:var(--bg);padding:0;display:flex;align-items:center;justify-content:center}
+.check svg{width:15px;height:15px;display:none}
+.check[aria-pressed="true"]{background:var(--done);border-color:var(--done)}
+.check[aria-pressed="true"] svg{display:block}
+.item .iname{font-weight:500;line-height:1.3;font-size:.94rem}
+.item.bought .iname{color:var(--muted)}
+.item .est{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.actual{width:92px;text-align:right;border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:6px 8px;font-variant-numeric:tabular-nums;font-size:.9rem}
+.group{margin-bottom:16px}
+.group h3{font-size:1rem;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+/* bottom nav */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs-in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 10px;color:var(--muted);text-decoration:none;font-size:.76rem;font-weight:500}
+.tabs a svg{width:22px;height:22px}
+.tabs a[aria-current="page"]{color:var(--accent);font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 14px;border-radius:8px;font-size:.86rem;z-index:20;max-width:90vw;display:none}
+.toast.show{display:block}
+.hidden{display:none!important}
+.foot{color:var(--muted);font-size:.78rem;margin-top:20px}
+.add-btn{display:block;width:100%;margin:6px 0 0;padding:12px;border:2px dashed var(--line);border-radius:10px;background:none;color:var(--accent);font-weight:700;font-size:.95rem}
+.edit-row{margin-top:10px}
+.edit-row button{border:0;background:none;color:var(--accent);font-weight:700;padding:4px 0;font-size:.88rem}
+.iedit{all:unset;cursor:pointer;display:block;min-width:0}
+.iedit span{display:block}
+.iedit:focus-visible{outline:3px solid var(--accent);border-radius:4px}
+.plan-btn{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 10px;font-size:.78rem;color:var(--accent);font-weight:700;white-space:nowrap}
+dialog.sheet{border:0;padding:0;background:var(--surface);color:var(--ink);width:min(560px,100%);max-height:90vh;border-radius:16px;margin:auto}
+@media (max-width:600px){dialog.sheet{margin:auto 0 0;max-width:100%;width:100%;border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}}
+dialog.sheet::backdrop{background:rgba(10,14,22,.5)}
+.sheet form{padding:16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:90vh}
+.sheet h3{margin:0 0 2px;font-size:1.2rem;font-weight:900}
+.sheet label{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted);font-weight:500}
+.sheet label.inline{flex-direction:row;align-items:center;gap:8px;font-size:.92rem;color:var(--ink)}
+.sheet input:not([type=checkbox]),.sheet select,.sheet textarea{border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:9px 10px;font-size:1rem;color:var(--ink);width:100%;min-height:0}
+.sheet input[type=checkbox]{width:20px;height:20px;accent-color:var(--done)}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-weight:400;color:var(--muted);font-size:.78rem;margin:0}
+.dlg-actions{display:flex;gap:8px;align-items:center;margin-top:4px}
+.dlg-actions span{flex:1}
+.dlg-actions button{border-radius:8px;padding:10px 14px;font-weight:700;border:1px solid var(--line);background:var(--bg)}
+.dlg-actions .primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.dlg-actions .danger{color:var(--now);border-color:transparent;background:none;padding-left:0}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="title-row">
+    <h1>Japan, 21 Nov – 4 Dec</h1>
+    <div class="sync" id="sync"><i></i><span>Loading…</span></div>
+  </div>
+  <div class="bar"><b id="tripBar"></b></div>
+  <div class="bar-label"><span id="tripLabel"></span><span id="tripCount"></span></div>
+</div></header>
+
+<main class="wrap">
+  <section id="v-plan">
+    <div class="days-wrap">
+      <button class="days-nav prev" id="daysPrev" aria-label="Scroll days left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="days" id="days" role="tablist" aria-label="Trip days"></div>
+      <button class="days-nav next" id="daysNext" aria-label="Scroll days right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div id="banner"></div>
+    <div class="dayhead">
+      <div><h2 id="dayTitle"></h2><div class="meta" id="dayMeta"></div></div>
+      <button class="today-btn" id="todayBtn">Today</button>
+    </div>
+    <ol class="rail" id="rail"></ol>
+    <button class="add-btn" id="addAct">+ Add a stop to this day</button>
+  </section>
+
+  <section id="v-shop" class="hidden">
+    <h2 class="sec">Shopping for sis</h2>
+    <p class="sub">Prices are estimates before tax. Type the real price when you buy.</p>
+    <div class="settings">
+      <div class="field"><label for="rate">RM per ¥100</label><input id="rate" type="number" step="0.01" inputmode="decimal"></div>
+      <div class="field"><label for="deposit">She banked in (RM)</label><input id="deposit" type="number" step="1" inputmode="decimal"></div>
+    </div>
+    <div class="sum">
+      <div><span>Estimated</span><strong id="sEst"></strong></div>
+      <div><span>Spent</span><strong id="sSpent"></strong></div>
+      <div><span>Balance</span><strong id="sBal"></strong></div>
+    </div>
+    <ul class="items" id="shopList"></ul>
+    <button class="add-btn" id="addItem">+ Add an item</button>
+    <p class="foot" id="shopFoot"></p>
+  </section>
+
+  <section id="v-ideas" class="hidden">
+    <h2 class="sec">Ideas, if there’s time</h2>
+    <p class="sub">Places not in the plan yet. Tick the ones you managed to visit.</p>
+    <div id="ideas"></div>
+  </section>
+</main>
+
+<nav class="tabs" aria-label="Sections"><div class="tabs-in">
+  <a href="#plan" data-v="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3v18M6 7h11M6 13h8M6 19h11"/><circle cx="6" cy="7" r="2" fill="currentColor"/><circle cx="6" cy="13" r="2" fill="currentColor"/><circle cx="6" cy="19" r="2" fill="currentColor"/></svg>Itinerary</a>
+  <a href="#shop" data-v="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+  <a href="#ideas" data-v="ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ideas</a>
+</div></nav>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="actDlg" class="sheet" aria-labelledby="actDlgTitle"><form id="actForm" novalidate>
+  <h3 id="actDlgTitle">Add a stop</h3>
+  <div class="frow2"><label>Day<select name="day"></select></label><label>Time<input name="t" type="time"></label></div>
+  <label>What are you doing<input name="n" maxlength="160" placeholder="e.g. Pokémon Center Osaka"></label>
+  <label>Places for Google Maps <span class="hint">One per line</span><textarea name="places" rows="2"></textarea></label>
+  <label>Getting there<input name="tr" maxlength="200" placeholder="e.g. Midosuji Line → Umeda"></label>
+  <div class="frow2"><label>Meal<select name="meal"><option value="">Not a meal</option><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></label><label>Ticket<input name="tk" maxlength="40" placeholder="e.g. Klook"></label></div>
+  <label class="inline"><input type="checkbox" name="halal"> Halal</label>
+  <label>Notes<textarea name="notes" rows="3" maxlength="1000"></textarea></label>
+  <div class="dlg-actions"><button type="button" class="danger" id="actDel">Delete</button><span></span><button type="button" data-close>Cancel</button><button type="submit" class="primary">Save</button></div>
+</form></dialog>
+<dialog id="itemDlg" class="sheet" aria-labelledby="itemDlgTitle"><form id="itemForm" novalidate>
+  <h3 id="itemDlgTitle">Add an item</h3>
+  <label>Item<input name="iname" maxlength="160" placeholder="e.g. Tokyo Banana, 8 pcs"></label>
+  <div class="frow2"><label>Quantity<input name="qty" type="number" min="1" step="1" inputmode="numeric"></label><label>Estimated total ¥<input name="est" type="number" min="0" step="10" inputmode="numeric"></label></div>
+  <p class="hint" id="itemRm"></p>
+  <div class="dlg-actions"><button type="button" class="danger" id="itemDel">Delete</button><span></span><button type="button" data-close>Cancel</button><button type="submit" class="primary">Save</button></div>
+</form></dialog>
+<script>
+const DAYS = [
+{d:1,date:"2026-11-21",dow:"Sat",city:"Osaka",title:"Arrive + Minami",acts:[
+["07:00","Arrive at KIX","","","","Buy an IC card (ICOCA or Suica) for trains.",["Kansai International Airport"]],
+["08:00","Train to Namba","Follow Nankai Line signs, take the Nankai Airport Express","","","",["Namba Station"]],
+["09:30","Drop luggage at Namba Station lockers","","","","Airbnb can’t take early luggage. Hotel TBC, near Dotonbori/Namba.",["Namba Station coin lockers"]],
+["10:30","Kuromon Market","","Breakfast","","Walk the whole market street. Try a fruit cup, hot tea from a vending machine, watch the seafood prep.",["Kuromon Ichiba Market"]],
+["11:00","Osaka Castle (outside only)","Namba → Midosuji Line → Hommachi, change to Chuo Line → Tanimachi 4-chome","","","Better to go early in the morning.",["Osaka Castle"]],
+["13:30","Best Halal Ramen Marhaba","","Lunch","","",["Halal Ramen Marhaba Osaka"],1],
+["15:30","Umeda Sky Building","Midosuji Line → Umeda","","Klook","",["Umeda Sky Building"]],
+["17:30","Café SKY 40 + Floating Garden ⭐","","","","Sunset 16:45. Come earlier if you want the sunset from Kuchu Teien Observatory.",["Kuchu Teien Observatory"]],
+["18:45","Dotonbori walk + street food","Umeda → Midosuji Line → Namba","","","Walk both canal sides, watch street performers, Don Quijote for 30 min, buy souvenir snacks. Check halal for street food.",["Dotonbori"]],
+["20:00","Halal Honolu Grande Shinsaibashi","","Dinner","","",["Honolu Grande Shinsaibashi"],1],
+["21:30","Back to hotel","","","","",[]]]},
+{d:2,date:"2026-11-22",dow:"Sun",city:"Osaka",title:"Shrines + old Osaka",acts:[
+["08:00","7-Eleven","","Breakfast","","",[]],
+["09:00","Sumiyoshi Taisha","Nankai Line → Sumiyoshitaisha Station","","","Walk the iconic Taiko Bridge.",["Sumiyoshi Taisha"]],
+["11:30","Shinsekai + Tsutenkaku Tower","Shin-Imamiya / Ebisucho Station","","","Macam Myeongdong. Retro streets, capsule machine shop, street snacks (check halal).",["Shinsekai","Tsutenkaku Tower"]],
+["13:00","Gyumon Tsutenkaku","","Lunch","","",["Gyumon Tsutenkaku Osaka"],1],
+["15:00","Amerikamura","","","","Macam Petaling Street. Vintage stores, sit at a café if tired.",["Amerikamura Osaka"]],
+["17:00","Umeda + HEP FIVE shopping","","","","",["HEP FIVE"]],
+["19:00","Gyumon Dotonbori 2nd","","Dinner","","",["Gyumon Dotonbori 2nd"],1],
+["20:30","Shinsaibashi shopping street","","","","",["Shinsaibashi-suji Shopping Street"]]]},
+{d:3,date:"2026-11-23",dow:"Mon",city:"Nara",title:"Deer + temples",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["08:00","Osaka → Nara","Namba → Kintetsu Nara Line → Kintetsu-Nara Station","","","",["Kintetsu-Nara Station"]],
+["09:00","Nara Park, Kasuga Taisha, Nigatsu-do, Todai-ji","","","","Buy deer senbei. Feed the deer slowly.",["Nara Park","Kasuga Taisha","Nigatsu-do","Todai-ji"]],
+["13:00","Nara Halal Restaurant & Ramen ⭐","","Lunch","","",["Nara Halal Restaurant"],1],
+["16:00","Nakatanidou mochi, Naramachi, Sarusawa Pond","","","","",["Nakatanidou Nara","Naramachi","Sarusawa Pond"]],
+["18:00","Gyumon Nara ⭐⭐⭐","","Dinner","","",["Gyumon Nara"],1],
+["19:15","Return to Osaka","Kintetsu-Nara → Kintetsu Nara Line → Namba","","","",[]],
+["20:30","Dotonbori night walk","","","","",["Dotonbori"]]]},
+{d:4,date:"2026-11-24",dow:"Tue",city:"Kyoto",title:"Arashiyama",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["07:30","Osaka → Kyoto Station","Namba → Midosuji Line → Umeda, then JR Kyoto Line from Osaka Station → Kyoto Station","","","",["Kyoto Station"]],
+["08:30","Kimono rental, Bamboo Forest, Tenryu-ji","Kyoto Station → JR Sagano Line → Saga-Arashiyama (~15 min)","","","Qi suggests wearing the kimono at the bamboo forest. Return kimono before the train ride.",["Arashiyama Bamboo Grove","Tenryu-ji"]],
+["11:30","Lunch TBC","","Lunch","","",[]],
+["12:30","Sagano Romantic Train → Kameoka, Hozugawa River Cruise back, mochi at Togetsukyo","","","Book ahead","River cruise takes about 2 hours.",["Torokko Saga Station","Hozugawa River Boat Ride","Togetsukyo Bridge"]],
+["17:30","Return to Osaka","Saga-Arashiyama → Kyoto Station → JR Kyoto Line → Osaka (~1 h)","","","",[]],
+["19:00","Dinner TBC","","Dinner","","",[]],
+["20:30","Dotonbori relax walk","","","","",["Dotonbori"]]]},
+{d:5,date:"2026-11-25",dow:"Wed",city:"Osaka",title:"Universal Studios",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["08:00","Universal Studios Japan","Osaka-Namba → Hanshin Namba Line → Nishikujo → JR Yumesaki Line → Universal City","","USJ ticket","Go straight to Super Nintendo World, then Harry Potter.",["Universal Studios Japan"]],
+["20:00","Gyumon Halal Wagyu Yakiniku","","Dinner","","",["Gyumon Halal Wagyu Yakiniku Osaka"],1]]},
+{d:6,date:"2026-11-26",dow:"Thu",city:"Osaka",title:"Free day + shopping",acts:[
+["08:00","7-Eleven","","Breakfast","","",[]],
+["10:00","Namba Yasaka Shrine","","","","",["Namba Yasaka Shrine"]],
+["14:00","Lunch TBC","","Lunch","","Kobe beef? Find a halal one.",[]],
+["16:00","Tower Knives, KAMO Umeda, Osaka Aquarium Kaiyukan","","","","Aquarium is far from Namba. Consider moving it to the morning.",["Tower Knives Osaka","KAMO Soccer Shop Umeda","Osaka Aquarium Kaiyukan"]],
+["19:00","Dinner TBC","","Dinner","","",[]],
+["20:30","Dotonbori relax walk","","","","",["Dotonbori"]]]},
+{d:7,date:"2026-11-27",dow:"Fri",city:"Tokyo",title:"Shinkansen to Tokyo",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["08:30","Check out of hotel","","","","",[]],
+["09:30","To Shin-Osaka","Namba → Midosuji Line → Shin-Osaka","","","",["Shin-Osaka Station"]],
+["10:00","Tokaido Shinkansen","","","Shinkansen ticket","",[]],
+["12:30","Arrive Tokyo Station","","","","",["Tokyo Station"]],
+["13:00","Hotel check-in (Shinjuku)","","","","",[]],
+["14:30","Ginza (Onitsuka Tiger engraving), then Tokyo Metropolitan Govt Building, Shinjuku Gyoen, Hanazono Shrine, 3D Cat","","Lunch","","Go to Ginza first to buy OT shoes with name engraving. Shinjuku Gyoen closes early in winter (around 16:00), so check before going.",["Onitsuka Tiger Ginza","Tokyo Metropolitan Government Building","Shinjuku Gyoen","Hanazono Shrine","Cross Shinjuku Vision 3D cat"]],
+["18:00","Kabukicho","","","","Main street, Don Quijote, Godzilla head, Alpen Tokyo.",["Kabukicho","Godzilla Head Shinjuku","Alpen Tokyo"]],
+["19:30","Panga Halal Yakiniku","","Dinner","","",["Panga Halal Yakiniku"],1],
+["21:00","Omoide Yokocho","","","","",["Omoide Yokocho"]]]},
+{d:8,date:"2026-11-28",dow:"Sat",city:"Tokyo",title:"Akihabara + Ueno",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["10:00","Kanda Myojin, Akihabara Electric Town, Yodobashi Akiba","","","","Anime shops, retro games, arcades, gachapon.",["Kanda Myojin","Akihabara Electric Town","Yodobashi Akiba"]],
+["12:30","Lunch TBC","","Lunch","","",[]],
+["14:30","2k540 Aki-Oka Artisan","","","","",["2k540 Aki-Oka Artisan"]],
+["17:00","Ameyoko, Ueno Park, Ueno Toshogu","","","","Museums if interested.",["Ameyoko","Ueno Park","Ueno Toshogu"]],
+["19:00","Dinner TBD","","Dinner","","",[]]]},
+{d:9,date:"2026-11-29",dow:"Sun",city:"Tokyo",title:"Asakusa + Skytree",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["09:00","Kaminarimon, Senso-ji, Nakamise, Denboin-dori, Kannon-dori, Shin-Nakamise","","","","Snack hunting in Asakusa.",["Kaminarimon","Senso-ji","Nakamise Shopping Street"]],
+["12:30","Yoshi’s Passion halal Japanese curry","","Lunch","","",["Yoshi's Passion Asakusa"],1],
+["14:00","Kappabashi Kitchenware Street + Sumida River walk","","","","",["Kappabashi Dougu Street","Sumida River Walk"]],
+["16:30","Tokyo Skytree","","","Ticket","",["Tokyo Skytree"]]]},
+{d:10,date:"2026-11-30",dow:"Mon",city:"Tokyo",title:"Shibuya",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["10:00","Shibuya Crossing + Hachiko","Shinjuku → JR Yamanote Line → Shibuya","","","",["Shibuya Crossing","Hachiko Statue"]],
+["11:00","Center Gai, PARCO, Sanrio Gift Gate, Shibuya 109, Donki","","","","Macam Myeongdong. Arcades, souvenir shops, vending machine drinks.",["Shibuya Center Gai","Shibuya PARCO","Shibuya 109","MEGA Don Quijote Shibuya"]],
+["12:30","Gyumon Halal Yakiniku","","Lunch","","",["Gyumon Shibuya"],1],
+["14:00","Miyashita Park + Dogenzaka","","","","",["Miyashita Park","Dogenzaka"]],
+["16:30","Yoyogi Park","","","","",["Yoyogi Park"]],
+["18:00","Shibuya Sky","","","Book early","",["Shibuya Sky"]],
+["19:30","Annam Indian Restaurant Ginza","Shibuya → Ginza Line → Ginza (~17 min)","Dinner","","",["Annam Indian Restaurant Ginza"],1],
+["21:00","Shibuya night street walk","","","","",["Shibuya"]]]},
+{d:11,date:"2026-12-01",dow:"Tue",city:"Fuji",title:"Kawaguchiko",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["07:30","Shinjuku → Kawaguchiko","JR Chuo Line → Otsuki, change to Fujikyu Railway → Kawaguchiko Station","","","",["Kawaguchiko Station"]],
+["10:30","Lake Kawaguchi","","","","Autumn maple with Fuji in the background. Walk the lakeside slowly.",["Lake Kawaguchi"]],
+["12:00","Hoto noodles","","Lunch","","Check ingredients.",[]],
+["13:30","Kachi Kachi Ropeway","","","Ticket","View Mt Fuji from the top.",["Mt. Fuji Panoramic Ropeway"]],
+["15:30","Rest + vending machine drink","","","","",[]],
+["16:30","Return to Tokyo","","","","",[]],
+["19:30","Panga Halal Yakiniku","","Dinner","","",["Panga Halal Yakiniku"],1]]},
+{d:12,date:"2026-12-02",dow:"Wed",city:"Tokyo",title:"Mt Takao + Showa Kinen",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["09:30","Mt Takao: cable car up, explore, chairlift down, shopping street","Shinjuku → Keio Line → Takaosanguchi (~50 min)","","","Take photos at Takaosanguchi Station.",["Takaosanguchi Station","Mt. Takao"]],
+["12:30","Lunch TBD","","Lunch","","",[]],
+["14:00","Showa Kinen Park (cycling)","Takao → JR Chuo Line → Tachikawa","","","",["Showa Kinen Park"]],
+["18:30","Dinner TBD","","Dinner","","",[]]]},
+{d:13,date:"2026-12-03",dow:"Thu",city:"Tokyo",title:"Ikebukuro + Harajuku",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["10:00","Ikebukuro Sunshine City","Shinjuku → JR Yamanote Line → Ikebukuro","","","Indoor shopping mall.",["Sunshine City"]],
+["12:00","Sakura Tei Harajuku","Ikebukuro → JR Yamanote Line → Harajuku","Lunch","","",["Sakura Tei Harajuku"],1],
+["14:00","Anime shopping TBC","","","","",[]],
+["16:30","Takeshita Street, Cat Street, Tokyu Plaza Omokado","","","","Blue Bottle, Arc’teryx, Case:Pace.",["Takeshita Street","Cat Street Harajuku","Tokyu Plaza Omotesando Omokado"]],
+["17:30","Omotesando Christmas illuminations","","","","",["Omotesando"]],
+["19:00","Annam Indian Restaurant Ginza","","Dinner","","",["Annam Indian Restaurant Ginza"],1]]},
+{d:14,date:"2026-12-04",dow:"Fri",city:"Tokyo",title:"Shinjuku shopping",acts:[
+["07:00","7-Eleven","","Breakfast","","",[]],
+["10:00","Onitsuka Tiger Shinjuku","","","","",["Onitsuka Tiger Shinjuku"]],
+["11:30","ABC-MART Grand Stage Shinjuku","","","","Other sport shoe brands.",["ABC-MART Grand Stage Shinjuku"]],
+["13:00","Halal Wagyu Ramen Shinjuku-Tei","","Lunch","","",["Shinjuku-Tei Halal Wagyu Ramen"],1],
+["14:30","Don Quijote Shinjuku","","","","Souvenirs + snacks heaven.",["Don Quijote Shinjuku"]],
+["17:00","Shinjuku Takashimaya","","","","Higher-quality souvenirs.",["Shinjuku Takashimaya"]],
+["19:00","Gyumon Halal Yakiniku","","Dinner","","",["Gyumon Halal Yakiniku Tokyo"],1]]}
+];
+const BASE_SHOP = [
+["s1","MUJI Packable Boston Bag 23L",1,2700],["s2","MUJI Lip Essence Pink (02)",1,900],
+["s3","MUJI UV Pocketable Hoodie, smoky pink XL",1,3600],["s4","MUJI Boa Fleece Jacket, smoky pink XL",1,4000],
+["s5","MUJI Eye Shadow 4 Colors Gold Brown",1,1350],["s6","Uniqlo Heattech Ultra Warm XL black (2 tops + 2 leggings)",4,10900],
+["s7","Derma Laser Super Retinol Mask",1,1400],["s8","Hada Labo Gokujyun Aging Care Lotion 170ml",1,1300],
+["s9","Kosé Gomen ne Suhada Face Mask",1,700],["s10","&honey Shampoo + Treatment (1 set)",1,2800],
+["s11","Hada Labo Gokujyun Alpha Premium Serum 20ml (may not exist in Japan)",2,3000],["s12","Hada Labo Perfect 3D Gel 40g (may not exist in Japan)",2,3000],
+["s13","Kosé CoenRich Q10 Hand Cream 80g",1,600],["s14","White Conc CC Cream 200g",1,1300],
+["s15","Travel-size sunscreens (Canmake, Anessa, 2× Shiseido)",4,6000],["s16","Melano CC Vitamin C Toner",1,1000],
+["s17","7-Eleven biscuits (4 blue, 4 orange)",8,2240],["s18","Royce Nama Chocolate, liqueur free (buy last)",3,2700]
+];
+const IDEAS = {"Kansai":["Dojimahama Tower","Akashi-Kaikyo Bridge","Sumaura-Yuen Amusement Park","Kitano Ijinkan-Gai / Moegi House / Weathercock House","Nakazakicho","Osaka Aquarium Kaiyukan","Tempozan Harbor Village","Osaka Amazing Pass","Daibutsu Ichigo (strawberries)","Yoshidaen","Jojakko-ji Temple","Narutaki","Senbon Torii","Murou Art Forest","Hozan-ji (Ikoma Shoten)"],
+"Tokyo":["The North Face","Human Made","Blue Bottle","Takeshita Street","Case:Pace","Hachiko Statue","PARCO (Nintendo + Pokémon)","Mega Don Quijote","Palace Skateboards Tokyo","Oi Racecourse Flea Market (9:30–14:30)","Tokyo Skytree","Ginza","Rugby Online Tokyo","Tokyo Tower"]};
+
+const CITY = {Osaka:["--osaka","O"],Nara:["--nara","N"],Kyoto:["--kyoto","K"],Tokyo:["--tokyo","T"],Fuji:["--fuji","F"]};
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const BASE_ACTS = DAYS.flatMap(day => day.acts.map((a,i) => ({id:"d"+day.d+"a"+i,day:day.d,t:a[0],n:a[1],tr:a[2],meal:a[3],tk:a[4],notes:a[5],places:a[6],halal:!!a[7]})));
+let ALL_ACTS = [], SHOP = [];
+function rebuild(){
+  const merged = BASE_ACTS.map(a => S.plan[a.id] ? Object.assign({}, a, S.plan[a.id], {id:a.id}) : a);
+  Object.entries(S.plan).forEach(([id,p]) => { if(id.startsWith("c")) merged.push(Object.assign({places:[]}, p, {id})); });
+  const live = merged.filter(a => !a.deleted && a.n && DAYS.some(d => d.d === Number(a.day))).map(a => Object.assign({}, a, {day:Number(a.day), t:a.t||"00:00", places:Array.isArray(a.places)?a.places:[]}));
+  DAYS.forEach(d => d.acts = live.filter(a => a.day === d.d).sort((x,y) => x.t.localeCompare(y.t)));
+  ALL_ACTS = DAYS.flatMap(d => d.acts);
+  const items = BASE_SHOP.map(([id,name,qty,est]) => S.items[id] ? Object.assign({id,name,qty,est}, S.items[id], {id}) : {id,name,qty,est});
+  Object.entries(S.items).forEach(([id,it]) => { if(id.startsWith("c")) items.push(Object.assign({qty:1,est:0}, it, {id})); });
+  SHOP = items.filter(i => !i.deleted && i.name);
+}
+const IDEA_LIST = Object.entries(IDEAS).flatMap(([g,arr]) => arr.map((n,i) => ({id:(g==="Kansai"?"k":"t")+i,g,n})));
+
+const S = {acts:{}, shop:{}, ideas:{}, plan:{}, items:{}, settings:{rate:3.0, deposit:0}};
+const UI = {view:"plan", day:null, open:new Set(), readOnly:false};
+const LS_KEY = "jptrip-v1";
+let db = null;
+
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const $ = id => document.getElementById(id);
+function cityVar(c){return "var("+CITY[c][0]+")"}
+function rm(n){return (n<0?"−RM":"RM") + Math.round(Math.abs(n)).toLocaleString("en-US")}
+function yen(n){return "¥" + Math.round(n).toLocaleString("en-US")}
+
+function jstNow(){const d=new Date(Date.now()+9*3600e3);return {date:d.toISOString().slice(0,10),mins:d.getUTCHours()*60+d.getUTCMinutes()}}
+function toMins(t){const [h,m]=t.split(":").map(Number);return h*60+m}
+function fmtDate(iso){const [y,m,d]=iso.split("-").map(Number);return d+" "+MON[m-1]}
+
+function loadLocal(){try{const raw=localStorage.getItem(LS_KEY);if(raw){const o=JSON.parse(raw);Object.assign(S.acts,o.acts||{});Object.assign(S.shop,o.shop||{});Object.assign(S.ideas,o.ideas||{});Object.assign(S.plan,o.plan||{});Object.assign(S.items,o.items||{});Object.assign(S.settings,o.settings||{})}}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){}}
+
+const queues = {};
+function persist(kind,id,data){
+  saveLocal();
+  if(!db || UI.readOnly) return;
+  const key = kind+"/"+id;
+  queues[key] = (queues[key]||Promise.resolve()).then(() => db.collection(kind).doc(id).set(data)).catch(err => {
+    if(err && (err.code==="invalid_argument" || err.code==="not_granted")){UI.readOnly=true;setSync("warn","View only");toast("You can view this trip but your changes won’t be shared.")}
+    else if(err && err.code==="unavailable"){toast("Couldn’t save just now. Your change is kept on this device.")}
+    else if(err && err.code==="quota_exceeded"){toast("Storage is full. Changes stay on this device only.")}
+  });
+}
+function setSync(kind,text){const el=$("sync");el.className="sync "+(kind||"");el.querySelector("span").textContent=text}
+let toastT;function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),3500)}
+
+/* ---------- itinerary ---------- */
+function dayProgress(day){const n=day.acts.length;const done=day.acts.filter(a=>S.acts[a.id]&&S.acts[a.id].s).length;return {n,done}}
+function nowNext(){
+  const {date,mins}=jstNow();const day=DAYS.find(d=>d.date===date);if(!day)return {day:null};
+  let now=null,next=null;
+  for(let i=0;i<day.acts.length;i++){if(toMins(day.acts[i].t)<=mins)now=day.acts[i];else{next=day.acts[i];break}}
+  return {day,now,next};
+}
+function renderDays(){
+  $("days").innerHTML = DAYS.map(d=>{const p=dayProgress(d);const pct=p.n?Math.round(p.done/p.n*100):0;
+    return `<button class="daybtn" role="tab" data-d="${d.d}" aria-current="${UI.day===d.d}" style="--c:${cityVar(d.city)}" aria-label="Day ${d.d}, ${fmtDate(d.date)}, ${d.city}">
+      <span class="badge"><small>${CITY[d.city][1]}</small><strong>${d.d}</strong></span>
+      <span class="dt">${fmtDate(d.date)}</span><span class="ring"><b style="width:${pct}%"></b></span></button>`}).join("");
+}
+function renderBanner(){
+  const {date}=jstNow();const nn=nowNext();let html="";
+  if(date<DAYS[0].date){const diff=Math.round((Date.parse(DAYS[0].date)-Date.parse(date))/864e5);html=`<div class="banner"><b>${diff} day${diff===1?"":"s"} to go.</b> First stop: arrive at KIX at 07:00, Sat 21 Nov.</div>`}
+  else if(nn.day){
+    const parts=[];if(nn.now)parts.push(`<b>Now:</b> ${esc(nn.now.t)} ${esc(nn.now.n)}`);if(nn.next)parts.push(`<b>Next:</b> ${esc(nn.next.t)} ${esc(nn.next.n)}`);
+    if(!parts.length)parts.push("Nothing scheduled right now.");
+    html=`<div class="banner">${parts.join("<br>")}</div>`;
+  }
+  $("banner").innerHTML=html;
+}
+const IC_DONE='<svg class="ic-done" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+const IC_SKIP='<svg class="ic-skip" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><path d="M6 12h12"/></svg>';
+const IC_PIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/></svg>';
+function mapUrl(place,city){const c=city==="Fuji"?"Yamanashi":city;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(place+" "+c+" Japan")}
+function renderRail(){
+  const day=DAYS.find(d=>d.d===UI.day);const nn=nowNext();const isToday=nn.day&&nn.day.d===day.d;
+  $("dayTitle").textContent=day.title;
+  $("dayMeta").innerHTML=`<span class="citytag" style="--c:${cityVar(day.city)}">${day.city}</span>Day ${day.d}, ${day.dow} ${fmtDate(day.date)}`;
+  $("rail").style.setProperty("--c",cityVar(day.city));
+  $("rail").innerHTML=day.acts.map(a=>{
+    const st=S.acts[a.id]||{};const s=st.s||"";const open=UI.open.has(a.id);
+    const isNow=isToday&&nn.now&&nn.now.id===a.id;const isNext=isToday&&nn.next&&nn.next.id===a.id;
+    const tags=[];
+    if(isNow)tags.push('<span class="tag now">Now</span>');if(isNext)tags.push('<span class="tag next">Next</span>');
+    if(a.meal)tags.push(`<span class="tag">${esc(a.meal)}</span>`);if(a.halal)tags.push('<span class="tag halal">Halal</span>');
+    if(a.tk)tags.push(`<span class="tag ticket">${esc(a.tk)}</span>`);if(st.note)tags.push('<span class="tag note">Has note</span>');
+    if(a.tr)tags.push('<span class="tag">Transport</span>');
+    const label=s==="done"?"Done":s==="skip"?"Skipped":"Not done";
+    return `<li class="stop${isNow?" is-now":""}" data-s="${s}" data-id="${a.id}">
+      <div class="time">${esc(a.t)}</div>
+      <div class="track"><button class="dot" data-act="cycle" aria-label="${esc(a.n)}: ${label}. Tap to change.">${IC_DONE}${IC_SKIP}</button></div>
+      <div class="card${open?" open":""}">
+        <button class="head" data-act="toggle" aria-expanded="${open}"><div class="name">${esc(a.n)}</div>${tags.length?`<div class="tags">${tags.join("")}</div>`:""}</button>
+        <div class="detail">
+          ${a.tr?`<div class="drow"><span class="k">Getting there</span>${esc(a.tr)}</div>`:""}
+          ${a.notes?`<div class="drow"><span class="k">Notes</span>${esc(a.notes)}</div>`:""}
+          ${a.places.length?`<div class="drow"><span class="k">Open in Google Maps</span><div class="maps">${a.places.map(p=>`<a href="${mapUrl(p,day.city)}" target="_blank" rel="noopener">${IC_PIN}${esc(p)}</a>`).join("")}</div></div>`:""}
+          <div class="status-row" role="group" aria-label="Status">
+            <button data-act="set" data-s="" aria-pressed="${!s}">Not done</button>
+            <button data-act="set" data-s="done" aria-pressed="${s==="done"}">Done</button>
+            <button data-act="set" data-s="skip" aria-pressed="${s==="skip"}">Skipped</button>
+          </div>
+          <div class="edit-row"><button data-act="edit">Edit or delete this stop</button></div>
+          <div class="drow"><label class="k" for="n-${a.id}">Your note</label><textarea id="n-${a.id}" data-note="${a.id}" placeholder="e.g. closed today, tak sempat, sedap gila">${esc(st.note||"")}</textarea></div>
+        </div>
+      </div></li>`}).join("");
+}
+function renderTripBar(){
+  const n=ALL_ACTS.length;const done=ALL_ACTS.filter(a=>S.acts[a.id]&&S.acts[a.id].s==="done").length;const skip=ALL_ACTS.filter(a=>S.acts[a.id]&&S.acts[a.id].s==="skip").length;
+  $("tripBar").style.width=Math.round((done+skip)/n*100)+"%";
+  $("tripLabel").textContent=`${done} done, ${skip} skipped`;$("tripCount").textContent=`${n} stops`;
+}
+function setAct(id,s){const cur=S.acts[id]||{};const next={s:s,note:cur.note||""};S.acts[id]=next;persist("acts",id,next);renderPlan();renderTripBar()}
+
+/* ---------- shopping ---------- */
+function renderShop(){
+  const rate=Number(S.settings.rate)||0;const dep=Number(S.settings.deposit)||0;
+  if(document.activeElement!==$("rate"))$("rate").value=rate;
+  if(document.activeElement!==$("deposit"))$("deposit").value=dep||"";
+  let est=0,spent=0,bought=0;
+  $("shopList").innerHTML=SHOP.map(({id,name,qty,est:y})=>{y=Number(y)||0;
+    const st=S.shop[id]||{};const actual=Number(st.actual)||0;est+=y;
+    if(st.bought){bought++;spent+=actual||y}
+    return `<li class="item${st.bought?" bought":""}" data-id="${id}">
+      <button class="check" data-act="buy" aria-pressed="${!!st.bought}" aria-label="Bought ${esc(name)}">${IC_DONE.replace('class="ic-done" ','')}</button>
+      <button class="iedit" data-act="edit-item" aria-label="Edit ${esc(name)}"><span class="iname">${esc(name)}</span><span class="est">×${esc(qty)} · ${y?`est ${yen(y)} ≈ ${rm(y*rate/100)}`:"no estimate"}${actual?` · paid ${rm(actual*rate/100)}`:""}</span></button>
+      <input class="actual" data-actual="${id}" type="number" inputmode="numeric" placeholder="Paid ¥" value="${actual||""}" aria-label="Actual price paid in yen for ${esc(name)}">
+    </li>`}).join("");
+  const estRM=est*rate/100, spentRM=spent*rate/100, bal=dep-spentRM;
+  $("sEst").textContent=rm(estRM);$("sSpent").textContent=rm(spentRM);
+  const b=$("sBal");b.textContent=dep?rm(bal):"–";b.className=dep?(bal<0?"neg":"pos"):"";
+  $("shopFoot").textContent=`${bought} of ${SHOP.length} bought. Bought items without a price use the estimate.`;
+}
+
+/* ---------- ideas ---------- */
+function renderIdeas(){
+  $("ideas").innerHTML=Object.keys(IDEAS).map(g=>{const list=IDEA_LIST.filter(i=>i.g===g);const done=list.filter(i=>S.ideas[i.id]&&S.ideas[i.id].done).length;
+    return `<div class="group"><h3><span class="citytag" style="--c:${g==="Kansai"?"var(--osaka)":"var(--tokyo)"}">${g}</span>${done} of ${list.length} visited</h3><ul class="items">${list.map(i=>{const on=!!(S.ideas[i.id]&&S.ideas[i.id].done);
+      return `<li class="item${on?" bought":""}" data-id="${i.id}" style="grid-template-columns:34px 1fr auto auto">
+        <button class="check" data-act="idea" aria-pressed="${on}" aria-label="Visited ${esc(i.n)}">${IC_DONE.replace('class="ic-done" ','')}</button>
+        <div class="iname">${esc(i.n)}</div>
+        <button class="plan-btn" data-act="idea-plan" aria-label="Add ${esc(i.n)} to the plan">+ Plan</button>
+        <a class="maps" style="margin:0" href="${mapUrl(i.n,g==="Kansai"?"Kansai":"Tokyo")}" target="_blank" rel="noopener" aria-label="Map for ${esc(i.n)}"><span style="color:var(--accent);display:inline-flex;width:20px">${IC_PIN}</span></a>
+      </li>`}).join("")}</ul></div>`}).join("");
+}
+
+/* ---------- views ---------- */
+function renderPlan(){renderDays();renderBanner();renderRail()}
+function render(){rebuild();renderTripBar();if(UI.view==="plan")renderPlan();else if(UI.view==="shop")renderShop();else renderIdeas()}
+let pendingRender=false;
+function safeRender(){const a=document.activeElement;if(a&&(a.tagName==="TEXTAREA"||a.tagName==="INPUT")){pendingRender=true;return}render()}
+document.addEventListener("focusout",()=>{if(pendingRender){pendingRender=false;setTimeout(render,0)}});
+
+function defaultDay(){const {date}=jstNow();const d=DAYS.find(x=>x.date===date);if(d)return d.d;return date<DAYS[0].date?1:DAYS[DAYS.length-1].d}
+function route(){
+  const h=location.hash.replace("#","");UI.view=["plan","shop","ideas"].includes(h)?h:"plan";
+  ["plan","shop","ideas"].forEach(v=>$("v-"+v).classList.toggle("hidden",v!==UI.view));
+  document.querySelectorAll(".tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.v===UI.view?"page":"false"));
+  render();
+}
+function scrollDayIntoView(){const s=$("days"),b=document.querySelector(`.daybtn[data-d="${UI.day}"]`);if(b&&s){s.scrollLeft=b.offsetLeft-s.offsetLeft-(s.clientWidth-b.offsetWidth)/2}if(window.updDayNav)setTimeout(window.updDayNav,50)}
+
+/* ---------- events ---------- */
+$("days").addEventListener("click",e=>{const b=e.target.closest(".daybtn");if(!b)return;UI.day=Number(b.dataset.d);renderPlan();scrollDayIntoView()});
+$("todayBtn").addEventListener("click",()=>{UI.day=defaultDay();renderPlan();scrollDayIntoView();const n=document.querySelector(".stop.is-now");if(n)n.scrollIntoView({block:"center"})});
+$("rail").addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]");if(!el)return;const id=el.closest(".stop").dataset.id;
+  if(el.dataset.act==="toggle"){UI.open.has(id)?UI.open.delete(id):UI.open.add(id);renderRail()}
+  else if(el.dataset.act==="cycle"){const s=(S.acts[id]||{}).s||"";setAct(id,s===""?"done":s==="done"?"skip":"")}
+  else if(el.dataset.act==="set"){setAct(id,el.dataset.s)}
+});
+const noteTimers={};
+$("rail").addEventListener("input",e=>{const id=e.target.dataset.note;if(!id)return;const val=e.target.value.slice(0,1000);
+  const cur=S.acts[id]||{};S.acts[id]={s:cur.s||"",note:val};saveLocal();clearTimeout(noteTimers[id]);noteTimers[id]=setTimeout(()=>{const c=S.acts[id]||{};S.acts[id]={s:c.s||"",note:val};persist("acts",id,S.acts[id])},700)});
+$("shopList").addEventListener("click",e=>{const el=e.target.closest("[data-act=buy]");if(!el)return;const id=el.closest(".item").dataset.id;const cur=S.shop[id]||{};const next={bought:!cur.bought,actual:Number(cur.actual)||0};S.shop[id]=next;persist("shop",id,next);renderShop()});
+const shopTimers={};
+$("shopList").addEventListener("input",e=>{const id=e.target.dataset.actual;if(!id)return;const v=Math.max(0,Number(e.target.value)||0);
+  const cur=S.shop[id]||{};S.shop[id]={bought:v>0?true:!!cur.bought,actual:v};saveLocal();clearTimeout(shopTimers[id]);shopTimers[id]=setTimeout(()=>{persist("shop",id,S.shop[id]);pendingRender=true},700)});
+let setT;
+function onSetting(){const next={rate:Math.max(0,Number($("rate").value)||0),deposit:Math.max(0,Number($("deposit").value)||0)};S.settings=next;saveLocal();clearTimeout(setT);setT=setTimeout(()=>{persist("settings","main",S.settings);pendingRender=true},600)}
+$("rate").addEventListener("input",onSetting);$("deposit").addEventListener("input",onSetting);
+$("ideas").addEventListener("click",e=>{const el=e.target.closest("[data-act=idea]");if(!el)return;const id=el.closest(".item").dataset.id;const next={done:!(S.ideas[id]&&S.ideas[id].done)};S.ideas[id]=next;persist("ideas",id,next);renderIdeas()});
+window.addEventListener("hashchange",route);
+setInterval(()=>{if(UI.view==="plan")safeRender()},60000);
+
+/* ---------- day strip scrolling ---------- */
+(function(){
+  const strip=$("days"),prev=$("daysPrev"),next=$("daysNext");
+  function upd(){const max=strip.scrollWidth-strip.clientWidth;prev.disabled=strip.scrollLeft<=4;next.disabled=strip.scrollLeft>=max-4}
+  strip.addEventListener("scroll",upd,{passive:true});window.addEventListener("resize",upd);
+  const step=()=>Math.max(160,strip.clientWidth*0.7);
+  prev.addEventListener("click",()=>strip.scrollBy({left:-step(),behavior:"smooth"}));
+  next.addEventListener("click",()=>strip.scrollBy({left:step(),behavior:"smooth"}));
+  strip.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&strip.scrollWidth>strip.clientWidth){e.preventDefault();strip.scrollLeft+=e.deltaY}},{passive:false});
+  let down=false,moved=false,sx=0,sl=0;
+  strip.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse"||e.button!==0)return;down=true;moved=false;sx=e.clientX;sl=strip.scrollLeft});
+  window.addEventListener("pointermove",e=>{if(!down)return;const dx=e.clientX-sx;if(Math.abs(dx)>5){moved=true;strip.classList.add("dragging")}if(moved)strip.scrollLeft=sl-dx});
+  window.addEventListener("pointerup",()=>{if(!down)return;down=false;strip.classList.remove("dragging")});
+  strip.addEventListener("click",e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true);
+  setTimeout(upd,50);
+  window.updDayNav=upd;
+})();
+
+/* ---------- add / edit ---------- */
+function newId(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function armDel(btn,fn){if(btn.dataset.armed){fn();return}btn.dataset.armed="1";btn.textContent="Tap again to delete"}
+function resetDel(btn){delete btn.dataset.armed;btn.textContent="Delete"}
+function canEdit(){if(UI.readOnly){toast("You can view this trip but not edit it.");return false}return true}
+document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>b.closest("dialog").close()));
+const actDlg=$("actDlg"),actF=$("actForm").elements;let editingAct=null;
+function openActForm(id,preset){
+  if(!canEdit())return;editingAct=id||null;
+  const a=id?ALL_ACTS.find(x=>x.id===id):Object.assign({day:UI.day,t:"",n:"",tr:"",meal:"",tk:"",notes:"",places:[],halal:false},preset||{});
+  if(!a)return;
+  actF.day.innerHTML=DAYS.map(d=>`<option value="${d.d}">Day ${d.d}, ${d.dow} ${fmtDate(d.date)}, ${d.city}</option>`).join("");
+  actF.day.value=a.day;actF.t.value=id?a.t:"";actF.n.value=a.n||"";actF.tr.value=a.tr||"";actF.meal.value=a.meal||"";actF.tk.value=a.tk||"";actF.notes.value=a.notes||"";actF.places.value=(a.places||[]).join("\n");actF.halal.checked=!!a.halal;
+  $("actDlgTitle").textContent=id?"Edit stop":"Add a stop";resetDel($("actDel"));$("actDel").classList.toggle("hidden",!id);
+  actDlg.showModal();
+}
+$("actForm").addEventListener("submit",e=>{e.preventDefault();if(!canEdit())return;
+  const n=actF.n.value.trim().slice(0,160);if(!n){actF.n.focus();toast("Give the stop a name.");return}
+  if(!actF.t.value){actF.t.focus();toast("Pick a time.");return}
+  const data={day:Number(actF.day.value),t:actF.t.value.slice(0,5),n,tr:actF.tr.value.trim().slice(0,200),meal:actF.meal.value,tk:actF.tk.value.trim().slice(0,40),notes:actF.notes.value.trim().slice(0,1000),places:actF.places.value.split("\n").map(s=>s.trim()).filter(Boolean).slice(0,10),halal:actF.halal.checked};
+  const id=editingAct||newId();S.plan[id]=data;persist("plan",id,data);
+  UI.day=data.day;actDlg.close();toast(editingAct?"Stop updated.":"Stop added.");
+  if(UI.view!=="plan")location.hash="#plan";else{render();scrollDayIntoView()}
+});
+$("actDel").addEventListener("click",e=>armDel(e.currentTarget,()=>{const a=ALL_ACTS.find(x=>x.id===editingAct);if(!a)return;const data=Object.assign({},a,{deleted:true});delete data.id;S.plan[editingAct]=data;persist("plan",editingAct,data);actDlg.close();render();toast("Stop deleted.")}));
+$("addAct").addEventListener("click",()=>openActForm(null));
+$("rail").addEventListener("click",e=>{const b=e.target.closest("[data-act=edit]");if(b)openActForm(b.closest(".stop").dataset.id)});
+$("ideas").addEventListener("click",e=>{const b=e.target.closest("[data-act=idea-plan]");if(!b)return;const i=IDEA_LIST.find(x=>x.id===b.closest(".item").dataset.id);if(i)openActForm(null,{n:i.n,places:[i.n]})});
+const itemDlg=$("itemDlg"),itemF=$("itemForm").elements;let editingItem=null;
+function updItemRm(){const y=Number(itemF.est.value)||0;$("itemRm").textContent=y?`About ${rm(y*(Number(S.settings.rate)||0)/100)} at your current rate.`:"Leave the estimate empty if you don’t know yet."}
+function openItemForm(id){
+  if(!canEdit())return;editingItem=id||null;const it=id?SHOP.find(x=>x.id===id):{name:"",qty:1,est:""};if(!it)return;
+  itemF.iname.value=it.name;itemF.qty.value=it.qty;itemF.est.value=it.est||"";
+  $("itemDlgTitle").textContent=id?"Edit item":"Add an item";resetDel($("itemDel"));$("itemDel").classList.toggle("hidden",!id);updItemRm();itemDlg.showModal();
+}
+itemF.est.addEventListener("input",updItemRm);
+$("itemForm").addEventListener("submit",e=>{e.preventDefault();if(!canEdit())return;
+  const name=itemF.iname.value.trim().slice(0,160);if(!name){itemF.iname.focus();toast("Give the item a name.");return}
+  const data={name,qty:Math.max(1,Math.round(Number(itemF.qty.value)||1)),est:Math.max(0,Math.round(Number(itemF.est.value)||0))};
+  const id=editingItem||newId();S.items[id]=data;persist("items",id,data);itemDlg.close();render();toast(editingItem?"Item updated.":"Item added.");
+});
+$("itemDel").addEventListener("click",e=>armDel(e.currentTarget,()=>{const it=SHOP.find(x=>x.id===editingItem);if(!it)return;const data={name:it.name,qty:it.qty,est:it.est,deleted:true};S.items[editingItem]=data;persist("items",editingItem,data);itemDlg.close();render();toast("Item deleted.")}));
+$("addItem").addEventListener("click",()=>openItemForm(null));
+$("shopList").addEventListener("click",e=>{const b=e.target.closest("[data-act=edit-item]");if(b)openItemForm(b.closest(".item").dataset.id)});
+
+/* ---------- boot ---------- */
+loadLocal();UI.day=defaultDay();setSync("","This device only");route();scrollDayIntoView();
+
+(async()=>{
+  if(!window.claude||!window.claude.use)return;
+  try{db=await window.claude.use("db")}catch(e){db=null}
+  if(!db){setSync("","This device only");return}
+  setSync("warn","Connecting…");
+  try{const user=await window.claude.use("user");if(user&&user.can){const c=await user.can("data.write");if(c===false){UI.readOnly=true}}}catch(e){}
+  let confirmed=false;
+  const timer=setTimeout(()=>{if(!confirmed)setSync("warn","Offline, showing saved")},10000);
+  const sub=(kind,key,fill)=>db.collection(kind).onSnapshot(snap=>{
+    const m={};snap.docs.forEach(d=>{if(d.exists)m[d.id]=d.data()});
+    if(snap.docs.length||!snap.metadata.fromCache){fill(m)}
+    if(!snap.metadata.fromCache&&!confirmed){confirmed=true;clearTimeout(timer)}
+    if(confirmed)setSync(UI.readOnly?"warn":"on",UI.readOnly?"View only":"Shared with group");
+    saveLocal();safeRender();
+  },err=>{clearTimeout(timer);setSync("warn","Sync stopped, saved on device")});
+  sub("acts","acts",m=>{S.acts=m});
+  sub("shop","shop",m=>{S.shop=m});
+  sub("ideas","ideas",m=>{S.ideas=m});
+  sub("settings","settings",m=>{if(m.main)S.settings=Object.assign({rate:3.0,deposit:0},m.main)});
+  sub("plan","plan",m=>{S.plan=m});
+  sub("items","items",m=>{S.items=m});
+})();
+</script>
+</body>
+</html>
