@@ -1,0 +1,124 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\TripRole;
+use Database\Factories\TripFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+#[Fillable(['name', 'start_date', 'end_date', 'timezone', 'exchange_rate_rm_per_100_yen', 'deposit_rm'])]
+class Trip extends Model
+{
+    /** @use HasFactory<TripFactory> */
+    use HasFactory;
+
+    /**
+     * Characters used for join codes. Look-alikes (0/O, 1/I/L) are left out.
+     */
+    private const JOIN_CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+    /**
+     * Bootstrap the model and its traits.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Trip $trip): void {
+            $trip->join_code ??= static::generateUniqueJoinCode();
+        });
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'exchange_rate_rm_per_100_yen' => 'decimal:4',
+            'deposit_rm' => 'decimal:2',
+        ];
+    }
+
+    /**
+     * Generate an 8-character join code that is not in use.
+     */
+    public static function generateUniqueJoinCode(): string
+    {
+        do {
+            $code = '';
+            for ($i = 0; $i < 8; $i++) {
+                $code .= self::JOIN_CODE_ALPHABET[random_int(0, strlen(self::JOIN_CODE_ALPHABET) - 1)];
+            }
+        } while (static::where('join_code', $code)->exists());
+
+        return $code;
+    }
+
+    /**
+     * Replace the join code with a fresh one.
+     */
+    public function regenerateJoinCode(): void
+    {
+        $this->forceFill(['join_code' => static::generateUniqueJoinCode()])->save();
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, TripMember>
+     */
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->using(TripMember::class)
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<Day, $this>
+     */
+    public function days(): HasMany
+    {
+        return $this->hasMany(Day::class)->orderBy('day_number');
+    }
+
+    /**
+     * @return HasMany<Activity, $this>
+     */
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+    /**
+     * @return HasMany<ShoppingItem, $this>
+     */
+    public function shoppingItems(): HasMany
+    {
+        return $this->hasMany(ShoppingItem::class)->orderBy('sort_order')->orderBy('created_at');
+    }
+
+    /**
+     * @return HasMany<Idea, $this>
+     */
+    public function ideas(): HasMany
+    {
+        return $this->hasMany(Idea::class)->orderBy('sort_order');
+    }
+
+    /**
+     * The given user's role on this trip, or null when they are not a member.
+     */
+    public function roleFor(User $user): ?TripRole
+    {
+        $member = $this->members()->whereKey($user->getKey())->first();
+
+        return $member?->pivot->role;
+    }
+}

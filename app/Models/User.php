@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -28,5 +29,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Trips this user belongs to, with their role on the pivot.
+     *
+     * @return BelongsToMany<Trip, $this, TripMember>
+     */
+    public function trips(): BelongsToMany
+    {
+        return $this->belongsToMany(Trip::class)
+            ->using(TripMember::class)
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }
