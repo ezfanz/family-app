@@ -22,6 +22,13 @@ class Trip extends Model
     private const JOIN_CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
     /**
+     * Roles already looked up on this instance, keyed by user id.
+     *
+     * @var array<int, TripRole|null>
+     */
+    private array $roleCache = [];
+
+    /**
      * Bootstrap the model and its traits.
      */
     protected static function booted(): void
@@ -114,11 +121,48 @@ class Trip extends Model
 
     /**
      * The given user's role on this trip, or null when they are not a member.
+     * Cached per instance because policies ask several times per request.
      */
     public function roleFor(User $user): ?TripRole
     {
-        $member = $this->members()->whereKey($user->getKey())->first();
+        if (! array_key_exists($user->getKey(), $this->roleCache)) {
+            $member = $this->members()->whereKey($user->getKey())->first();
+            $this->roleCache[$user->getKey()] = $member?->pivot->role;
+        }
 
-        return $member?->pivot->role;
+        return $this->roleCache[$user->getKey()];
+    }
+
+    /**
+     * Add a user to the trip. Returns false when they were already a member.
+     */
+    public function addMember(User $user, TripRole $role): bool
+    {
+        if ($this->roleFor($user) !== null) {
+            return false;
+        }
+
+        $this->members()->attach($user, ['role' => $role->value]);
+        $this->roleCache[$user->getKey()] = $role;
+
+        return true;
+    }
+
+    /**
+     * Change a member's role.
+     */
+    public function changeRole(User $user, TripRole $role): void
+    {
+        $this->members()->updateExistingPivot($user->getKey(), ['role' => $role->value]);
+        $this->roleCache[$user->getKey()] = $role;
+    }
+
+    /**
+     * Remove a member from the trip.
+     */
+    public function removeMember(User $user): void
+    {
+        $this->members()->detach($user->getKey());
+        $this->roleCache[$user->getKey()] = null;
     }
 }

@@ -9,6 +9,15 @@ enum TripRole: string
     case Viewer = 'viewer';
 
     /**
+     * Role given to someone who joins with the join code.
+     * Editor matches the prototype, where everyone in the group could edit.
+     */
+    public static function forNewMembers(): self
+    {
+        return self::Editor;
+    }
+
+    /**
      * Whether this role may change trip content.
      */
     public function canEdit(): bool
