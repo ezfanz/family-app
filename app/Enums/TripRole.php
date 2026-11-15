@@ -9,12 +9,21 @@ enum TripRole: string
     case Viewer = 'viewer';
 
     /**
-     * Role given to someone who joins with the join code.
-     * Editor matches the prototype, where everyone in the group could edit.
+     * Role given to someone who joins with the join code (Tabi: "New people join as Viewer").
      */
     public static function forNewMembers(): self
     {
-        return self::Editor;
+        return self::Viewer;
+    }
+
+    /**
+     * Roles an owner can hand out to other members.
+     *
+     * @return list<self>
+     */
+    public static function assignable(): array
+    {
+        return [self::Editor, self::Viewer];
     }
 
     /**

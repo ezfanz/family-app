@@ -17,7 +17,7 @@ class UpdateMemberRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role' => ['required', Rule::enum(TripRole::class)],
+            'role' => ['required', Rule::enum(TripRole::class)->only(TripRole::assignable())],
         ];
     }
 }

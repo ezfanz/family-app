@@ -24,6 +24,14 @@ class TripPolicy
     }
 
     /**
+     * Every member, viewers included, can tick stops and keep private notes.
+     */
+    public function participate(User $user, Trip $trip): Response
+    {
+        return $this->view($user, $trip);
+    }
+
+    /**
      * Owners and editors can change trip content and settings.
      */
     public function update(User $user, Trip $trip): Response

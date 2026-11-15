@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Enums\TripRole;
+use Carbon\CarbonPeriod;
 use Database\Factories\TripFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 #[Fillable(['name', 'start_date', 'end_date', 'timezone', 'exchange_rate_rm_per_100_yen', 'deposit_rm'])]
 class Trip extends Model
@@ -66,6 +68,37 @@ class Trip extends Model
         } while (static::where('join_code', $code)->exists());
 
         return $code;
+    }
+
+    /**
+     * Start a new trip owned by the given user, with one blank day per date.
+     *
+     * @param  array{name: string, start_date: string, end_date: string, timezone?: string|null}  $attributes
+     */
+    public static function startFor(User $owner, array $attributes): self
+    {
+        return DB::transaction(function () use ($owner, $attributes): self {
+            $trip = static::create([
+                'name' => $attributes['name'],
+                'start_date' => $attributes['start_date'],
+                'end_date' => $attributes['end_date'],
+                'timezone' => $attributes['timezone'] ?? 'Asia/Tokyo',
+            ]);
+
+            $period = CarbonPeriod::create($trip->start_date, $trip->end_date);
+            foreach ($period as $index => $date) {
+                $trip->days()->create([
+                    'day_number' => $index + 1,
+                    'date' => $date->toDateString(),
+                    'city' => null,
+                    'title' => '',
+                ]);
+            }
+
+            $trip->addMember($owner, TripRole::Owner);
+
+            return $trip;
+        });
     }
 
     /**

@@ -11,7 +11,7 @@
   <div class="panel">
     <h3>Join code</h3>
     <p class="join-code" aria-label="Join code {{ implode(' ', str_split($trip->join_code)) }}">{{ $trip->join_code }}</p>
-    <p class="hint">Share this with your group. New people join as editors, and you can change that below.</p>
+    <p class="hint">Share this with your group. New people join as viewers. Change their role below.</p>
     <form method="POST" action="{{ route('trips.join-code.regenerate', $trip) }}">
       @csrf
       <button type="submit" class="btn small">Make a new code</button>

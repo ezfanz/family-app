@@ -21,7 +21,7 @@ class TripSharingTest extends TestCase
             ->post(route('trips.join'), ['code' => strtolower(substr($trip->join_code, 0, 4).' '.substr($trip->join_code, 4))])
             ->assertRedirect(route('trips.show', $trip));
 
-        $this->assertSame(TripRole::Editor, $trip->fresh()->roleFor($user));
+        $this->assertSame(TripRole::Viewer, $trip->fresh()->roleFor($user));
     }
 
     public function test_joining_twice_keeps_the_existing_role(): void

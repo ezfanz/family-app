@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'qty', 'estimated_yen', 'actual_yen', 'is_bought', 'sort_order'])]
+#[Fillable(['name', 'for_whom', 'qty', 'estimated_yen', 'actual_yen', 'is_bought', 'sort_order'])]
 class ShoppingItem extends Model
 {
     /** @use HasFactory<ShoppingItemFactory> */

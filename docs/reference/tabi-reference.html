@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabi: screen reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+/* ---- Tabi tokens (light / dark) ---- */
+:root {
+  --paper: #F7F7F5; --surface: #FFFFFF; --ink: #1C1C1E; --stone: #6B6B70; --hair: #E4E4E1; --action: #2A3B8F;
+  --osaka: #E5171F; --nara: #7E4FB0; --kyoto: #00968F; --tokyo: #4A8410; --fuji: #2563A8;
+  --done: #2F7A49; --skipped: #9198A4; --now: #D2281E;
+}
+.dark {
+  --paper: #121214; --surface: #1C1C20; --ink: #EDEDED; --stone: #9A9AA2; --hair: #2C2C32; --action: #9DAEFF;
+  --tokyo: #9AD34A;
+}
+/* ---- reference page shell (not part of the app) ---- */
+body { margin: 0; background: #DADAD6; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; }
+.gallery { display: flex; flex-wrap: wrap; gap: 48px 40px; padding: 40px; align-items: flex-start; }
+.shot { margin: 0; }
+.shot figcaption { font-size: 14px; font-weight: 700; color: #3A3A3E; margin: 0 0 10px 4px; }
+.frame { width: 390px; height: 844px; overflow: auto; border-radius: 28px; border: 1px solid #C8C8C4; position: relative; scrollbar-width: thin; }
+/* ---- app styles ---- */
+
+
+a{color:#2A3B8F}a:hover{color:#1C1C1E}
+.i{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.tnum{font-variant-numeric:tabular-nums}
+.strip{scrollbar-width:none}.strip::-webkit-scrollbar{display:none}
+button,input,select,textarea{font-family:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #2A3B8F;outline-offset:2px}
+@keyframes ring{0%,100%{box-shadow:0 0 0 5px rgba(210,40,30,0.18)}50%{box-shadow:0 0 0 9px rgba(210,40,30,0.05)}}
+.pulse{animation:ring 2.4s ease-in-out infinite}
+@keyframes pop{from{transform:scale(0.4);opacity:0}to{transform:scale(1);opacity:1}}
+.pop{animation:pop 0.18s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.rise{animation:rise 0.2s ease-out}
+@media (prefers-reduced-motion: reduce){.pulse,.pop,.rise{animation:none}}
+.pill input{position:absolute;opacity:0;width:1px;height:1px}.pill input:checked + span{background:#2A3B8F;border-color:#2A3B8F;color:#FFFFFF}.pill input:focus-visible + span{outline:2px solid #2A3B8F;outline-offset:2px}
+
+</style>
+</head>
+<body>
+<main class="gallery">
+<figure class="shot">
+<figcaption>Day 1, Osaka</figcaption>
+<div class="frame" id="main" style="background: #F7F7F5">
+<div style="min-height: 1820px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 4%; background: #1C1C1E"></div>
+</div>
+</header>
+<nav aria-label="Days" class="strip" style="display: flex; gap: 10px; overflow-x: auto; padding: 14px 20px 14px; border-bottom: 1px solid #E4E4E1">
+<button type="button" aria-current="date" aria-label="Day 1, Sat 21 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #E5171F; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">1</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 700; color: #1C1C1E">21 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 50%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 2, Sun 22 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">2</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">22 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 3, Mon 23 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">3</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">23 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 4, Tue 24 Nov, Nara" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #7E4FB0; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">N</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">4</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">24 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #7E4FB0"></span></span>
+</button>
+<button type="button" aria-label="Day 5, Wed 25 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">5</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">25 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 6, Thu 26 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">6</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">26 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 7, Fri 27 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">7</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">27 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 8, Sat 28 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">8</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">28 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 9, Sun 29 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">9</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">29 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 10, Mon 30 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">10</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">30 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 11, Tue 1 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">11</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">1 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 12, Wed 2 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #2563A8; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">12</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">2 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #2563A8"></span></span>
+</button>
+<button type="button" aria-label="Day 13, Thu 3 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #2563A8; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">13</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">3 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #2563A8"></span></span>
+</button>
+<button type="button" aria-label="Day 14, Fri 4 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">14</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">4 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+</nav>
+<main style="flex: 1">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 20px 20px 0">
+<div style="min-width: 0">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Day 1 · Osaka</h1>
+<p class="tnum" style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Saturday 21 Nov · 8 stops</p>
+</div>
+<button type="button" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; color: #2A3B8F; font-size: 15px; font-weight: 700; cursor: pointer"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Add stop</button>
+</div>
+<div style="margin: 16px 20px 0; background: #FFFFFF; border: 1px solid #E4E4E1; border-left: 4px solid #D2281E; border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 44px minmax(0, 1fr); row-gap: 6px; align-items: baseline">
+<span style="font-size: 13px; font-weight: 700; color: #D2281E">Now</span>
+<span style="font-size: 16px; font-weight: 700"><span class="tnum">13:30</span>  Lunch at Marhaba</span>
+<span style="font-size: 13px; font-weight: 500; color: #6B6B70">Next</span>
+<span style="font-size: 16px; font-weight: 500"><span class="tnum" style="font-weight: 700">15:30</span>  Umeda Sky Building</span>
+</div>
+<ol class="tl" aria-label="Stops" style="list-style: none; margin: 20px 0 0; padding: 0 20px 0 12px"></ol>
+<div style="padding: 4px 20px 24px 114px">
+<a href="#addstop" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; border: 1.5px dashed #E4E4E1; border-radius: 12px; color: #2A3B8F; text-decoration: none; font-size: 15px; font-weight: 700"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Add a stop</a>
+</div>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#main" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#shopping" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div>
+</div>
+</figure>
+<figure class="shot">
+<figcaption>Day 10, Tokyo, dark mode</figcaption>
+<div class="frame" id="tokyodark" style="background: #121214">
+<div style="min-height: 1180px; box-sizing: border-box; background: #121214; color: #EDEDED; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #121214">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #9A9AA2; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #9A9AA2; text-decoration: none; white-space: nowrap"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/></svg>View only</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #2C2C32">
+<div style="height: 3px; width: 68%; background: #EDEDED"></div>
+</div>
+</header>
+<nav aria-label="Days" class="strip" style="display: flex; gap: 10px; overflow-x: auto; padding: 14px 20px 14px; border-bottom: 1px solid #2C2C32">
+<button type="button" aria-label="Day 1, Sat 21 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">1</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">21 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 2, Sun 22 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">2</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">22 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 3, Mon 23 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">3</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">23 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 4, Tue 24 Nov, Nara" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #9A6BD0; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">N</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">4</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">24 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #9A6BD0"></span></span>
+</button>
+<button type="button" aria-label="Day 5, Wed 25 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00A89F; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">5</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">25 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #00A89F"></span></span>
+</button>
+<button type="button" aria-label="Day 6, Thu 26 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00A89F; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">6</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">26 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #00A89F"></span></span>
+</button>
+<button type="button" aria-label="Day 7, Fri 27 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00A89F; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">7</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">27 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #00A89F"></span></span>
+</button>
+<button type="button" aria-label="Day 8, Sat 28 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #9AD34A; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">8</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">28 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #9AD34A"></span></span>
+</button>
+<button type="button" aria-label="Day 9, Sun 29 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #9AD34A; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">9</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">29 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #9AD34A"></span></span>
+</button>
+<button type="button" aria-current="date" aria-label="Day 10, Mon 30 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #9AD34A; border-radius: 10px; background: #9AD34A; color: #121214; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">10</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 700; color: #EDEDED">30 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 33%; background: #9AD34A"></span></span>
+</button>
+<button type="button" aria-label="Day 11, Tue 1 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #9AD34A; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">11</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">1 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #9AD34A"></span></span>
+</button>
+<button type="button" aria-label="Day 12, Wed 2 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A86D0; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">12</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">2 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A86D0"></span></span>
+</button>
+<button type="button" aria-label="Day 13, Thu 3 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A86D0; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">13</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">3 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A86D0"></span></span>
+</button>
+<button type="button" aria-label="Day 14, Fri 4 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #EDEDED">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #9AD34A; border-radius: 10px; background: #1C1C20; color: #EDEDED; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">14</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #9A9AA2">4 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #2C2C32; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #9AD34A"></span></span>
+</button>
+</nav>
+<main style="flex: 1">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 20px 20px 0">
+<div style="min-width: 0">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Day 10 · Tokyo</h1>
+<p class="tnum" style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #9A9AA2">Monday 30 Nov · Shibuya · 6 stops</p>
+</div>
+
+</div>
+<div style="margin: 16px 20px 0; background: #1C1C20; border: 1px solid #2C2C32; border-left: 4px solid #D2281E; border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 44px minmax(0, 1fr); row-gap: 6px; align-items: baseline">
+<span style="font-size: 13px; font-weight: 700; color: #FF7A6E">Now</span>
+<span style="font-size: 16px; font-weight: 700"><span class="tnum">12:30</span>  Lunch at Gyumon</span>
+<span style="font-size: 13px; font-weight: 500; color: #9A9AA2">Next</span>
+<span style="font-size: 16px; font-weight: 500"><span class="tnum" style="font-weight: 700">14:30</span>  Yoyogi Park</span>
+</div>
+<ol class="tl" aria-label="Stops" style="list-style: none; margin: 20px 0 0; padding: 0 20px 0 12px"></ol>
+<div style="height: 16px"></div>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #1C1C20; border-top: 1px solid #2C2C32; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#main" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #9DAEFF; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#shopping" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #9A9AA2; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #9A9AA2; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div>
+</div>
+</figure>
+<figure class="shot">
+<figcaption>Add a stop</figcaption>
+<div class="frame" id="addstop" style="background: #F7F7F5">
+<div style="min-height: 1400px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<div aria-hidden="true" style="position: relative; height: 330px; overflow: hidden; flex: none">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 4%; background: #1C1C1E"></div>
+</div>
+</header>
+<nav aria-label="Days" class="strip" style="display: flex; gap: 10px; overflow-x: auto; padding: 14px 20px 14px; border-bottom: 1px solid #E4E4E1">
+<button type="button" aria-current="date" aria-label="Day 1, Sat 21 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #E5171F; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">1</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 700; color: #1C1C1E">21 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 50%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 2, Sun 22 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">2</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">22 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 3, Mon 23 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">3</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">23 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 4, Tue 24 Nov, Nara" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #7E4FB0; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">N</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">4</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">24 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #7E4FB0"></span></span>
+</button>
+<button type="button" aria-label="Day 5, Wed 25 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">5</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">25 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 6, Thu 26 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">6</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">26 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 7, Fri 27 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">7</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">27 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 8, Sat 28 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">8</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">28 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 9, Sun 29 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">9</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">29 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 10, Mon 30 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">10</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">30 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 11, Tue 1 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">11</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">1 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 12, Wed 2 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #2563A8; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">12</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">2 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #2563A8"></span></span>
+</button>
+<button type="button" aria-label="Day 13, Thu 3 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #2563A8; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">13</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">3 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #2563A8"></span></span>
+</button>
+<button type="button" aria-label="Day 14, Fri 4 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">14</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">4 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+</nav>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 20px 20px 0">
+<div style="min-width: 0">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Day 1 · Osaka</h1>
+<p class="tnum" style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Saturday 21 Nov · 8 stops</p>
+</div>
+<button type="button" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; color: #2A3B8F; font-size: 15px; font-weight: 700; cursor: pointer"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Add stop</button>
+</div>
+<div style="position: absolute; inset: 0; background: rgba(28,28,30,0.45)"></div>
+</div>
+<div style="position: relative; margin-top: -40px; background: rgba(28,28,30,0.45); flex: 1; display: flex; flex-direction: column">
+<form aria-labelledby="sheet-title" style="flex: 1; display: flex; flex-direction: column; background: #FFFFFF; border-radius: 20px 20px 0 0">
+<div aria-hidden="true" style="width: 40px; height: 4px; border-radius: 2px; background: #E4E4E1; margin: 10px auto 0"></div>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px 4px 20px">
+<h2 id="sheet-title" style="margin: 0; font-size: 20px; font-weight: 900">Add a stop</h2>
+<a href="#main" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 22px; padding: 12px 20px 24px">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 120px; gap: 12px">
+<div><label for="f-day" style="display: block; font-size: 15px; font-weight: 700">Day</label><select id="f-day" style="display: block; width: 100%; box-sizing: border-box; margin-top: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #F7F7F5; color: #1C1C1E; font-size: 16px; line-height: 1.45; appearance: auto"><option value="1" selected>Day 1 · Sat 21 Nov · Osaka</option>
+<option value="2">Day 2 · Sun 22 Nov · Osaka</option>
+<option value="3">Day 3 · Mon 23 Nov · Osaka</option>
+<option value="4">Day 4 · Tue 24 Nov · Nara</option>
+<option value="5">Day 5 · Wed 25 Nov · Kyoto</option>
+<option value="6">Day 6 · Thu 26 Nov · Kyoto</option>
+<option value="7">Day 7 · Fri 27 Nov · Kyoto</option>
+<option value="8">Day 8 · Sat 28 Nov · Tokyo</option>
+<option value="9">Day 9 · Sun 29 Nov · Tokyo</option>
+<option value="10">Day 10 · Mon 30 Nov · Tokyo</option>
+<option value="11">Day 11 · Tue 1 Dec · Tokyo</option>
+<option value="12">Day 12 · Wed 2 Dec · Fuji</option>
+<option value="13">Day 13 · Thu 3 Dec · Fuji</option>
+<option value="14">Day 14 · Fri 4 Dec · Tokyo</option></select></div>
+<div><label for="f-time" style="display: block; font-size: 15px; font-weight: 700">Time</label><input id="f-time" type="time" value="15:30" class="tnum" style="display: block; width: 100%; box-sizing: border-box; margin-top: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #F7F7F5; color: #1C1C1E; font-size: 16px; line-height: 1.45; font-weight: 700"></div>
+</div>
+<div><label for="f-name" style="display: block; font-size: 15px; font-weight: 700">Name</label><input id="f-name" type="text" value="Umeda Sky Building" placeholder="e.g. Osaka Castle" style="display: block; width: 100%; box-sizing: border-box; margin-top: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #F7F7F5; color: #1C1C1E; font-size: 16px; line-height: 1.45"></div>
+<div><label for="f-places" style="display: block; font-size: 15px; font-weight: 700">Places<span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px">One per line. Each becomes a Google Maps link.</span></label><textarea id="f-places" rows="3" style="display: block; width: 100%; box-sizing: border-box; margin-top: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #F7F7F5; color: #1C1C1E; font-size: 16px; line-height: 1.45; resize: vertical">Umeda Sky Building&#10;Umeda Station</textarea></div>
+<div><label for="f-getting" style="display: block; font-size: 15px; font-weight: 700">Getting there</label><textarea id="f-getting" rows="2" style="display: block; width: 100%; box-sizing: border-box; margin-top: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #F7F7F5; color: #1C1C1E; font-size: 16px; line-height: 1.45; resize: vertical">Midosuji line to Umeda, then walk 10 min through the underpass.</textarea></div>
+<fieldset style="border: 0; margin: 0; padding: 0; min-width: 0"><legend style="padding: 0; font-size: 15px; font-weight: 700">Meal</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px">
+<label class="pill" style="position: relative; cursor: pointer"><input type="radio" name="meal" value="None" checked><span style="display: flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 15px; font-weight: 700">None</span></label>
+<label class="pill" style="position: relative; cursor: pointer"><input type="radio" name="meal" value="Breakfast"><span style="display: flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 15px; font-weight: 700">Breakfast</span></label>
+<label class="pill" style="position: relative; cursor: pointer"><input type="radio" name="meal" value="Lunch"><span style="display: flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 15px; font-weight: 700">Lunch</span></label>
+<label class="pill" style="position: relative; cursor: pointer"><input type="radio" name="meal" value="Dinner"><span style="display: flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 15px; font-weight: 700">Dinner</span></label>
+<label class="pill" style="position: relative; cursor: pointer"><input type="radio" name="meal" value="Snack"><span style="display: flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 15px; font-weight: 700">Snack</span></label>
+</div></fieldset>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<label for="f-ticket" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; cursor: pointer">
+<input id="f-ticket" type="checkbox" checked style="width: 22px; height: 22px; margin: 0; accent-color: #2A3B8F; flex: none">
+<span><span style="display: block; font-size: 16px; font-weight: 700">Needs a ticket</span><span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Shows an amber Ticket tag</span></span>
+</label>
+<label for="f-halal" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; cursor: pointer">
+<input id="f-halal" type="checkbox" style="width: 22px; height: 22px; margin: 0; accent-color: #2A3B8F; flex: none">
+<span><span style="display: block; font-size: 16px; font-weight: 700">Halal</span><span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Shows a green Halal tag</span></span>
+</label>
+</div>
+<div><label for="f-notes" style="display: block; font-size: 15px; font-weight: 700">Notes<span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px">Everyone in the group can see these.</span></label><textarea id="f-notes" rows="3" placeholder="Opening hours, what to order, meeting point" style="display: block; width: 100%; box-sizing: border-box; margin-top: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #F7F7F5; color: #1C1C1E; font-size: 16px; line-height: 1.45; resize: vertical"></textarea></div>
+</div>
+<div style="position: sticky; bottom: 0; margin-top: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 12px 20px 20px; background: #FFFFFF; border-top: 1px solid #E4E4E1">
+<a href="#main" style="display: flex; align-items: center; justify-content: center; min-height: 52px; border: 1px solid #E4E4E1; border-radius: 12px; color: #1C1C1E; text-decoration: none; font-size: 16px; font-weight: 700">Cancel</a>
+<a href="#main" style="display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 12px; background: #2A3B8F; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 700">Save stop</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+</figure>
+<figure class="shot">
+<figcaption>Empty day, Kyoto</figcaption>
+<div class="frame" id="emptyday" style="background: #F7F7F5">
+<div style="min-height: 844px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 40%; background: #1C1C1E"></div>
+</div>
+</header>
+<nav aria-label="Days" class="strip" style="display: flex; gap: 10px; overflow-x: auto; padding: 14px 20px 14px; border-bottom: 1px solid #E4E4E1">
+<button type="button" aria-label="Day 1, Sat 21 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">1</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">21 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 2, Sun 22 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">2</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">22 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 3, Mon 23 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">3</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">23 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 4, Tue 24 Nov, Nara" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #7E4FB0; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">N</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">4</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">24 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #7E4FB0"></span></span>
+</button>
+<button type="button" aria-label="Day 5, Wed 25 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">5</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">25 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-current="date" aria-label="Day 6, Thu 26 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #00968F; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">6</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 700; color: #1C1C1E">26 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 7, Fri 27 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">7</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">27 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 8, Sat 28 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">8</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">28 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 9, Sun 29 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">9</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">29 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 10, Mon 30 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">10</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">30 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 11, Tue 1 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">11</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">1 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 12, Wed 2 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #2563A8; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">12</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">2 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #2563A8"></span></span>
+</button>
+<button type="button" aria-label="Day 13, Thu 3 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #2563A8; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">13</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">3 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #2563A8"></span></span>
+</button>
+<button type="button" aria-label="Day 14, Fri 4 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">14</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">4 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+</nav>
+<main style="flex: 1">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 20px 20px 0">
+<div style="min-width: 0">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Day 6 · Kyoto</h1>
+<p class="tnum" style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Thursday 26 Nov · No stops yet</p>
+</div>
+
+</div>
+<div style="display: grid; grid-template-columns: 52px 44px minmax(0, 1fr); column-gap: 6px; padding: 28px 20px 0 12px">
+<div></div>
+<div style="display: flex; flex-direction: column; align-items: center">
+<span aria-hidden="true" style="width: 22px; height: 22px; margin-top: 11px; border-radius: 50%; box-sizing: border-box; border: 3px solid #00968F; background: #FFFFFF"></span>
+<span aria-hidden="true" style="width: 4px; height: 120px; background: repeating-linear-gradient(#00968F 0 8px, transparent 8px 14px)"></span>
+</div>
+<div style="padding-top: 8px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 900; line-height: 1.35">Nothing planned yet.</h2>
+<p style="margin: 6px 0 0; font-size: 16px; line-height: 1.5; color: #6B6B70">Add a stop, or pick one from your Kyoto ideas.</p>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px">
+<a href="#addstop" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; border-radius: 12px; background: #2A3B8F; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 700"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Add a stop</a>
+<a href="#ideas" style="display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 12px; border: 1px solid #E4E4E1; background: #FFFFFF; color: #2A3B8F; text-decoration: none; font-size: 16px; font-weight: 700">Browse ideas</a>
+</div>
+</div>
+</div>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#main" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#shopping" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div>
+</div>
+</figure>
+<figure class="shot">
+<figcaption>Offline, Day 3</figcaption>
+<div class="frame" id="offline" style="background: #F7F7F5">
+<div style="min-height: 960px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M3 3l18 18"/><path d="M8.5 8.6A5 5 0 0 0 6.5 18H17"/><path d="M10.6 6.2A5 5 0 0 1 17.6 10 3.5 3.5 0 0 1 20 16"/></svg>Offline, showing saved</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 18%; background: #1C1C1E"></div>
+</div>
+</header>
+<div aria-live="polite" style="margin: 12px 20px 0; display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 10px; background: #EEEEEB; border: 1px solid #E4E4E1">
+<svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;margin-top: 1px"><path d="M3 3l18 18"/><path d="M8.5 8.6A5 5 0 0 0 6.5 18H17"/><path d="M10.6 6.2A5 5 0 0 1 17.6 10 3.5 3.5 0 0 1 20 16"/></svg>
+<div><div style="font-size: 16px; font-weight: 700; line-height: 1.4">You're offline.</div>
+<div style="font-size: 15px; color: #6B6B70; line-height: 1.45">Changes will sync when you're back online.</div></div>
+</div>
+<nav aria-label="Days" class="strip" style="display: flex; gap: 10px; overflow-x: auto; padding: 14px 20px 14px; border-bottom: 1px solid #E4E4E1">
+<button type="button" aria-label="Day 1, Sat 21 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">1</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">21 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 2, Sun 22 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">2</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">22 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 100%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-current="date" aria-label="Day 3, Mon 23 Nov, Osaka" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #E5171F; border-radius: 10px; background: #E5171F; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">O</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">3</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 700; color: #1C1C1E">23 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 33%; background: #E5171F"></span></span>
+</button>
+<button type="button" aria-label="Day 4, Tue 24 Nov, Nara" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #7E4FB0; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">N</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">4</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">24 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #7E4FB0"></span></span>
+</button>
+<button type="button" aria-label="Day 5, Wed 25 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">5</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">25 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 6, Thu 26 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">6</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">26 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 7, Fri 27 Nov, Kyoto" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #00968F; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">K</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">7</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">27 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #00968F"></span></span>
+</button>
+<button type="button" aria-label="Day 8, Sat 28 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">8</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">28 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 9, Sun 29 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">9</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">29 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 10, Mon 30 Nov, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">10</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">30 Nov</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 11, Tue 1 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">11</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">1 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+<button type="button" aria-label="Day 12, Wed 2 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #2563A8; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">12</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">2 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #2563A8"></span></span>
+</button>
+<button type="button" aria-label="Day 13, Thu 3 Dec, Fuji" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #2563A8; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">F</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">13</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">3 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #2563A8"></span></span>
+</button>
+<button type="button" aria-label="Day 14, Fri 4 Dec, Tokyo" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: #1C1C1E">
+<span style="width: 52px; height: 58px; box-sizing: border-box; border: 3px solid #4A8410; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 12px; font-weight: 700; line-height: 1">T</span>
+<span class="tnum" style="font-size: 22px; font-weight: 900; line-height: 1.15">14</span>
+</span>
+<span class="tnum" style="font-size: 12px; font-weight: 500; color: #6B6B70">4 Dec</span>
+<span style="display: block; width: 40px; height: 3px; border-radius: 2px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 3px; width: 0%; background: #4A8410"></span></span>
+</button>
+</nav>
+<main style="flex: 1">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 20px 20px 0">
+<div style="min-width: 0">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Day 3 · Osaka</h1>
+<p class="tnum" style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Monday 23 Nov · 3 stops</p>
+</div>
+<button type="button" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; color: #2A3B8F; font-size: 15px; font-weight: 700; cursor: pointer"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Add stop</button>
+</div>
+<ol class="tl" aria-label="Stops" style="list-style: none; margin: 20px 0 0; padding: 0 20px 0 12px"></ol>
+<div style="padding: 4px 20px 24px 114px">
+<a href="#addstop" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; border: 1.5px dashed #E4E4E1; border-radius: 12px; color: #2A3B8F; text-decoration: none; font-size: 15px; font-weight: 700"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Add a stop</a>
+</div>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#main" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#shopping" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div>
+</div>
+</figure>
+<figure class="shot">
+<figcaption>Shopping</figcaption>
+<div class="frame" id="shopping" style="background: #F7F7F5">
+<div style="min-height: 1080px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 4%; background: #1C1C1E"></div>
+</div>
+</header>
+<main style="flex: 1; padding: 20px 20px 24px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Shopping</h1>
+<p style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Barang kirim for family back home</p>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px">
+<div><label for="s-rate" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">RM per ¥100</label><input id="s-rate" class="tnum" inputmode="decimal" value="3.00" data-in="rate" style="display: block; width: 100%; box-sizing: border-box; margin-top: 6px; height: 48px; padding: 0 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 18px; font-weight: 700"></div>
+<div><label for="s-banked" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">She banked in (RM)</label><input id="s-banked" class="tnum" inputmode="decimal" value="800" data-in="banked" style="display: block; width: 100%; box-sizing: border-box; margin-top: 6px; height: 48px; padding: 0 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 18px; font-weight: 700"></div>
+</div>
+<div style="margin-top: 16px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<div style="padding: 14px 12px"><div style="font-size: 13px; font-weight: 500; color: #6B6B70">Estimated</div><div class="tnum" style="font-size: 18px; font-weight: 900; margin-top: 2px"><span data-k="estimated"></span></div></div>
+<div style="padding: 14px 12px; border-left: 1px solid #E4E4E1"><div style="font-size: 13px; font-weight: 500; color: #6B6B70">Spent</div><div class="tnum" style="font-size: 18px; font-weight: 900; margin-top: 2px"><span data-k="spent"></span></div></div>
+<div style="padding: 14px 12px; border-left: 1px solid #E4E4E1"><div style="font-size: 13px; font-weight: 500; color: #6B6B70">Balance</div><div class="tnum" style="font-size: 18px; font-weight: 900; margin-top: 2px" data-k="balance"></div></div>
+</div>
+<div style="padding: 10px 12px; border-top: 1px solid #E4E4E1; font-size: 13px; font-weight: 500; color: #6B6B70"><span data-k="balanceNote"></span></div>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 28px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 900">List</h2>
+<span class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70"><span data-k="countLine"></span></span>
+</div>
+<ul class="shop-list" style="list-style: none; margin: 8px 0 0; padding: 0; border-top: 1px solid #E4E4E1">
+
+</ul>
+<button type="button" style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 52px; margin-top: 4px; padding: 0 10px; border: 0; background: none; color: #2A3B8F; font-size: 16px; font-weight: 700; cursor: pointer"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Add an item</button>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#main" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#shopping" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div>
+</div>
+</figure>
+<figure class="shot">
+<figcaption>Ideas</figcaption>
+<div class="frame" id="ideas" style="background: #F7F7F5">
+<div style="min-height: 1180px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 4%; background: #1C1C1E"></div>
+</div>
+</header>
+<main style="flex: 1; padding: 20px 20px 24px">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<div><h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Ideas</h1>
+<p style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Places to go if there's time</p></div>
+<button type="button" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; color: #2A3B8F; font-size: 15px; font-weight: 700; cursor: pointer"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Add idea</button>
+</div>
+<section style="margin-top: 28px" aria-labelledby="g-Kansai">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<h2 id="g-Kansai" style="margin: 0; font-size: 20px; font-weight: 900">Kansai</h2>
+<span class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70">3 of 15 visited</span>
+</div>
+<div aria-hidden="true" style="height: 3px; margin-top: 10px; background: #E4E4E1; border-radius: 2px"><div style="height: 3px; width: 20%; background: #2F7A49; border-radius: 2px"></div></div>
+<ul style="list-style: none; margin: 4px 0 0; padding: 0">
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-K0" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-K0" type="checkbox" checked aria-label="Visited Fushimi Inari Taisha" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #6B6B70">Fushimi Inari Taisha</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #00968F; flex: none"></span>Kyoto · Fushimi</div></div>
+<span class="tnum" style="display: flex; align-items: center; min-height: 44px; padding: 0 4px; font-size: 13px; font-weight: 500; color: #6B6B70; white-space: nowrap">Day 5</span>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Fushimi+Inari+Taisha" target="_blank" rel="noopener" aria-label="Open Fushimi Inari Taisha in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-N1" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-N1" type="checkbox" checked aria-label="Visited Nara Park" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #6B6B70">Nara Park</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #7E4FB0; flex: none"></span>Nara · Deer park</div></div>
+<span class="tnum" style="display: flex; align-items: center; min-height: 44px; padding: 0 4px; font-size: 13px; font-weight: 500; color: #6B6B70; white-space: nowrap">Day 4</span>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Nara+Park" target="_blank" rel="noopener" aria-label="Open Nara Park in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-K2" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-K2" type="checkbox" checked aria-label="Visited Kiyomizu-dera" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #6B6B70">Kiyomizu-dera</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #00968F; flex: none"></span>Kyoto · Higashiyama</div></div>
+<span class="tnum" style="display: flex; align-items: center; min-height: 44px; padding: 0 4px; font-size: 13px; font-weight: 500; color: #6B6B70; white-space: nowrap">Day 7</span>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Kiyomizu-dera" target="_blank" rel="noopener" aria-label="Open Kiyomizu-dera in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-K3" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-K3" type="checkbox" aria-label="Visited Arashiyama Bamboo Grove" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #1C1C1E">Arashiyama Bamboo Grove</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #00968F; flex: none"></span>Kyoto · Arashiyama</div></div>
+<button type="button" aria-label="Plan Arashiyama Bamboo Grove on a day" style="display: flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer"><span style="display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border: 1px solid #2A3B8F; border-radius: 999px; color: #2A3B8F; font-size: 14px; font-weight: 700; white-space: nowrap"><svg class="i" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Plan</span></button>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Arashiyama+Bamboo+Grove" target="_blank" rel="noopener" aria-label="Open Arashiyama Bamboo Grove in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-K4" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-K4" type="checkbox" aria-label="Visited Nishiki Market" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #1C1C1E">Nishiki Market</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #00968F; flex: none"></span>Kyoto · Downtown</div></div>
+<button type="button" aria-label="Plan Nishiki Market on a day" style="display: flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer"><span style="display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border: 1px solid #2A3B8F; border-radius: 999px; color: #2A3B8F; font-size: 14px; font-weight: 700; white-space: nowrap"><svg class="i" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Plan</span></button>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Nishiki+Market" target="_blank" rel="noopener" aria-label="Open Nishiki Market in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-O5" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-O5" type="checkbox" aria-label="Visited Kaiyukan Aquarium" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #1C1C1E">Kaiyukan Aquarium</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #E5171F; flex: none"></span>Osaka · Bay area</div></div>
+<button type="button" aria-label="Plan Kaiyukan Aquarium on a day" style="display: flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer"><span style="display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border: 1px solid #2A3B8F; border-radius: 999px; color: #2A3B8F; font-size: 14px; font-weight: 700; white-space: nowrap"><svg class="i" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Plan</span></button>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Kaiyukan+Aquarium" target="_blank" rel="noopener" aria-label="Open Kaiyukan Aquarium in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+</ul>
+<button type="button" style="display: flex; align-items: center; min-height: 48px; padding: 0 10px; border: 0; background: none; color: #2A3B8F; font-size: 15px; font-weight: 700; cursor: pointer">Show 9 more</button>
+</section>
+<section style="margin-top: 28px" aria-labelledby="g-Tokyo">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<h2 id="g-Tokyo" style="margin: 0; font-size: 20px; font-weight: 900">Tokyo</h2>
+<span class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70">2 of 12 visited</span>
+</div>
+<div aria-hidden="true" style="height: 3px; margin-top: 10px; background: #E4E4E1; border-radius: 2px"><div style="height: 3px; width: 17%; background: #2F7A49; border-radius: 2px"></div></div>
+<ul style="list-style: none; margin: 4px 0 0; padding: 0">
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-T0" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-T0" type="checkbox" checked aria-label="Visited Senso-ji" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #6B6B70">Senso-ji</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #4A8410; flex: none"></span>Tokyo · Asakusa</div></div>
+<span class="tnum" style="display: flex; align-items: center; min-height: 44px; padding: 0 4px; font-size: 13px; font-weight: 500; color: #6B6B70; white-space: nowrap">Day 8</span>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Senso-ji" target="_blank" rel="noopener" aria-label="Open Senso-ji in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-T1" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-T1" type="checkbox" checked aria-label="Visited teamLab Planets" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #6B6B70">teamLab Planets</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #4A8410; flex: none"></span>Tokyo · Toyosu</div></div>
+<span class="tnum" style="display: flex; align-items: center; min-height: 44px; padding: 0 4px; font-size: 13px; font-weight: 500; color: #6B6B70; white-space: nowrap">Day 9</span>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=teamLab+Planets" target="_blank" rel="noopener" aria-label="Open teamLab Planets in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-T2" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-T2" type="checkbox" aria-label="Visited Akihabara" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #1C1C1E">Akihabara</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #4A8410; flex: none"></span>Tokyo · Electric town</div></div>
+<button type="button" aria-label="Plan Akihabara on a day" style="display: flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer"><span style="display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border: 1px solid #2A3B8F; border-radius: 999px; color: #2A3B8F; font-size: 14px; font-weight: 700; white-space: nowrap"><svg class="i" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Plan</span></button>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Akihabara" target="_blank" rel="noopener" aria-label="Open Akihabara in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-T3" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-T3" type="checkbox" aria-label="Visited Tsukiji Outer Market" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #1C1C1E">Tsukiji Outer Market</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #4A8410; flex: none"></span>Tokyo · Tsukiji</div></div>
+<button type="button" aria-label="Plan Tsukiji Outer Market on a day" style="display: flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer"><span style="display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border: 1px solid #2A3B8F; border-radius: 999px; color: #2A3B8F; font-size: 14px; font-weight: 700; white-space: nowrap"><svg class="i" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Plan</span></button>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Tsukiji+Outer+Market" target="_blank" rel="noopener" aria-label="Open Tsukiji Outer Market in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 44px; align-items: center; column-gap: 6px; padding: 6px 0; border-bottom: 1px solid #E4E4E1">
+<label for="idea-T4" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input id="idea-T4" type="checkbox" aria-label="Visited Shimokitazawa" style="width: 22px; height: 22px; margin: 0; accent-color: #2F7A49"></label>
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: #1C1C1E">Shimokitazawa</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #4A8410; flex: none"></span>Tokyo · Vintage shops</div></div>
+<button type="button" aria-label="Plan Shimokitazawa on a day" style="display: flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer"><span style="display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border: 1px solid #2A3B8F; border-radius: 999px; color: #2A3B8F; font-size: 14px; font-weight: 700; white-space: nowrap"><svg class="i" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Plan</span></button>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Shimokitazawa" target="_blank" rel="noopener" aria-label="Open Shimokitazawa in Google Maps" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #6B6B70"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg></a>
+</li>
+</ul>
+<button type="button" style="display: flex; align-items: center; min-height: 48px; padding: 0 10px; border: 0; background: none; color: #2A3B8F; font-size: 15px; font-weight: 700; cursor: pointer">Show 7 more</button>
+</section>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#main" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#shopping" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#ideas" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div>
+</div>
+</figure>
+<figure class="shot">
+<figcaption>Join a trip</figcaption>
+<div class="frame" id="join" style="background: #F7F7F5">
+<div style="min-height: 844px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 12px; border-bottom: 1px solid #E4E4E1">
+<span style="font-size: 17px; font-weight: 900">Tabi</span>
+<span style="font-size: 13px; font-weight: 500; color: #6B6B70">Not in a trip yet</span>
+</header>
+<main style="flex: 1; padding: 32px 20px 24px; display: flex; flex-direction: column">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Join a trip</h1>
+<p style="margin: 8px 0 0; font-size: 16px; line-height: 1.55; color: #6B6B70">Ask the trip owner for the 8-character join code.</p>
+<label for="j-code" style="display: block; margin-top: 28px; font-size: 15px; font-weight: 700">Join code</label>
+<input id="j-code" class="tnum" type="text" value="K7Q2M9XA" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" style="display: block; width: 100%; box-sizing: border-box; margin-top: 8px; height: 72px; padding: 0 12px; border: 2px solid #1C1C1E; border-radius: 12px; background: #FFFFFF; color: #1C1C1E; font-size: 30px; font-weight: 900; letter-spacing: 0.32em; text-align: center; text-transform: uppercase">
+<p style="margin: 8px 0 0; font-size: 13px; font-weight: 500; color: #6B6B70">Letters and numbers. Capitals don't matter.</p>
+<label for="j-name" style="display: block; margin-top: 24px; font-size: 15px; font-weight: 700">Your name in the group</label>
+<input id="j-name" type="text" value="Aisyah" style="display: block; width: 100%; box-sizing: border-box; margin-top: 8px; height: 52px; padding: 0 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px">
+<a href="#main" style="display: flex; align-items: center; justify-content: center; min-height: 52px; margin-top: 28px; border-radius: 12px; background: #2A3B8F; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 700">Join trip</a>
+<p style="margin: 14px 0 0; font-size: 14px; line-height: 1.5; color: #6B6B70; text-align: center">You'll see the plan right away. The owner decides who can edit.</p>
+<div style="margin-top: auto; padding-top: 32px; display: flex; align-items: center; gap: 12px; color: #6B6B70; font-size: 13px; font-weight: 500"><span style="flex: 1; height: 1px; background: #E4E4E1"></span>or<span style="flex: 1; height: 1px; background: #E4E4E1"></span></div>
+<button type="button" style="display: flex; align-items: center; justify-content: center; min-height: 52px; margin-top: 16px; border: 1px solid #E4E4E1; border-radius: 12px; background: #FFFFFF; color: #2A3B8F; font-size: 16px; font-weight: 700; cursor: pointer">Start a new trip</button>
+</main>
+</div>
+</div>
+</figure>
+<figure class="shot">
+<figcaption>Group and join code</figcaption>
+<div class="frame" id="members" style="background: #F7F7F5">
+<div style="min-height: 1000px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="display: flex; align-items: center; gap: 4px; padding: 6px 12px 6px 8px; border-bottom: 1px solid #E4E4E1; background: #F7F7F5">
+<a href="#main" style="display: flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 8px 0 4px; color: #2A3B8F; text-decoration: none; font-size: 16px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M15 5l-7 7 7 7"/></svg>Itinerary</a>
+</header>
+<main style="flex: 1; padding: 20px 20px 32px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Group</h1>
+<p class="tnum" style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Japan 2026 · 5 people</p>
+<section aria-labelledby="code-h" style="margin-top: 20px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<div style="padding: 16px 16px 14px">
+<h2 id="code-h" style="margin: 0; font-size: 13px; font-weight: 500; color: #6B6B70">Join code</h2>
+<div class="tnum" style="margin-top: 6px; font-size: 34px; font-weight: 900; letter-spacing: 0.18em; line-height: 1.2">K7Q2 M9XA</div>
+<p style="margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: #6B6B70">New people join as Viewer. Change their role below.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px dashed #E4E4E1">
+<button type="button" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 0; background: none; color: #2A3B8F; font-size: 15px; font-weight: 700; cursor: pointer"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg>Copy code</button>
+<button type="button" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 0; border-left: 1px solid #E4E4E1; background: none; color: #2A3B8F; font-size: 15px; font-weight: 700; cursor: pointer"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>Share</button>
+</div>
+</section>
+<button type="button" style="display: flex; align-items: center; min-height: 44px; margin-top: 4px; padding: 0 2px; border: 0; background: none; color: #6B6B70; font-size: 14px; font-weight: 500; text-decoration: underline; cursor: pointer">Make a new code</button>
+<h2 style="margin: 24px 0 0; font-size: 20px; font-weight: 900">Members</h2>
+<ul style="list-style: none; margin: 8px 0 0; padding: 0; border-top: 1px solid #E4E4E1">
+<li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #E4E4E1">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #EEEEEB; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex: none">IR</span>
+<span style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700">Irfan<span style="font-size: 13px; font-weight: 500; color: #6B6B70; margin-left: 6px">You</span></span>
+<span style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; font-size: 15px; font-weight: 700; color: #6B6B70">Owner</span>
+</li>
+<li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #E4E4E1">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #EEEEEB; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex: none">AI</span>
+<span style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700">Aisyah</span>
+<div style="position: relative">
+<label for="role-1" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Role for Aisyah</label>
+<select id="role-1" style="appearance: none; -webkit-appearance: none; height: 44px; padding: 0 36px 0 14px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 15px; font-weight: 700; cursor: pointer"><option value="Editor" selected>Editor</option><option value="Viewer">Viewer</option></select>
+<svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;position: absolute; right: 10px; top: 13px; pointer-events: none; color: #6B6B70"><path d="M6 9l6 6 6-6"/></svg>
+</div>
+</li>
+<li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #E4E4E1">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #EEEEEB; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex: none">HF</span>
+<span style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700">Hafiz</span>
+<div style="position: relative">
+<label for="role-2" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Role for Hafiz</label>
+<select id="role-2" style="appearance: none; -webkit-appearance: none; height: 44px; padding: 0 36px 0 14px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 15px; font-weight: 700; cursor: pointer"><option value="Editor" selected>Editor</option><option value="Viewer">Viewer</option></select>
+<svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;position: absolute; right: 10px; top: 13px; pointer-events: none; color: #6B6B70"><path d="M6 9l6 6 6-6"/></svg>
+</div>
+</li>
+<li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #E4E4E1">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #EEEEEB; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex: none">NU</span>
+<span style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700">Nurul</span>
+<div style="position: relative">
+<label for="role-3" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Role for Nurul</label>
+<select id="role-3" style="appearance: none; -webkit-appearance: none; height: 44px; padding: 0 36px 0 14px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 15px; font-weight: 700; cursor: pointer"><option value="Editor">Editor</option><option value="Viewer" selected>Viewer</option></select>
+<svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;position: absolute; right: 10px; top: 13px; pointer-events: none; color: #6B6B70"><path d="M6 9l6 6 6-6"/></svg>
+</div>
+</li>
+<li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #E4E4E1">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #EEEEEB; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex: none">DA</span>
+<span style="flex: 1; min-width: 0; font-size: 16px; font-weight: 700">Danial</span>
+<div style="position: relative">
+<label for="role-4" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Role for Danial</label>
+<select id="role-4" style="appearance: none; -webkit-appearance: none; height: 44px; padding: 0 36px 0 14px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 15px; font-weight: 700; cursor: pointer"><option value="Editor">Editor</option><option value="Viewer" selected>Viewer</option></select>
+<svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;position: absolute; right: 10px; top: 13px; pointer-events: none; color: #6B6B70"><path d="M6 9l6 6 6-6"/></svg>
+</div>
+</li>
+</ul>
+<dl style="margin: 20px 0 0; display: grid; grid-template-columns: 64px minmax(0, 1fr); row-gap: 8px; font-size: 14px; line-height: 1.5">
+<dt style="font-weight: 700">Owner</dt><dd style="margin: 0; color: #6B6B70">Everything, plus roles and the join code.</dd>
+<dt style="font-weight: 700">Editor</dt><dd style="margin: 0; color: #6B6B70">Add, change and delete stops and items.</dd>
+<dt style="font-weight: 700">Viewer</dt><dd style="margin: 0; color: #6B6B70">Sees the plan, ticks stops, keeps own notes.</dd>
+</dl>
+</main>
+</div>
+</div>
+</figure>
+</main>
+<script>
+const CONFIGS = {"main": {"kind": "tl", "P": {"paper": "#F7F7F5", "surface": "#FFFFFF", "ink": "#1C1C1E", "stone": "#6B6B70", "hair": "#E4E4E1", "action": "#2A3B8F", "onAction": "#FFFFFF", "done": "#2F7A49", "skip": "#9198A4", "now": "#D2281E", "nowText": "#D2281E", "nowRing": "rgba(210,40,30,0.18)", "soft": "#EEEEEB", "dim": "rgba(28,28,30,0.45)", "amberText": "#8A5A00", "amberLine": "#D9A23A", "halalText": "#2F7A49", "halalLine": "#2F7A49", "skipSeg": "#6B6B70", "onCity": "#FFFFFF"}, "C": "#E5171F", "stops": [{"id": "kix", "time": "07:00", "name": "Land at Kansai Airport (KIX)", "sub": "Immigration, then SIM and ICOCA card", "status": "done", "getting": "Terminal 1 arrivals. Follow signs for Nankai railway.", "places": ["Kansai International Airport"]}, {"id": "nankai", "time": "08:10", "name": "Nankai train to Namba", "sub": "Rapi:t limited express, about 40 min", "tags": ["Ticket"], "status": "done", "getting": "Platform at Kansai Airport station, 2nd floor.", "places": ["Kansai Airport Station", "Namba Station"]}, {"id": "kuromon", "time": "09:30", "name": "Breakfast at Kuromon Market", "tags": ["Breakfast"], "status": "skipped", "notes": "Skipped, went to drop bags at the hotel first.", "places": ["Kuromon Ichiba Market"]}, {"id": "castle", "time": "11:00", "name": "Osaka Castle", "tags": ["Ticket", "Has note"], "status": "done", "getting": "Chuo line to Morinomiya, then walk through the park.", "notes": "Main tower has a queue. Go straight up, then walk down floor by floor.", "places": ["Osaka Castle"]}, {"id": "marhaba", "time": "13:30", "name": "Halal ramen lunch at Marhaba", "tags": ["Lunch", "Halal", "Has note"], "status": "pending", "getting": "Walk back to Morinomiya, one stop on the Chuo line, then 5 min on foot. Tap the place for the route.", "notes": "Halal certified, per the group chat. Try the chicken ramen set. Prayer room nearby is listed on the map.", "places": ["Marhaba Osaka", "Morinomiya Station"]}, {"id": "umeda", "time": "15:30", "name": "Umeda Sky Building", "sub": "Floating Garden observatory", "tags": ["Ticket"], "status": "pending", "getting": "Midosuji line to Umeda, then walk 10 min through the underpass.", "places": ["Umeda Sky Building"]}, {"id": "dotonbori", "time": "18:00", "name": "Dotonbori walk", "sub": "Glico sign, canal, street food", "status": "pending", "places": ["Dotonbori"]}, {"id": "dinner", "time": "19:30", "name": "Dinner in Namba", "tags": ["Dinner", "Halal"], "status": "pending", "places": ["Namba"]}], "open": "marhaba", "now": "marhaba", "canEdit": true}, "tokyodark": {"kind": "tl", "P": {"paper": "#121214", "surface": "#1C1C20", "ink": "#EDEDED", "stone": "#9A9AA2", "hair": "#2C2C32", "action": "#9DAEFF", "onAction": "#121214", "done": "#2F7A49", "skip": "#9198A4", "now": "#D2281E", "nowText": "#FF7A6E", "nowRing": "rgba(255,90,80,0.22)", "soft": "#232328", "dim": "rgba(0,0,0,0.55)", "amberText": "#E8B54A", "amberLine": "#8A6A20", "halalText": "#6FCF8E", "halalLine": "#3E8F5A", "skipSeg": "#9A9AA2", "onCity": "#121214"}, "C": "#9AD34A", "stops": [{"id": "crossing", "time": "09:00", "name": "Shibuya Crossing", "sub": "Hachiko exit, watch from the station bridge", "status": "done", "places": ["Shibuya Scramble Crossing"]}, {"id": "centergai", "time": "10:00", "name": "Center Gai", "sub": "Shops and arcades", "status": "done", "places": ["Shibuya Center Gai"]}, {"id": "gyumon", "time": "12:30", "name": "Halal yakiniku lunch at Gyumon", "tags": ["Lunch", "Halal"], "status": "pending", "getting": "5 min walk from Center Gai.", "places": ["Gyumon Shibuya"]}, {"id": "yoyogi", "time": "14:30", "name": "Yoyogi Park", "tags": ["Has note"], "status": "pending", "notes": "Meiji Jingu is next door if there is time.", "places": ["Yoyogi Park"]}, {"id": "sky", "time": "17:00", "name": "Shibuya Sky", "sub": "Sunset slot booked", "tags": ["Ticket"], "status": "pending", "places": ["Shibuya Sky"]}, {"id": "dinner10", "time": "19:30", "name": "Dinner in Shibuya", "tags": ["Dinner", "Halal"], "status": "pending", "places": ["Shibuya"]}], "open": null, "now": "gyumon", "canEdit": false}, "offline": {"kind": "tl", "P": {"paper": "#F7F7F5", "surface": "#FFFFFF", "ink": "#1C1C1E", "stone": "#6B6B70", "hair": "#E4E4E1", "action": "#2A3B8F", "onAction": "#FFFFFF", "done": "#2F7A49", "skip": "#9198A4", "now": "#D2281E", "nowText": "#D2281E", "nowRing": "rgba(210,40,30,0.18)", "soft": "#EEEEEB", "dim": "rgba(28,28,30,0.45)", "amberText": "#8A5A00", "amberLine": "#D9A23A", "halalText": "#2F7A49", "halalLine": "#2F7A49", "skipSeg": "#6B6B70", "onCity": "#FFFFFF"}, "C": "#E5171F", "stops": [{"id": "usj", "time": "08:30", "name": "Universal Studios Japan", "sub": "Gates open 08:30", "tags": ["Ticket", "Waiting to sync"], "status": "done", "places": ["Universal Studios Japan"]}, {"id": "usjlunch", "time": "13:00", "name": "Lunch inside the park", "tags": ["Lunch", "Has note"], "status": "pending", "notes": "Bring snacks. Check the park map for halal-friendly options."}, {"id": "shinsekai", "time": "19:00", "name": "Shinsekai and Tsutenkaku", "sub": "Evening walk, kushikatsu street", "status": "pending", "places": ["Tsutenkaku"]}], "open": null, "now": "usjlunch", "canEdit": true}, "shopping": {"kind": "shop", "P": {"paper": "#F7F7F5", "surface": "#FFFFFF", "ink": "#1C1C1E", "stone": "#6B6B70", "hair": "#E4E4E1", "action": "#2A3B8F", "onAction": "#FFFFFF", "done": "#2F7A49", "skip": "#9198A4", "now": "#D2281E", "nowText": "#D2281E", "nowRing": "rgba(210,40,30,0.18)", "soft": "#EEEEEB", "dim": "rgba(28,28,30,0.45)", "amberText": "#8A5A00", "amberLine": "#D9A23A", "halalText": "#2F7A49", "halalLine": "#2F7A49", "skipSeg": "#6B6B70", "onCity": "#FFFFFF"}, "items": [{"id": "muji", "name": "MUJI Boston Bag 23L", "who": "For Mak", "qty": 1, "est": 6000, "bought": true, "paid": "5990"}, {"id": "heattech", "name": "Uniqlo Heattech Ultra Warm", "who": "For Abah and adik", "qty": 4, "est": 12000, "bought": true, "paid": "11960"}, {"id": "hadalabo", "name": "Hada Labo lotion", "who": "For Kak Long", "qty": 2, "est": 1800, "bought": false, "paid": ""}, {"id": "royce", "name": "Royce Nama Chocolate", "who": "For the office", "qty": 3, "est": 2700, "bought": false, "paid": ""}, {"id": "banana", "name": "Tokyo Banana", "who": "For Mak", "qty": 2, "est": 2400, "bought": false, "paid": ""}]}};
+/* ===== Tabi reference behaviour (vanilla JS, no framework) ===== */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+const PIN = '<svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>';
+const TICK = '<svg class="i pop" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="stroke: #FFFFFF; stroke-width: 3.5"><path d="M5 12.5l4 4 10-10"/></svg>';
+const DASH = '<span class="pop" style="display: block; width: 10px; height: 3px; border-radius: 2px; background: #FFFFFF"></span>';
+const NEXT = { pending: 'done', done: 'skipped', skipped: 'pending' };
+const WORD = { pending: 'Not done', done: 'Done', skipped: 'Skipped' };
+
+/* ---------- Rail timeline ---------- */
+function mountTimeline(root, cfg) {
+  const P = cfg.P, C = cfg.C;
+  const list = root.querySelector('ol.tl');
+  const state = { open: cfg.open, status: {} };
+  cfg.stops.forEach(function (s) { state.status[s.id] = s.status; });
+
+  const TAG = {
+    meal: 'border: 1px solid ' + P.hair + '; color: ' + P.stone + ';',
+    Halal: 'border: 1px solid ' + P.halalLine + '; color: ' + P.halalText + ';',
+    Ticket: 'border: 1px solid ' + P.amberLine + '; color: ' + P.amberText + ';',
+    'Has note': 'border: 1px dashed ' + P.stone + '; color: ' + P.stone + ';',
+    'Waiting to sync': 'border: 1px dashed ' + P.stone + '; color: ' + P.stone + ';'
+  };
+  const label = 'font-size: 13px; font-weight: 500; color: ' + P.stone + ';';
+
+  function render() {
+    const n = cfg.stops.length;
+    list.innerHTML = cfg.stops.map(function (s, i) {
+      const status = state.status[s.id];
+      const isDone = status === 'done', isSkipped = status === 'skipped';
+      const isNow = s.id === cfg.now && status === 'pending';
+      const open = state.open === s.id;
+
+      let dot;
+      if (isDone) dot = 'background: ' + P.done + '; border: 3px solid ' + P.done + ';';
+      else if (isSkipped) dot = 'background: ' + P.skip + '; border: 3px solid ' + P.skip + ';';
+      else if (isNow) dot = 'background: ' + P.surface + '; border: 3px solid ' + P.now + '; box-shadow: 0 0 0 5px ' + P.nowRing + ';';
+      else dot = 'background: ' + P.surface + '; border: 3px solid ' + C + ';';
+
+      let line = 'background: ' + C + ';';
+      if (n === 1) line += 'display: none;';
+      else if (i === 0) line += 'top: 22px; bottom: 0;';
+      else if (i === n - 1) line += 'top: 0; height: 22px;';
+      else line += 'top: 0; bottom: 0;';
+
+      const tags = (s.tags || []).map(function (t) {
+        return '<span style="font-size: 13px; font-weight: 500; line-height: 1; padding: 5px 8px; border-radius: 6px; ' + (TAG[t] || TAG.meal) + '">' + esc(t) + '</span>';
+      }).join('');
+
+      let detail = '';
+      if (open) {
+        const places = (s.places || []).map(function (name) {
+          const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name);
+          return '<a href="' + esc(url) + '" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px 0 8px; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 700; border: 1px solid ' + P.hair + '; color: ' + P.action + '; background: ' + P.surface + '">' + PIN + esc(name) + '</a>';
+        }).join('');
+        const segs = ['pending', 'done', 'skipped'].map(function (k) {
+          const on = status === k;
+          const bg = k === 'done' ? P.done : (k === 'skipped' ? P.skipSeg : P.ink);
+          const fg = k === 'pending' ? P.paper : '#FFFFFF';
+          const st = on ? 'background: ' + bg + '; color: ' + fg + ';' : 'background: transparent; color: ' + P.ink + ';';
+          return '<button type="button" data-act="set" data-id="' + s.id + '" data-v="' + k + '" aria-pressed="' + on + '" style="min-height: 44px; border: 0; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; ' + st + '">' + WORD[k] + '</button>';
+        }).join('');
+        detail =
+          '<div class="rise" style="padding: 14px; display: flex; flex-direction: column; gap: 18px; border-top: 1px solid ' + P.hair + '">' +
+          (s.getting ? '<div><div style="' + label + '">Getting there</div><p style="margin: 4px 0 0; font-size: 15px; line-height: 1.55">' + esc(s.getting) + '</p></div>' : '') +
+          (s.notes ? '<div><div style="' + label + '">Notes</div><p style="margin: 4px 0 0; font-size: 15px; line-height: 1.55">' + esc(s.notes) + '</p></div>' : '') +
+          (places ? '<div><div style="' + label + '">Places</div><div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px">' + places + '</div></div>' : '') +
+          '<fieldset style="border: 0; margin: 0; padding: 0; min-width: 0"><legend style="padding: 0; ' + label + '">Status</legend>' +
+          '<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; margin-top: 8px; border-radius: 10px; border: 1px solid ' + P.hair + '; background: ' + P.paper + '">' + segs + '</div></fieldset>' +
+          '<div><label for="note-' + s.id + '" style="display: block; ' + label + '">My note</label><textarea id="note-' + s.id + '" rows="2" placeholder="Only you can see this" style="display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 12px; border-radius: 10px; font-size: 16px; line-height: 1.45; resize: vertical; border: 1px solid ' + P.hair + '; background: ' + P.paper + '; color: ' + P.ink + '"></textarea></div>' +
+          (cfg.canEdit ? '<a href="#addstop" style="display: flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 700; text-decoration: none; color: ' + P.action + '">Edit or delete this stop</a>' : '') +
+          '</div>';
+      }
+
+      return '<li style="position: relative; display: grid; grid-template-columns: 52px 44px minmax(0, 1fr); column-gap: 6px; padding-bottom: 12px">' +
+        '<div aria-hidden="true" style="position: absolute; left: 78px; width: 4px; ' + line + '"></div>' +
+        '<div class="tnum" style="padding-top: 12px; text-align: right; font-size: 15px; font-weight: 700; line-height: 20px; color: ' + (isSkipped ? P.stone : P.ink) + '">' + esc(s.time) + '</div>' +
+        '<div style="display: flex; justify-content: center; align-items: flex-start">' +
+        '<button type="button" data-act="cycle" data-id="' + s.id + '" aria-label="' + esc(s.name + ': ' + WORD[status] + '. Tap to change.') + '" style="position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center">' +
+        '<span class="' + (isNow ? 'pulse' : '') + '" style="width: 22px; height: 22px; border-radius: 50%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; ' + dot + '">' + (isDone ? TICK : '') + (isSkipped ? DASH : '') + '</span>' +
+        '</button></div>' +
+        '<div style="border-radius: 12px; overflow: hidden; min-width: 0; background: ' + P.surface + '; border: ' + (isNow ? '1.5px solid ' + P.now : '1px solid ' + P.hair) + '">' +
+        '<button type="button" data-act="toggle" data-id="' + s.id + '" aria-expanded="' + open + '" style="display: flex; flex-direction: column; gap: 4px; width: 100%; text-align: left; background: none; border: 0; padding: 11px 14px 12px; color: inherit; cursor: pointer; min-height: 44px">' +
+        (isNow ? '<span style="font-size: 13px; font-weight: 700; color: ' + P.nowText + '">Now</span>' : '') +
+        '<span style="font-size: 17px; font-weight: 700; line-height: 1.35; ' + (isSkipped ? 'color: ' + P.stone + '; text-decoration: line-through;' : 'color: ' + P.ink + ';') + '">' + esc(s.name) + '</span>' +
+        (s.sub ? '<span style="font-size: 14px; line-height: 1.4; color: ' + P.stone + '">' + esc(s.sub) + '</span>' : '') +
+        (tags ? '<span style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px">' + tags + '</span>' : '') +
+        '</button>' + detail + '</div></li>';
+    }).join('');
+  }
+
+  list.addEventListener('click', function (e) {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const id = b.dataset.id;
+    if (b.dataset.act === 'cycle') state.status[id] = NEXT[state.status[id]];
+    else if (b.dataset.act === 'set') state.status[id] = b.dataset.v;
+    else if (b.dataset.act === 'toggle') state.open = state.open === id ? null : id;
+    render();
+  });
+  render();
+}
+
+/* ---------- Shopping ---------- */
+function mountShopping(root, cfg) {
+  const P = cfg.P;
+  const items = cfg.items.map(function (x) { return Object.assign({}, x); });
+  const list = root.querySelector('ul.shop-list');
+  const rateIn = root.querySelector('[data-in="rate"]');
+  const bankIn = root.querySelector('[data-in="banked"]');
+  const num = function (v) { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return isNaN(n) ? 0 : n; };
+  const rm = function (n) { return 'RM' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  const rm0 = function (n) { return 'RM' + Math.round(n).toLocaleString('en-MY'); };
+  const yen = function (n) { return '¥' + Math.round(n).toLocaleString('en-US'); };
+  const k = function (name) { return root.querySelector('[data-k="' + name + '"]'); };
+
+  function renderList() {
+    const r = num(rateIn.value) / 100;
+    list.innerHTML = items.map(function (it) {
+      return '<li style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 112px; align-items: center; column-gap: 8px; padding: 10px 0; border-bottom: 1px solid ' + P.hair + '">' +
+        '<label style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer"><input type="checkbox" data-id="' + it.id + '"' + (it.bought ? ' checked' : '') + ' aria-label="Bought ' + esc(it.name) + '" style="width: 22px; height: 22px; margin: 0; accent-color: ' + P.done + '"></label>' +
+        '<div style="min-width: 0"><div style="font-size: 16px; font-weight: 700; line-height: 1.35; color: ' + (it.bought ? P.stone : P.ink) + '">' + esc(it.name) + '</div>' +
+        '<div class="tnum" data-meta="' + it.id + '" style="font-size: 13px; font-weight: 500; line-height: 1.45; color: ' + P.stone + '; margin-top: 2px">×' + it.qty + ' · est ' + yen(it.est) + ' ≈ ' + rm0(it.est * r) + ' · ' + esc(it.who) + '</div></div>' +
+        '<div style="display: flex; align-items: center; gap: 4px; height: 44px; padding: 0 10px; box-sizing: border-box; border: 1px solid ' + P.hair + '; border-radius: 10px; background: ' + P.surface + '"><span aria-hidden="true" style="font-size: 13px; font-weight: 500; color: ' + P.stone + '; white-space: nowrap">Paid ¥</span>' +
+        '<input class="tnum" inputmode="numeric" placeholder="0" data-paid="' + it.id + '" value="' + esc(it.paid) + '" aria-label="Paid in yen for ' + esc(it.name) + '" style="flex: 1; min-width: 0; width: 0; border: 0; background: transparent; color: ' + P.ink + '; font-size: 16px; font-weight: 700; text-align: right; padding: 0"></div>' +
+        '</li>';
+    }).join('');
+  }
+
+  function renderTotals() {
+    const r = num(rateIn.value) / 100;
+    const banked = num(bankIn.value);
+    let estY = 0, paidY = 0, leftY = 0, boughtN = 0;
+    items.forEach(function (it) {
+      estY += it.est; paidY += num(it.paid);
+      if (it.bought) boughtN += 1; else leftY += it.est;
+    });
+    const bal = banked - paidY * r - leftY * r;
+    k('estimated').textContent = rm(estY * r);
+    k('spent').textContent = rm(paidY * r);
+    const b = k('balance');
+    b.textContent = (bal < 0 ? '−' : '') + rm(Math.abs(bal));
+    b.style.color = bal < 0 ? P.now : P.done;
+    k('balanceNote').textContent = bal < 0 ? 'Not enough. Ask her to bank in more, or drop an item.' : 'Banked in, minus spent and still to buy.';
+    k('countLine').textContent = items.length + ' items · ' + boughtN + ' bought';
+  }
+
+  list.addEventListener('change', function (e) {
+    const id = e.target.dataset.id;
+    if (!id) return;
+    items.find(function (x) { return x.id === id; }).bought = e.target.checked;
+    renderList(); renderTotals();
+  });
+  list.addEventListener('input', function (e) {
+    const id = e.target.dataset.paid;
+    if (!id) return;
+    items.find(function (x) { return x.id === id; }).paid = e.target.value;
+    renderTotals(); // don't re-render the list, so the input keeps focus
+  });
+  [rateIn, bankIn].forEach(function (el) {
+    el.addEventListener('input', function () { renderList(); renderTotals(); });
+  });
+  renderList(); renderTotals();
+}
+
+/* ---------- mount ---------- */
+Object.keys(CONFIGS).forEach(function (id) {
+  const root = document.getElementById(id);
+  const cfg = CONFIGS[id];
+  if (cfg.kind === 'tl') mountTimeline(root, cfg);
+  else if (cfg.kind === 'shop') mountShopping(root, cfg);
+});
+
+</script>
+</body>
+</html>

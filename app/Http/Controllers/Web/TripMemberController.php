@@ -21,7 +21,7 @@ class TripMemberController extends Controller
         return view('trips.members', [
             'trip' => $trip,
             'members' => $trip->members()->orderBy('name')->get(),
-            'roles' => TripRole::cases(),
+            'roles' => TripRole::assignable(),
         ]);
     }
 

@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['start_time', 'name', 'transport', 'meal', 'ticket', 'notes', 'places', 'is_halal', 'status', 'user_note', 'sort_order'])]
+#[Fillable(['start_time', 'name', 'transport', 'meal', 'ticket', 'notes', 'places', 'is_halal', 'status', 'sort_order'])]
 class Activity extends Model
 {
     /** @use HasFactory<ActivityFactory> */
@@ -59,5 +60,23 @@ class Activity extends Model
     public function day(): BelongsTo
     {
         return $this->belongsTo(Day::class);
+    }
+
+    /**
+     * Members' private notes on this stop.
+     *
+     * @return HasMany<ActivityNote, $this>
+     */
+    public function personalNotes(): HasMany
+    {
+        return $this->hasMany(ActivityNote::class);
+    }
+
+    /**
+     * Start time as HH:MM regardless of how the driver returns it.
+     */
+    public function timeLabel(): string
+    {
+        return substr((string) $this->start_time, 0, 5);
     }
 }
