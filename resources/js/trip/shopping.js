@@ -118,6 +118,14 @@ function renderAll() {
     }).join('');
 }
 
+/** Google search for an item: store + name + details finds the right product. */
+export function googleUrl(item, images = false) {
+    const query = [item.store, item.name, item.details].filter(Boolean).join(' ');
+    return `https://www.google.com/search?q=${encodeURIComponent(query)}${images ? '&tbm=isch' : ''}`;
+}
+
+const SEARCH_ICON = '<svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>';
+
 function metaText(item) {
     const parts = [item.store, item.details].filter(Boolean);
     parts.push(`×${item.qty}`);
@@ -137,6 +145,7 @@ function renderPersonList(person) {
                 <span class="item-name">${esc(item.name)}</span>
                 <span class="item-meta tnum">${esc(metaText(item))}</span>
             </button>
+            <a class="search-btn" href="${esc(googleUrl(item))}" target="_blank" rel="noopener" aria-label="Search Google for ${esc(item.name)}" title="Search on Google">${SEARCH_ICON}</a>
             <div class="paid"><span aria-hidden="true">Paid ¥</span><input class="tnum" inputmode="numeric" pattern="[0-9]*" placeholder="0" data-paid="${item.id}" value="${item.actual_yen ?? ''}" aria-label="Paid in yen for ${esc(item.name)}" ${editable ? '' : 'readonly'}></div>
         </div></li>`).join('')
         : `<li class="empty-list">Nothing on ${person.is_me ? 'your' : `${esc(person.name)}’s`} list yet.</li>`;

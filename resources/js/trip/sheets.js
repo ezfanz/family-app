@@ -4,6 +4,7 @@ import { S, UI, canEdit, canManageShoppingOf, shoppingList } from './store.js';
 import { $, fmtDate, weekday, rm, uuid, toast } from './util.js';
 import { write } from './writer.js';
 import { regions, saveIdea, deleteIdeaWithUndo } from './ideas.js';
+import { googleUrl } from './shopping.js';
 
 let rerender = () => {};
 
@@ -150,6 +151,17 @@ function updateItemRm() {
     $('itemRm').textContent = yenValue ? `About ${rm((yenValue * r) / 100, 0)} at your current rate.` : 'Leave the estimate empty if you don’t know yet.';
 }
 
+/** "Search Google" / "Google Images" pills follow what is typed in the sheet. */
+function updateItemWebLinks() {
+    const f = $('itemForm').elements;
+    const item = { store: f.store.value.trim(), name: f.name.value.trim(), details: f.details.value.trim() };
+    $('itemWeb').classList.toggle('hidden', item.name === '');
+    if (item.name) {
+        $('itemGoogle').href = googleUrl(item);
+        $('itemImages').href = googleUrl(item, true);
+    }
+}
+
 /** Shopping is personal: you add to your own list; the owner can add to anyone's. */
 function guardShopping(userId) {
     if (!canManageShoppingOf(userId)) {
@@ -186,6 +198,7 @@ export function openItemForm(id, forUserId = null) {
     resetDelete($('itemDel'), 'Delete this item');
     $('itemDel').closest('.danger-row').classList.toggle('hidden', !id);
     updateItemRm();
+    updateItemWebLinks();
     itemDlg().showModal();
     if (!id) f.name.focus();
 }
@@ -326,6 +339,7 @@ export function bindSheets(render) {
     $('actDel').addEventListener('click', (e) => armDelete(e.currentTarget, 'Delete this stop', deleteAct));
     $('itemForm').addEventListener('submit', submitItem);
     $('itemForm').elements.est.addEventListener('input', updateItemRm);
+    ['name', 'store', 'details'].forEach((field) => $('itemForm').elements[field].addEventListener('input', updateItemWebLinks));
     $('itemDel').addEventListener('click', (e) => armDelete(e.currentTarget, 'Delete this item', deleteItem));
     $('ideaForm').addEventListener('submit', submitIdea);
     $('ideaDel').addEventListener('click', (e) => armDelete(e.currentTarget, 'Delete this idea', deleteIdea));

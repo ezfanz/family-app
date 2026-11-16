@@ -47,6 +47,10 @@
     </div>
     <div class="sheet-body form">
       <div class="field"><label for="i-name">Item</label><input id="i-name" name="name" type="text" class="input" maxlength="160" placeholder="e.g. Tokyo Banana, 8 pcs" required></div>
+      <div class="web-pills hidden" id="itemWeb">
+        <a class="menu-pill" id="itemGoogle" target="_blank" rel="noopener"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>Search Google</a>
+        <a class="menu-pill" id="itemImages" target="_blank" rel="noopener"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></svg>Google Images</a>
+      </div>
       <div class="grid2">
         <div class="field"><label for="i-store">Store</label><input id="i-store" name="store" type="text" class="input" maxlength="60" placeholder="e.g. MUJI" list="storeList"><datalist id="storeList"></datalist></div>
         <div class="field"><label for="i-for">For who</label><input id="i-for" name="for_whom" type="text" class="input" maxlength="80" placeholder="e.g. For Mak"></div>

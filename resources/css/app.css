@@ -233,7 +233,12 @@ fieldset.plain legend { padding: 0; }
 
 .list { list-style: none; margin: 8px 0 0; padding: 0; border-top: 1px solid var(--hair); }
 .list > li { border-bottom: 1px solid var(--hair); }
-.shop-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) 112px; align-items: center; column-gap: 8px; padding: 10px 0; }
+.shop-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) 40px 112px; align-items: center; column-gap: 6px; padding: 10px 0; }
+.search-btn { width: 40px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px; color: var(--action); text-decoration: none; }
+.search-btn:active { background: var(--soft); }
+@media (hover: hover) { .search-btn:hover { background: var(--soft); } }
+@media (max-width: 480px) { .shop-row { grid-template-columns: 40px minmax(0, 1fr) 36px 100px; column-gap: 4px; } .search-btn { width: 36px; } .shop-row .paid { padding: 0 8px; } }
+.web-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: -8px; }
 .check { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0; }
 .check input { width: 22px; height: 22px; margin: 0; accent-color: var(--done); cursor: inherit; }
 .check input:disabled { cursor: not-allowed; }
