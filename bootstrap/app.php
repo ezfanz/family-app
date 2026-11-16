@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // The web app calls /api with its session cookie; the mobile app uses bearer tokens.
         $middleware->statefulApi();
+
+        // Set by the browser (Settings > Appearance) and read when rendering <html>.
+        $middleware->encryptCookies(except: ['theme']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

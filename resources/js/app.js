@@ -1,6 +1,8 @@
 import { bootTrip } from './trip/main.js';
 import { clearAllTabiStorage } from './trip/sync.js';
 import { bindGroupPage } from './pages/group.js';
+import { bindThemePicker } from './pages/theme.js';
+import { bindAccountPage } from './pages/account.js';
 
 const tripRoot = document.getElementById('app');
 if (tripRoot?.dataset.tripId) {
@@ -8,6 +10,8 @@ if (tripRoot?.dataset.tripId) {
 }
 
 bindGroupPage();
+bindThemePicker();
+bindAccountPage();
 
 // Installable app: the service worker lets a trip you have opened before open with no signal.
 if ('serviceWorker' in navigator && window.isSecureContext) {

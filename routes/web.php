@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Web\AccountController;
 use App\Http\Controllers\Web\TripController;
 use App\Http\Controllers\Web\TripMemberController;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::get('/', [TripController::class, 'home'])->name('home');
+    Route::get('/account', AccountController::class)->name('account');
     Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
     Route::post('/trips/join', [TripController::class, 'join'])->name('trips.join')->middleware('throttle:10,1');
     Route::get('/trips/create', [TripController::class, 'create'])->name('trips.create');

@@ -73,7 +73,35 @@ export function isQueued(key) {
 
 /* ---------------- cache ---------------- */
 
+/** Device preference (Account > Save trip on this phone). Not under "tabi:" so log out keeps it. */
+const OFFLINE_PREF = 'pref:offline-copy';
+
+export function offlineCopyEnabled() {
+    try {
+        return localStorage.getItem(OFFLINE_PREF) !== 'off';
+    } catch {
+        return true;
+    }
+}
+
+/** Turning it off removes saved trips now; queued changes are kept so nothing is lost. */
+export function setOfflineCopyEnabled(enabled) {
+    try {
+        if (enabled) {
+            localStorage.removeItem(OFFLINE_PREF);
+        } else {
+            localStorage.setItem(OFFLINE_PREF, 'off');
+            Object.keys(localStorage).filter((k) => k.startsWith('tabi:') && k.includes(':trip:')).forEach((k) => localStorage.removeItem(k));
+        }
+    } catch {
+        /* storage blocked */
+    }
+}
+
 export function loadCache() {
+    if (!offlineCopyEnabled()) {
+        return false;
+    }
     const saved = readJson(cacheKey);
     if (!saved?.trip) {
         return false;
@@ -87,7 +115,7 @@ export function loadCache() {
 }
 
 export function saveCache() {
-    if (S.trip) {
+    if (S.trip && offlineCopyEnabled()) {
         writeJson(cacheKey, snapshot());
     }
 }

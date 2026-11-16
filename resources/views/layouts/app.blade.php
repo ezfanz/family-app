@@ -1,6 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+@php($theme = in_array(request()->cookie('theme'), ['light', 'dark'], true) ? request()->cookie('theme') : null)
+<html lang="en"@if ($theme) data-theme="{{ $theme }}"@endif>
 <head>
+<script>
+  {{-- Apply the saved theme before first paint (also covers pages served offline from cache). --}}
+  try { var t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') { document.documentElement.dataset.theme = t; } else if (t === 'system') { document.documentElement.removeAttribute('data-theme'); } } catch (e) {}
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="csrf-token" content="{{ csrf_token() }}">

@@ -16,10 +16,7 @@
           @else
             <a href="{{ route('trips.index') }}">Trips</a>
           @endif
-          <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit">Log out</button>
-          </form>
+          <a href="{{ route('account') }}">Account</a>
         @else
           @yield('aside')
         @endauth

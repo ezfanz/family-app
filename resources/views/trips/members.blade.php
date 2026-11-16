@@ -74,14 +74,11 @@
   <dt>Viewer</dt><dd>Sees the plan, ticks stops, keeps own notes.</dd>
 </dl>
 
-<h2 class="sec">You</h2>
-<p class="lede">Logged in as {{ $me->name }} ({{ $me->email }})</p>
-<div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
-  <a class="btn compact" href="{{ route('trips.index') }}">All trips</a>
-  <form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button type="submit" class="btn compact secondary">Log out</button>
-  </form>
+<div class="acct-card" style="margin-top:24px">
+  <a class="acct-row link" href="{{ route('account') }}">
+    <span class="avatar solid small" aria-hidden="true">{{ Str::upper(Str::substr($me->name, 0, 2)) }}</span>
+    <span class="acct-who"><strong>Account and log out</strong></span>
+    <svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="color:var(--stone)"><path d="M9 5l7 7-7 7"/></svg>
+  </a>
 </div>
-<p class="muted" style="margin-top:8px">Logging out also removes the saved copy of your trips from this device.</p>
 @endsection
