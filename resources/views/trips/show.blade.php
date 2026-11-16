@@ -19,6 +19,9 @@
         <div class="subtitle tnum" id="tripSub">{{ $trip->start_date->format('j M') }} – {{ $trip->end_date->format('j M') }}</div>
       </div>
       <a class="sync" id="sync" href="{{ route('trips.members.index', $trip) }}"><span class="dot" aria-hidden="true"></span><span class="txt">Loading…</span></a>
+      <a class="me" href="{{ route('account') }}" aria-label="Account and settings for {{ auth()->user()->name }}" title="Account">
+        <span class="avatar solid" aria-hidden="true">{{ Str::upper(Str::substr(auth()->user()->name, 0, 2)) }}</span>
+      </a>
     </div>
     <div class="progress" role="progressbar" aria-label="Trip progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="tripProgress"><div id="tripBar"></div></div>
   </header>

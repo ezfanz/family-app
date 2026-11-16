@@ -22,6 +22,7 @@ class TripPagesTest extends TestCase
             ->assertSee('id="rail"', false)
             ->assertSee('id="actDlg"', false)
             ->assertSee('<link rel="manifest" href="/manifest.webmanifest">', false)
+            ->assertSee('class="me" href="'.route('account').'"', false)
             ->assertSee('Itinerary')
             ->assertSee('Shopping')
             ->assertSee('Ideas');

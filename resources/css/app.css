@@ -71,6 +71,11 @@ a { color: var(--action); }
 .app-header .subtitle { font-size: 13px; font-weight: 500; color: var(--stone); line-height: 1.4; }
 .app-header .titles { min-width: 0; flex: 1; }
 .app-header .logo { flex: none; border-radius: 8px; }
+.app-header .row { gap: 10px; }
+.app-header .me { flex: none; width: 44px; height: 44px; margin-right: -6px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; }
+.app-header .me .avatar { width: 34px; height: 34px; font-size: 13px; }
+.app-header .me:active .avatar { transform: scale(.94); }
+@media (max-width: 480px) { .app-header .logo { display: none; } }
 .sync { display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: var(--stone); text-decoration: none; white-space: nowrap; }
 .sync .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--skip); flex: none; }
 .sync.on .dot { background: var(--done); }
