@@ -76,7 +76,17 @@ class ReceiptController extends Controller
     {
         Gate::authorize('manageReceiptsOf', [$receipt->trip, (int) $receipt->user_id]);
 
-        DB::transaction(fn () => $this->save($receipt, $request->validated()));
+        $input = $request->validated();
+        $newOwnerId = isset($input['user_id']) ? (int) $input['user_id'] : (int) $receipt->user_id;
+        if ($newOwnerId !== (int) $receipt->user_id) {
+            Gate::authorize('manageReceiptsOf', [$receipt->trip, $newOwnerId]);
+            abort_if($receipt->trip->members()->whereKey($newOwnerId)->doesntExist(), 422, 'That person is not in this trip.');
+            $receipt->user_id = $newOwnerId;
+            // Links point at the old owner's shopping list.
+            $input['shopping_item_ids'] ??= [];
+        }
+
+        DB::transaction(fn () => $this->save($receipt, $input));
 
         return ReceiptResource::make($receipt->refresh()->load(['photos', 'shoppingItems']));
     }

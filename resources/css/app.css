@@ -675,3 +675,53 @@ dialog.camera::backdrop { background: #0E0E10; }
 .cam-shutter:active span { transform: scale(.9); }
 .cam-offline { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0 16px 20px; font-size: 13px; color: #9A9AA2; text-align: center; }
 .rc-wait { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--amber-text); }
+.rc-row.openable { cursor: pointer; }
+.rc-row.openable:hover { background: color-mix(in srgb, var(--soft) 60%, var(--surface)); }
+.rc-row.openable:focus-visible { outline: 2px solid var(--action); outline-offset: -2px; }
+
+/* ---------- check receipt ---------- */
+dialog.sheet.tall { height: calc(100dvh - var(--safe-top) - 24px); }
+.rv-lede { margin: 2px 0 0; font-size: 14px; }
+.rv-photo { display: flex; gap: 14px; align-items: center; padding: 12px; background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; }
+.rv-thumb { flex: none; width: 72px; height: 96px; }
+.rv-thumb img, .rv-thumb .rc-thumb { width: 72px; height: 96px; border: 1px solid var(--hair); border-radius: 6px; object-fit: cover; display: block; }
+.rv-photo-text { flex: 1; min-width: 0; }
+.rv-photo-title { font-size: 16px; font-weight: 700; }
+.rv-photo-text .muted { font-size: 13px; margin-top: 2px; }
+.rv-photo-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.rv-mini { min-height: 44px; padding: 0 12px; border: 1px solid var(--hair); border-radius: 8px; background: var(--surface); color: var(--action); font-size: 14px; font-weight: 700; cursor: pointer; }
+.rv-mini[hidden] { display: none; }
+.rv-banner { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 12px; background: var(--soft); border: 1px solid var(--hair); }
+.rv-banner-icon { flex: none; display: flex; color: var(--stone); margin-top: 1px; }
+.rv-banner-title { font-size: 16px; font-weight: 900; }
+.rv-banner p { margin: 4px 0 0; font-size: 14px; line-height: 1.5; }
+.rv-banner.ok { background: color-mix(in srgb, var(--done) 12%, var(--surface)); border-color: color-mix(in srgb, var(--done) 32%, var(--surface)); }
+.rv-banner.ok .rv-banner-icon, .rv-banner.ok .rv-banner-title { color: var(--halal-text); }
+.rv-banner.short { background: color-mix(in srgb, var(--amber-line) 14%, var(--surface)); border-color: var(--amber-line); }
+.rv-banner.short .rv-banner-icon, .rv-banner.short .rv-banner-title { color: var(--amber-text); }
+.rv-amount { margin-top: 10px; }
+.rv-amount-input { font-size: 22px !important; font-weight: 900 !important; height: 56px; }
+.rv-est { margin: 6px 0 0; font-size: 13px; }
+.field.low .input { border: 2px solid var(--amber-line); }
+.low-hint { display: flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 13px; font-weight: 700; color: var(--amber-text); }
+.rv-label { font-size: 15px; font-weight: 700; }
+.rv-label .hint { display: inline; margin-left: 6px; }
+.rv-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.rv-links:empty { display: none; }
+.rv-link { display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: color-mix(in srgb, var(--action) 12%, var(--surface)); color: var(--action); font-size: 14px; font-weight: 700; cursor: pointer; }
+.rv-pick { margin-top: 10px; }
+.rv-link-add { list-style: none; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 12px; border: 1px dashed var(--hair); border-radius: 999px; color: var(--action); font-size: 14px; font-weight: 700; cursor: pointer; }
+.rv-link-add::-webkit-details-marker { display: none; }
+.rv-pick-list { margin-top: 8px; max-height: 260px; overflow-y: auto; border: 1px solid var(--hair); border-radius: 12px; padding: 0 12px; }
+.rv-pick-list .check-row { border-bottom: 1px solid var(--hair); }
+.rv-pick-list .check-row:last-child { border-bottom: 0; }
+.rv-link-note { margin: 8px 0 0; font-size: 13px; }
+.rv-reminder { display: flex; gap: 8px; margin: 4px 0 0; padding: 12px; border-radius: 10px; background: var(--soft); font-size: 13px; line-height: 1.5; }
+.rv-reminder svg { flex: none; margin-top: 1px; }
+.sheet .sheet-foot.rv-foot { grid-template-columns: 1fr; gap: 10px; }
+.rv-expected { display: flex; justify-content: space-between; align-items: baseline; }
+.rv-expected > span { font-size: 13px; font-weight: 500; color: var(--stone); }
+.rv-expected strong { font-size: 18px; font-weight: 900; }
+.rv-expected strong span { font-size: 14px; font-weight: 700; color: var(--stone); }
+.rv-pick-list .check-row { border: 0; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 8px 0; background: none; }
+.rv-pick-list .check-row small { display: block; font-size: 13px; font-weight: 500; color: var(--stone); }

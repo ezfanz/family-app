@@ -12,6 +12,7 @@ import { rate, selectedShopper } from './shopping.js';
 import * as tax from './taxcalc.js';
 import { queuePhoto, flushPhotos, localPhotoUrl, waitingReceiptIds, onPhotosChanged, restoreLocalUrls } from './photo-queue.js';
 import { openCamera } from './camera.js';
+import { openReview, bindReview } from './receipt-review.js';
 
 /** Receipts with a photo still on this phone, waiting to upload. */
 let waitingUpload = new Set();
@@ -86,7 +87,8 @@ function rowHtml(receipt, status, editable) {
     const refund = status === 'refunded' ? (receipt.refund_received_yen ?? t) : t;
     const refundWord = !counts ? 'no refund' : status === 'refunded' ? 'received' : 'tax back';
 
-    return `<li class="rc-row" data-id="${esc(receipt.id)}">
+    const open = editable ? ` tabindex="0" role="button" aria-label="Open receipt: ${esc(receiptTitle(receipt))}, ${esc(STATUS_LABEL[status])}"` : '';
+    return `<li class="rc-row${editable ? ' openable' : ''}" data-id="${esc(receipt.id)}"${open}>
         ${thumbHtml(receipt)}
         <div class="rc-main">
             <div class="rc-title">${esc(receiptTitle(receipt))}</div>
@@ -262,7 +264,8 @@ async function saveSnapped(blobs) {
         onSaved: (data) => { storeServerReceipt(data?.data); uploadWaitingPhotos(); },
         revert: () => { S.receipts.delete(receipt.id); renderReceipts(); },
     });
-    toast(navigator.onLine ? 'Photo saved. Add the amount next.' : 'Photo saved on this phone. It uploads when you’re back online.');
+    if (!navigator.onLine) toast('Photo saved on this phone. It uploads when you’re back online.');
+    openReview(receipt.id);
     return receipt;
 }
 
@@ -272,6 +275,7 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
         if (UI.shopTab === 'receipts' && UI.view === 'shopping') renderReceipts();
     });
     restoreLocalUrls();
+    bindReview({ onChange: () => { renderReceipts(); uploadWaitingPhotos(); } });
     window.addEventListener('online', () => uploadWaitingPhotos());
 
     $('v-shopping').addEventListener('click', (e) => {
@@ -291,6 +295,17 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
         if (mark) {
             const receipt = S.receipts.get(mark.closest('[data-id]').dataset.id);
             if (receipt && canManageShoppingOf(receipt.user_id)) openMarkRefunded(receipt);
+            return;
+        }
+        const row = e.target.closest('.rc-row.openable');
+        if (row) openReview(row.dataset.id);
+    });
+
+    $('rcGroups').addEventListener('keydown', (e) => {
+        const row = e.target.closest('.rc-row.openable');
+        if (row && e.target === row && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            openReview(row.dataset.id);
         }
     });
 

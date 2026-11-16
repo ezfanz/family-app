@@ -90,6 +90,20 @@ class ReceiptApiTest extends TestCase
             ->assertJsonPath('data.refund_received_yen', 500);
     }
 
+    public function test_only_the_owner_can_move_a_receipt_to_someone_else(): void
+    {
+        ['trip' => $trip, 'owner' => $owner, 'editor' => $editor, 'viewer' => $viewer] = $this->tripFixture();
+        $receipt = Receipt::factory()->for($trip)->create(['user_id' => $owner->id]);
+        $editors = Receipt::factory()->for($trip)->create(['user_id' => $editor->id]);
+
+        $this->actingAs($owner)->patchJson("/api/receipts/{$receipt->id}", ['user_id' => $viewer->id])
+            ->assertOk()
+            ->assertJsonPath('data.user_id', $viewer->id);
+
+        $this->actingAs($editor)->patchJson("/api/receipts/{$editors->id}", ['user_id' => $viewer->id])->assertNotFound();
+        $this->assertSame($editor->id, $editors->fresh()->user_id);
+    }
+
     public function test_outsiders_get_not_found(): void
     {
         ['trip' => $trip, 'outsider' => $outsider, 'viewer' => $viewer] = $this->tripFixture();

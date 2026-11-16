@@ -11,6 +11,9 @@ class UpdateReceiptRequest extends StoreReceiptRequest
      */
     public function rules(): array
     {
-        return self::contentRules(partial: true);
+        return [
+            'user_id' => ['sometimes', 'integer'],
+            ...self::contentRules(partial: true),
+        ];
     }
 }

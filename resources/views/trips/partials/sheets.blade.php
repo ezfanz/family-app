@@ -125,6 +125,85 @@
   <input type="file" id="camCapture" accept="image/*" capture="environment" hidden>
 </dialog>
 
+{{-- ---------- Check receipt (after a snap, or tap a receipt) ---------- --}}
+<dialog class="sheet tall" id="rvDlg" aria-labelledby="rvTitle">
+  <form id="rvForm" novalidate>
+    <div class="grab" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div><h2 id="rvTitle">Check receipt</h2><p class="muted rv-lede">Fix anything that looks wrong, then save.</p></div>
+      <button type="button" class="icon-btn" data-close aria-label="Close">{!! $close !!}</button>
+    </div>
+    <div class="sheet-body form">
+      <div class="rv-photo">
+        <span class="rv-thumb" id="rvThumb"></span>
+        <div class="rv-photo-text">
+          <div class="rv-photo-title" id="rvPhotoTitle">Photo saved</div>
+          <div class="muted" id="rvPhotoSub">Kept until the refund arrives</div>
+          <div class="rv-photo-actions">
+            <button type="button" class="rv-mini" id="rvRetake">Retake</button>
+            <button type="button" class="rv-mini" id="rvPart2">Add part 2</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rv-banner" id="rvBanner" aria-live="polite">
+        <span class="rv-banner-icon" id="rvBannerIcon" aria-hidden="true"></span>
+        <div><div class="rv-banner-title" id="rvBannerTitle"></div><p class="tnum" id="rvBannerText"></p></div>
+      </div>
+
+      <div class="grid2">
+        <div class="field" data-field="store_name"><label for="rvStore">Store</label><input id="rvStore" name="store_name" type="text" class="input" maxlength="80" list="rvStoreList" placeholder="e.g. Don Quijote" autocomplete="off" required><datalist id="rvStoreList"></datalist></div>
+        <div class="field" data-field="branch"><label for="rvBranch">Branch<span class="hint">Optional</span></label><input id="rvBranch" name="branch" type="text" class="input" maxlength="80" placeholder="e.g. Dotonbori" autocomplete="off"></div>
+        <div class="field" data-field="date"><label for="rvDate">Date</label><input id="rvDate" name="date" type="date" class="input tnum" required></div>
+        <div class="field" data-field="time"><label for="rvTime">Time<span class="hint">Japan time</span></label><input id="rvTime" name="time" type="time" class="input tnum" required></div>
+      </div>
+
+      <fieldset class="plain field">
+        <legend>Amount on the receipt</legend>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="amount_kind" value="pre" checked><span>Before tax</span></label>
+          <label class="pill"><input type="radio" name="amount_kind" value="total"><span>Total paid</span></label>
+        </div>
+        <div class="field rv-amount" data-field="pre_tax_yen">
+          <div class="yen-input"><span aria-hidden="true">¥</span><input id="rvAmount" name="amount" type="number" min="1" max="10000000" step="1" inputmode="numeric" class="input tnum rv-amount-input" aria-label="Amount in yen" required></div>
+          <p class="muted rv-est hidden" id="rvEstimate"></p>
+        </div>
+      </fieldset>
+
+      <fieldset class="plain field">
+        <legend>Tax</legend>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="tax_rate" value="10" checked><span>10%</span></label>
+          <label class="pill"><input type="radio" name="tax_rate" value="8"><span>8% food and drink</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="plain field hidden" id="rvOwnerSet">
+        <legend>Whose receipt</legend>
+        <div class="pills" id="rvOwners"></div>
+      </fieldset>
+
+      <div class="field">
+        <div class="rv-label">Link to shopping list<span class="hint">Optional</span></div>
+        <div class="rv-links" id="rvLinks"></div>
+        <details class="rv-pick" id="rvPick">
+          <summary class="rv-link-add"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Link item</summary>
+          <div class="rv-pick-list" id="rvPickList"></div>
+        </details>
+        <p class="muted rv-link-note">Linked items are ticked as bought. With one item linked, its Paid ¥ is filled in from this receipt.</p>
+      </div>
+
+      <p class="rv-reminder"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Tax-free goods are for personal use and must leave Japan with you, unused.</span></p>
+
+      <div class="danger-row"><button type="button" class="btn danger compact" id="rvDelete">Delete this receipt</button></div>
+    </div>
+    <div class="sheet-foot rv-foot">
+      <div class="rv-expected tnum"><span>Expected refund</span><strong id="rvExpected">¥0</strong></div>
+      <button type="submit" class="btn primary">Save receipt</button>
+    </div>
+  </form>
+</dialog>
+
 {{-- ---------- Mark a tax refund as received ---------- --}}
 <dialog class="sheet" id="refundDlg" aria-labelledby="refundDlgTitle">
   <form id="refundForm" novalidate>
