@@ -14,17 +14,17 @@ class ChangesApiTest extends TestCase
     {
         $this->travelTo('2026-11-21 00:00:00');
         $fixture = $this->tripFixture();
-        ['trip' => $trip, 'editor' => $editor, 'viewer' => $viewer, 'activity' => $activity, 'item' => $item, 'idea' => $idea] = $fixture;
+        ['trip' => $trip, 'editor' => $editor, 'owner' => $owner, 'activity' => $activity, 'item' => $item, 'idea' => $idea] = $fixture;
 
         $this->travelTo('2026-11-21 01:00:00');
-        $since = $this->actingAs($viewer)->getJson("/api/trips/{$trip->id}")->json('server_time');
+        $since = $this->actingAs($owner)->getJson("/api/trips/{$trip->id}")->json('server_time');
 
         $this->travelTo('2026-11-21 02:00:00');
         $this->actingAs($editor)->patchJson("/api/activities/{$activity->id}", ['name' => 'Kuromon Ichiba'])->assertOk();
         $this->actingAs($editor)->deleteJson("/api/shopping-items/{$item->id}")->assertNoContent();
         $this->actingAs($editor)->deleteJson("/api/ideas/{$idea->id}")->assertNoContent();
 
-        $response = $this->actingAs($viewer)->getJson("/api/trips/{$trip->id}/changes?since=".urlencode($since))
+        $response = $this->actingAs($owner)->getJson("/api/trips/{$trip->id}/changes?since=".urlencode($since))
             ->assertOk()
             ->assertJsonCount(1, 'activities')
             ->assertJsonPath('activities.0.name', 'Kuromon Ichiba')

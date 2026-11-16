@@ -1,9 +1,9 @@
 /* Bottom sheets for adding and editing stops, shopping items and ideas. */
 
-import { S, UI, canEdit, shoppingList } from './store.js';
+import { S, UI, canEdit, canManageShoppingOf, shoppingList } from './store.js';
 import { $, fmtDate, weekday, rm, uuid, toast } from './util.js';
 import { write } from './writer.js';
-import { regions, saveIdea } from './ideas.js';
+import { regions, saveIdea, deleteIdeaWithUndo } from './ideas.js';
 
 let rerender = () => {};
 
@@ -150,12 +150,25 @@ function updateItemRm() {
     $('itemRm').textContent = yenValue ? `About ${rm((yenValue * r) / 100, 0)} at your current rate.` : 'Leave the estimate empty if you don’t know yet.';
 }
 
-export function openItemForm(id) {
-    if (!guardEdit()) return;
-    const f = $('itemForm').elements;
+/** Shopping is personal: you add to your own list; the owner can add to anyone's. */
+function guardShopping(userId) {
+    if (!canManageShoppingOf(userId)) {
+        toast('You can only change your own shopping list.');
+        return false;
+    }
+    return true;
+}
+
+let itemListOwner = null;
+
+export function openItemForm(id, forUserId = null) {
     const it = id ? S.items.get(id) : { name: '', for_whom: '', qty: 1, estimated_yen: '' };
     if (!it) return;
+    const listOwner = id ? Number(it.user_id) : Number(forUserId && forUserId !== 'all' ? forUserId : S.me);
+    if (!guardShopping(listOwner)) return;
+    const f = $('itemForm').elements;
     editingItem = id;
+    itemListOwner = listOwner;
     f.name.value = it.name;
     f.for_whom.value = it.for_whom || '';
     f.qty.value = it.qty;
@@ -171,7 +184,7 @@ export function openItemForm(id) {
 
 function submitItem(e) {
     e.preventDefault();
-    if (!guardEdit()) return;
+    if (!guardShopping(itemListOwner)) return;
     const f = $('itemForm').elements;
     const name = f.name.value.trim().slice(0, 160);
     if (!name) return invalid(f.name, 'Give the item a name.');
@@ -194,9 +207,9 @@ function submitItem(e) {
     } else {
         const id = uuid();
         const last = shoppingList().at(-1);
-        S.items.set(id, { id, ...data, actual_yen: null, is_bought: false, sort_order: (last?.sort_order ?? 0) + 1 });
+        S.items.set(id, { id, user_id: itemListOwner, ...data, actual_yen: null, is_bought: false, sort_order: (last?.sort_order ?? 0) + 1 });
         write({
-            key: `item:${id}`, method: 'POST', path: '/shopping-items', body: { id, trip_id: S.trip.id, ...data },
+            key: `item:${id}`, method: 'POST', path: '/shopping-items', body: { id, trip_id: S.trip.id, user_id: itemListOwner, ...data },
             revert: () => { S.items.delete(id); rerender(); },
             onSaved: (res) => { S.items.set(res.data.id, res.data); },
         });
@@ -225,7 +238,6 @@ const ideaDlg = () => $('ideaDlg');
 let editingIdea = null;
 
 export function openIdeaForm(id) {
-    if (!guardEdit()) return;
     const f = $('ideaForm').elements;
     const idea = id ? S.ideas.get(id) : { name: '', region: regions()[0] || '', city: '', area: '' };
     if (!idea) return;
@@ -245,7 +257,6 @@ export function openIdeaForm(id) {
 
 async function submitIdea(e) {
     e.preventDefault();
-    if (!guardEdit()) return;
     const f = $('ideaForm').elements;
     const name = f.name.value.trim().slice(0, 160);
     const region = f.region.value.trim().slice(0, 32);
@@ -276,14 +287,8 @@ async function submitIdea(e) {
 function deleteIdea() {
     const idea = S.ideas.get(editingIdea);
     if (!idea) return;
-    S.ideas.delete(idea.id);
-    write({
-        key: `idea:${idea.id}`, method: 'DELETE', path: `/ideas/${idea.id}`,
-        revert: () => { S.ideas.set(idea.id, idea); rerender(); },
-    });
     ideaDlg().close();
-    rerender();
-    toast('Idea deleted.');
+    deleteIdeaWithUndo(idea);
 }
 
 export function planIdea(idea) {

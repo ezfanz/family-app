@@ -160,10 +160,11 @@ function showLoadError(message) {
 
 export async function bootTrip(root) {
     setApiBase(root.dataset.apiBase);
+    S.me = Number(root.dataset.userId);
 
     setActFormOpener(openActForm);
     setItemFormOpener(openItemForm);
-    setIdeaHandlers({ openIdeaForm, planIdea });
+    setIdeaHandlers({ openIdeaForm, planIdea, rerender: render });
     bindItinerary(render);
     bindShopping();
     bindIdeas();

@@ -30,6 +30,7 @@ class TripMember extends Pivot
     {
         return [
             'role' => TripRole::class,
+            'budget_rm' => 'decimal:2',
         ];
     }
 }

@@ -20,6 +20,7 @@ class ShoppingItemResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'name' => $this->name,
             'for_whom' => $this->for_whom,
             'qty' => $this->qty,

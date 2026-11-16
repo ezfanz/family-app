@@ -6,6 +6,7 @@ use App\Enums\TripRole;
 use Carbon\CarbonPeriod;
 use Database\Factories\TripFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -116,7 +117,7 @@ class Trip extends Model
     {
         return $this->belongsToMany(User::class)
             ->using(TripMember::class)
-            ->withPivot('role')
+            ->withPivot('role', 'budget_rm')
             ->withTimestamps();
     }
 
@@ -150,6 +151,22 @@ class Trip extends Model
     public function ideas(): HasMany
     {
         return $this->hasMany(Idea::class)->orderBy('sort_order');
+    }
+
+    /**
+     * Members whose shopping the given user may see: everyone for the owner, otherwise only themselves.
+     *
+     * @return Collection<int, User>
+     */
+    public function shoppersVisibleTo(User $user): Collection
+    {
+        $query = $this->members()->orderByPivot('id');
+
+        if ($this->roleFor($user) !== TripRole::Owner) {
+            $query->whereKey($user->getKey());
+        }
+
+        return $query->get();
     }
 
     /**

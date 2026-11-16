@@ -94,15 +94,38 @@ export function uuid() {
 }
 
 let toastTimer;
-export function toast(message) {
+
+/**
+ * Short message above the tab bar. Optional action button, e.g. { action: 'Undo', onAction }.
+ *
+ * @param {string} message
+ * @param {{ action?: string, onAction?: () => void, duration?: number }} [options]
+ */
+export function toast(message, options = {}) {
     const el = $('toast');
     if (!el) {
         return;
     }
-    el.textContent = message;
+    el.textContent = '';
+    const text = document.createElement('span');
+    text.className = 'toast-msg';
+    text.textContent = message;
+    el.appendChild(text);
+    if (options.action && options.onAction) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'toast-act';
+        button.textContent = options.action;
+        button.addEventListener('click', () => {
+            el.classList.add('hidden');
+            options.onAction();
+        }, { once: true });
+        el.appendChild(button);
+    }
+    el.classList.toggle('with-action', Boolean(options.action));
     el.classList.remove('hidden');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.add('hidden'), 3500);
+    toastTimer = setTimeout(() => el.classList.add('hidden'), options.duration ?? (options.action ? 6000 : 3500));
 }
 
 export function debounce(fn, wait) {

@@ -22,7 +22,7 @@ class IdeaController extends Controller
      */
     public function store(StoreIdeaRequest $request, Trip $trip): JsonResponse
     {
-        Gate::authorize('update', $trip);
+        Gate::authorize('participate', $trip);
 
         $attributes = self::attributesFrom($request->validated(), $trip);
         $attributes['sort_order'] = (int) $trip->ideas()->max('sort_order') + 1;
@@ -37,7 +37,7 @@ class IdeaController extends Controller
      */
     public function update(UpdateIdeaRequest $request, Idea $idea): IdeaResource
     {
-        Gate::authorize('update', $idea->trip);
+        Gate::authorize('participate', $idea->trip);
 
         $idea->update(self::attributesFrom($request->validated(), $idea->trip));
 
@@ -49,11 +49,23 @@ class IdeaController extends Controller
      */
     public function destroy(Idea $idea): Response
     {
-        Gate::authorize('update', $idea->trip);
+        Gate::authorize('participate', $idea->trip);
 
         $idea->delete();
 
         return response()->noContent();
+    }
+
+    /**
+     * Bring back a deleted idea (the Undo after delete).
+     */
+    public function restore(Idea $idea): IdeaResource
+    {
+        Gate::authorize('participate', $idea->trip);
+
+        $idea->restore();
+
+        return IdeaResource::make($idea);
     }
 
     /**

@@ -40,7 +40,12 @@ class MakeTripOwner extends Command
             $trip->changeRole($user, TripRole::Owner);
         }
 
+        $claimed = $trip->shoppingItems()->whereNull('user_id')->update(['user_id' => $user->id]);
+
         $this->info("{$user->email} is now an owner of \"{$trip->name}\".");
+        if ($claimed > 0) {
+            $this->info("{$claimed} unassigned shopping items moved to their list.");
+        }
 
         return self::SUCCESS;
     }

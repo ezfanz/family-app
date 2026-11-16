@@ -69,36 +69,54 @@
       </div>
     </section>
 
-    {{-- ---------- Shopping ---------- --}}
+    {{-- ---------- Shopping (personal lists; the owner sees everyone) ---------- --}}
     <section id="v-shopping" class="page hidden" aria-labelledby="shopTitle">
       <h1 id="shopTitle">Shopping</h1>
-      <p class="lede">Prices are estimates before tax. Type the real price when you buy.</p>
-      <div class="grid2" style="margin-top:20px">
-        <div><label class="lbl" for="rate">RM per ¥100</label><input id="rate" class="big-input tnum" inputmode="decimal" type="number" step="0.01" min="0"></div>
-        <div><label class="lbl" for="deposit">She banked in (RM)</label><input id="deposit" class="big-input tnum" inputmode="decimal" type="number" step="1" min="0" placeholder="0"></div>
+      <p class="lede">Barang kirim for family back home</p>
+
+      <div class="info-note hidden" id="shopAdminNote">
+        <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span><b>Admin view.</b> You can see everyone’s spending.</span>
       </div>
-      <div class="totals" aria-live="polite">
-        <div class="cells">
-          <div><div class="muted">Estimated</div><div class="v tnum" id="sEst"></div></div>
-          <div><div class="muted">Spent</div><div class="v tnum" id="sSpent"></div></div>
-          <div><div class="muted">Balance</div><div class="v tnum" id="sBal"></div></div>
+      <nav class="chips hidden" id="shopChips" aria-label="Whose shopping"></nav>
+
+      {{-- Everyone (owner only) --}}
+      <div id="shopAll" class="hidden">
+        <div class="totals" id="allTotals" aria-live="polite"></div>
+        <label class="rate-row" for="rateAll">Rate for everyone, RM per ¥100
+          <input id="rateAll" class="rate-input tnum" inputmode="decimal" type="number" step="0.01" min="0" data-rate>
+        </label>
+        <h2 class="sec" style="margin:28px 0 10px">By person</h2>
+        <div class="people" id="shopPeople"></div>
+      </div>
+
+      {{-- One person --}}
+      <div id="shopPerson" class="hidden">
+        <div class="person-head" id="personHead"></div>
+        <div class="grid2" style="margin-top:16px">
+          <div><label class="lbl" for="budget">Budget (RM)</label><input id="budget" class="big-input tnum" inputmode="decimal" type="number" step="1" min="0" placeholder="0"></div>
+          <div><label class="lbl" for="rate">RM per ¥100</label><input id="rate" class="big-input tnum" inputmode="decimal" type="number" step="0.01" min="0" data-rate></div>
         </div>
-        <div class="note" id="sNote"></div>
+        <div class="totals" id="personTotals" aria-live="polite"></div>
+        <p class="muted tnum" id="personLeft" style="margin:10px 2px 0"></p>
+        <div class="row-between" style="margin-top:24px">
+          <h2 class="sec" style="margin:0">List</h2>
+          <span class="muted tnum" id="shopCount"></span>
+        </div>
+        <ul class="list" id="shopList"></ul>
+        <button type="button" class="add-row" id="addItem"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add an item</button>
       </div>
-      <div class="row-between" style="margin-top:28px">
-        <h2 class="sec" style="margin:0">List</h2>
-        <span class="muted tnum" id="shopCount"></span>
-      </div>
-      <ul class="list" id="shopList"></ul>
-      <button type="button" class="add-row hidden" id="addItem"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add an item</button>
-      <p class="muted" style="margin-top:12px">Bought items without a price count at their estimate.</p>
     </section>
 
-    {{-- ---------- Ideas ---------- --}}
+    {{-- ---------- Ideas (shared with everyone in the trip) ---------- --}}
     <section id="v-ideas" class="page hidden" aria-labelledby="ideasTitle">
       <div class="page-head">
         <div><h1 id="ideasTitle">Ideas</h1><p class="lede">Places to go if there’s time</p></div>
-        <button type="button" class="pill-btn hidden" id="addIdea"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add idea</button>
+        <button type="button" class="pill-btn" id="addIdea"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add idea</button>
+      </div>
+      <div class="info-note">
+        <svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M18 14c2 .7 3 2.8 3 5"/></svg>
+        <span><b>Shared with everyone in the trip.</b> Anyone can add, tick, plan or delete an idea.</span>
       </div>
       <div id="ideas"></div>
     </section>

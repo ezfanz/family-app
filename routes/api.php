@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\IdeaController;
+use App\Http\Controllers\Api\ShoppingBudgetController;
 use App\Http\Controllers\Api\ShoppingItemController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\TripChangesController;
@@ -51,4 +52,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::post('/trips/{trip}/ideas', [IdeaController::class, 'store'])->name('ideas.store');
     Route::patch('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
+    Route::patch('/ideas/{idea}/restore', [IdeaController::class, 'restore'])->name('ideas.restore')->withTrashed();
+
+    Route::patch('/trips/{trip}/budgets/{user}', ShoppingBudgetController::class)->name('trips.budgets.update');
 });

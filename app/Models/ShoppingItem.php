@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\TripRole;
 use Database\Factories\ShoppingItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,5 +52,28 @@ class ShoppingItem extends Model
     public function trip(): BelongsTo
     {
         return $this->belongsTo(Trip::class);
+    }
+
+    /**
+     * The member whose shopping list this item is on.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Items the given member may see: owners see everyone's, others only their own.
+     *
+     * @param  Builder<ShoppingItem>  $query
+     */
+    #[Scope]
+    protected function visibleTo(Builder $query, Trip $trip, User $user): void
+    {
+        if ($trip->roleFor($user) !== TripRole::Owner) {
+            $query->where('user_id', $user->getKey());
+        }
     }
 }

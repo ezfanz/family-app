@@ -50,7 +50,7 @@ abstract class TestCase extends BaseTestCase
             'outsider' => User::factory()->create(),
             'day' => $day,
             'activity' => Activity::factory()->create(['day_id' => $day->id, 'start_time' => '09:00', 'name' => 'Kuromon Market']),
-            'item' => ShoppingItem::factory()->for($trip)->create(['name' => 'Royce Nama Chocolate']),
+            'item' => ShoppingItem::factory()->for($trip)->create(['name' => 'Royce Nama Chocolate', 'user_id' => $editor->id]),
             'idea' => Idea::factory()->for($trip)->create(['name' => 'Tokyo Tower', 'region' => 'Tokyo']),
         ];
     }

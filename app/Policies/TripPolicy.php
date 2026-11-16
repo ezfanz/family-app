@@ -32,6 +32,23 @@ class TripPolicy
     }
 
     /**
+     * Shopping is personal: any member manages their own list and budget,
+     * and the owner (admin) can manage everyone's.
+     */
+    public function manageShoppingOf(User $user, Trip $trip, int $listOwnerId): Response
+    {
+        $role = $trip->roleFor($user);
+
+        if ($role === null) {
+            return Response::denyAsNotFound();
+        }
+
+        return $role === TripRole::Owner || $user->getKey() === $listOwnerId
+            ? Response::allow()
+            : Response::deny('You can only change your own shopping list.');
+    }
+
+    /**
      * Owners and editors can change trip content and settings.
      */
     public function update(User $user, Trip $trip): Response

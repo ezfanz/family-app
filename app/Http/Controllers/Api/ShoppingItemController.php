@@ -16,16 +16,19 @@ use Illuminate\Support\Facades\Gate;
 class ShoppingItemController extends Controller
 {
     /**
-     * Add an item. Retrying with the same client-generated id is idempotent.
+     * Add an item to someone's list (your own by default; the owner can add for anyone).
+     * Retrying with the same client-generated id is idempotent.
      */
     public function store(StoreShoppingItemRequest $request): JsonResponse
     {
         $trip = Trip::findOrFail($request->validated('trip_id'));
-        Gate::authorize('update', $trip);
+        $listOwnerId = (int) ($request->validated('user_id') ?? $request->user()->id);
+        Gate::authorize('manageShoppingOf', [$trip, $listOwnerId]);
+        abort_if($trip->members()->whereKey($listOwnerId)->doesntExist(), 422, 'That person is not in this trip.');
 
         $id = $request->validated('id');
         if ($id !== null && ($existing = ShoppingItem::withTrashed()->find($id)) !== null) {
-            abort_unless($existing->trip_id === $trip->id, 409, 'That id is already in use.');
+            abort_unless($existing->trip_id === $trip->id && $existing->user_id === $listOwnerId, 409, 'That id is already in use.');
 
             return ShoppingItemResource::make($existing)->response()->setStatusCode(200);
         }
@@ -35,6 +38,7 @@ class ShoppingItemController extends Controller
             $item->id = $id;
         }
         $item->trip_id = $trip->id;
+        $item->user_id = $listOwnerId;
         $item->sort_order = (int) $trip->shoppingItems()->max('sort_order') + 1;
         $item->save();
 
@@ -46,7 +50,7 @@ class ShoppingItemController extends Controller
      */
     public function update(UpdateShoppingItemRequest $request, ShoppingItem $shoppingItem): ShoppingItemResource
     {
-        Gate::authorize('update', $shoppingItem->trip);
+        Gate::authorize('manageShoppingOf', [$shoppingItem->trip, (int) $shoppingItem->user_id]);
 
         $shoppingItem->fill(self::attributesFrom($request->validated()))->save();
 
@@ -58,7 +62,7 @@ class ShoppingItemController extends Controller
      */
     public function destroy(ShoppingItem $shoppingItem): Response
     {
-        Gate::authorize('update', $shoppingItem->trip);
+        Gate::authorize('manageShoppingOf', [$shoppingItem->trip, (int) $shoppingItem->user_id]);
 
         $shoppingItem->delete();
 

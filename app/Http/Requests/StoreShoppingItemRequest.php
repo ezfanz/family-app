@@ -30,6 +30,7 @@ class StoreShoppingItemRequest extends FormRequest
         return [
             'id' => ['nullable', 'uuid'],
             'trip_id' => ['required', 'integer', 'exists:trips,id'],
+            'user_id' => ['nullable', 'integer'],
             ...self::contentRules(),
         ];
     }

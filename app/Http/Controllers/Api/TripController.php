@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateTripRequest;
 use App\Http\Resources\ActivityNoteResource;
 use App\Http\Resources\DayResource;
 use App\Http\Resources\IdeaResource;
+use App\Http\Resources\ShopperResource;
 use App\Http\Resources\ShoppingItemResource;
 use App\Http\Resources\TripResource;
 use App\Models\ActivityNote;
@@ -47,21 +48,19 @@ class TripController extends Controller
     {
         $serverTime = TripChangesController::nextSince();
 
-        $trip->load([
-            'days.activities',
-            'shoppingItems',
-            'ideas',
-        ]);
+        $trip->load(['days.activities', 'ideas']);
+        $user = $request->user();
 
         $myNotes = ActivityNote::query()
-            ->whereBelongsTo($request->user())
+            ->whereBelongsTo($user)
             ->whereIn('activity_id', $trip->activities()->select('id'))
             ->get();
 
         return response()->json([
             'trip' => TripResource::make($trip),
             'days' => DayResource::collection($trip->days),
-            'shopping_items' => ShoppingItemResource::collection($trip->shoppingItems),
+            'shoppers' => ShopperResource::collection($trip->shoppersVisibleTo($user)),
+            'shopping_items' => ShoppingItemResource::collection($trip->shoppingItems()->visibleTo($trip, $user)->get()),
             'ideas' => IdeaResource::collection($trip->ideas),
             'my_notes' => ActivityNoteResource::collection($myNotes),
             'server_time' => $serverTime->toIso8601String(),

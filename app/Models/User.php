@@ -41,7 +41,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Trip::class)
             ->using(TripMember::class)
-            ->withPivot('role')
+            ->withPivot('role', 'budget_rm')
             ->withTimestamps();
     }
 }

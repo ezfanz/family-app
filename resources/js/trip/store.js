@@ -4,6 +4,10 @@ export const S = {
     trip: null,
     role: 'viewer',
     days: [],
+    /** Members whose shopping I can see (everyone for the owner), with budgets. */
+    shoppers: [],
+    /** Logged-in user id (from the page). */
+    me: null,
     acts: new Map(),
     items: new Map(),
     ideas: new Map(),
@@ -18,9 +22,28 @@ export const UI = {
     dayId: null,
     open: new Set(),
     expandedRegions: new Set(),
+    /** Shopping: 'all' (owner only) or a user id. */
+    shopSel: null,
+    /** Ideas: id whose ⋯ menu is open, and id armed for delete. */
+    ideaMenu: null,
+    ideaArmed: null,
 };
 
 export const canEdit = () => S.role === 'owner' || S.role === 'editor';
+export const isOwner = () => S.role === 'owner';
+/** Shopping is personal: you manage your own list; the owner manages everyone's. */
+export const canManageShoppingOf = (userId) => isOwner() || Number(userId) === Number(S.me);
+
+/** You first, then everyone else in the order they joined. */
+const meFirst = (list) => [...list].sort((a, b) => Number(b.is_me) - Number(a.is_me));
+
+function mergeShoppers(list) {
+    if (!list) return;
+    S.shoppers = meFirst(list).map((p) => {
+        const local = S.shoppers.find((x) => x.user_id === p.user_id);
+        return local && S.pending.has(`budget:${p.user_id}`) ? { ...p, budget_rm: local.budget_rm } : p;
+    });
+}
 
 /** Pending-write key prefixes that protect each record type from being overwritten. */
 const GUARDS = { act: ['act', 'status'], item: ['item'], idea: ['idea'] };
@@ -43,6 +66,7 @@ export function loadFull(payload) {
     S.trip = payload.trip;
     S.role = payload.trip.my_role || 'viewer';
     S.days = payload.days.map(({ activities, ...day }) => day);
+    S.shoppers = meFirst(payload.shoppers || []);
     S.acts = new Map();
     payload.days.forEach((day) => (day.activities || []).forEach((a) => S.acts.set(a.id, a)));
     S.items = new Map(payload.shopping_items.map((i) => [i.id, i]));
@@ -73,6 +97,7 @@ export function mergeChanges(payload) {
             S.days.sort((a, b) => a.day_number - b.day_number);
         }
     }
+    mergeShoppers(payload.shoppers);
     upsertAll(S.acts, payload.activities, 'act');
     upsertAll(S.items, payload.shopping_items, 'item');
     upsertAll(S.ideas, payload.ideas, 'idea');
@@ -90,6 +115,7 @@ export function snapshot() {
         trip: S.trip,
         role: S.role,
         days: S.days,
+        shoppers: S.shoppers,
         acts: [...S.acts.values()],
         items: [...S.items.values()],
         ideas: [...S.ideas.values()],
@@ -102,6 +128,7 @@ export function restore(saved) {
     S.trip = saved.trip;
     S.role = saved.role;
     S.days = saved.days;
+    S.shoppers = saved.shoppers || [];
     S.acts = new Map(saved.acts.map((a) => [a.id, a]));
     S.items = new Map(saved.items.map((i) => [i.id, i]));
     S.ideas = new Map(saved.ideas.map((i) => [i.id, i]));
