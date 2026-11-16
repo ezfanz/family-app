@@ -133,11 +133,23 @@ const SEARCH_ICON = '<svg class="i" width="20" height="20" viewBox="0 0 24 24" a
 
 function metaText(item) {
     const parts = [item.store, item.details].filter(Boolean);
+    const paid = Number(item.actual_yen) || 0;
     const est = Number(item.estimated_yen) || 0;
-    parts.push(est ? `est ${yen(est)} ≈ ${rm(toRm(est), 0)}` : 'no estimate');
+    if (paid > 0) {
+        // The line's sum: price each × quantity.
+        parts.push(`paid ${yen(paid)} ≈ ${rm(toRm(paid), 2)}`);
+    } else {
+        parts.push(est ? `est ${yen(est)} ≈ ${rm(toRm(est), 0)}` : 'no estimate');
+    }
     if (item.for_whom) parts.push(item.for_whom);
     return parts.join(' · ');
 }
+
+/** Price for one, from the stored total paid. */
+const paidEach = (item) => {
+    const paid = Number(item.actual_yen) || 0;
+    return paid > 0 ? Math.round(paid / (Number(item.qty) || 1)) : '';
+};
 
 /** − qty + under the item name; plain "Qty n" when you can't change it. */
 function qtyHtml(item, editable) {
@@ -164,7 +176,7 @@ function renderPersonList(person) {
             </button>
             ${qtyHtml(item, editable)}
             <a class="search-btn" href="${esc(googleUrl(item))}" target="_blank" rel="noopener" aria-label="Search Google for ${esc(item.name)}" title="Search on Google">${SEARCH_ICON}</a>
-            <div class="paid"><span aria-hidden="true">Paid ¥</span><input class="tnum" inputmode="numeric" pattern="[0-9]*" placeholder="0" data-paid="${item.id}" value="${item.actual_yen ?? ''}" aria-label="Paid in yen for ${esc(item.name)}" ${editable ? '' : 'readonly'}></div>
+            <div class="paid"><span aria-hidden="true">¥ each</span><input class="tnum" inputmode="numeric" pattern="[0-9]*" placeholder="0" data-paid="${item.id}" value="${paidEach(item)}" aria-label="Price paid for one ${esc(item.name)}, in yen" ${editable ? '' : 'readonly'}></div>
         </div></li>`).join('')
         : `<li class="empty-list">Nothing on ${person.is_me ? 'your' : `${esc(person.name)}’s`} list yet.</li>`;
 }
@@ -280,16 +292,18 @@ const saveBudget = debounceKeyed((userId) => {
 /** Quantity changes are batched so tapping + a few times sends one update. */
 const saveQty = debounceKeyed((id) => {
     const item = S.items.get(id);
-    if (item) saveItem(item, { qty: item.qty, estimated_yen: item.estimated_yen });
+    if (item) saveItem(item, { qty: item.qty, estimated_yen: item.estimated_yen, actual_yen: item.actual_yen });
 }, 600);
 
-/** Change quantity by one; the estimate scales with it because it is the total for the quantity. */
+/** Change quantity by one; estimate and paid are totals, so both scale with it. */
 function stepQty(item, step) {
     const current = Number(item.qty) || 1;
     const next = Math.min(999, Math.max(1, current + step));
     if (next === current) return;
     const est = Number(item.estimated_yen) || 0;
     if (est > 0) item.estimated_yen = Math.round((est / current) * next);
+    const paid = Number(item.actual_yen) || 0;
+    if (paid > 0) item.actual_yen = Math.round((paid / current) * next);
     item.qty = next;
     renderShop();
     saveQty(item.id);
@@ -339,14 +353,16 @@ export function bindShopping() {
         if (!id) return;
         const item = S.items.get(id);
         if (!item || !canManageShoppingOf(item.user_id)) return;
-        const value = Math.max(0, Math.round(Number(e.target.value.replace(/[^0-9]/g, '')) || 0));
-        item.actual_yen = value || null;
-        if (value > 0 && !item.is_bought) {
+        // The box is the price for one; the stored amount is the total for the quantity.
+        const each = Math.max(0, Math.round(Number(e.target.value.replace(/[^0-9]/g, '')) || 0));
+        item.actual_yen = each ? Math.min(10_000_000, each * (Number(item.qty) || 1)) : null;
+        const row = e.target.closest('li');
+        if (each > 0 && !item.is_bought) {
             item.is_bought = true;
-            const row = e.target.closest('li');
             row.classList.add('bought');
             row.querySelector('[data-act="buy"]').checked = true;
         }
+        row.querySelector('.item-meta').textContent = metaText(item);
         renderNumbersOnly(); // keep the list as is so the input keeps focus
         savePaid(id);
     });
