@@ -751,3 +751,22 @@ dialog.sheet.tall { height: calc(100dvh - var(--safe-top) - 24px); }
 .air-state { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: var(--soft); color: var(--stone); }
 .air-state.done { background: color-mix(in srgb, var(--done) 14%, var(--surface)); color: var(--halal-text); }
 .air-none { margin: 10px 0 0; }
+
+/* ---------- receipts: owner view of everyone's refunds ---------- */
+.rc-admin-note { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; padding: 8px 12px; border-radius: 10px; background: var(--soft); font-size: 13px; font-weight: 500; }
+.rc-admin-note svg { flex: none; color: var(--action); }
+.rc-sum-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.rc-num small { font-size: 13px; color: var(--stone); font-weight: 700; }
+.rc-people { display: flex; flex-direction: column; gap: 10px; }
+.rc-person { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; width: 100%; padding: 14px; text-align: left; color: var(--ink); background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; cursor: pointer; font: inherit; }
+.rc-person:hover { border-color: var(--stone); }
+.rc-person:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
+.rc-person .avatar { width: 40px; height: 40px; font-size: 13px; }
+.rc-person-main { min-width: 0; display: block; }
+.rc-person-name { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 16px; font-weight: 700; }
+.rc-person-line { display: block; margin-top: 4px; font-size: 13px; font-weight: 500; color: var(--stone); }
+.rc-bar.small { height: 6px; margin-top: 8px; border-radius: 3px; }
+.rc-bar.small span { height: 6px; }
+.rc-person-side { text-align: right; }
+.rc-person-exp { display: block; font-size: 16px; font-weight: 900; }
+.rc-person-word { display: block; font-size: 13px; font-weight: 500; color: var(--stone); }

@@ -1,5 +1,24 @@
 {{-- Shopping → Receipts: tax refund tracking. Only shown on the Receipts tab. --}}
 <div class="receipts-only" id="receiptsPane">
+  {{-- Owner on "Everyone": the group's refunds and one card per person --}}
+  <div id="rcAdmin" class="hidden">
+    <p class="rc-admin-note"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/></svg><span><b>Admin view.</b> You can see everyone’s receipts.</span></p>
+    <section class="rc-summary" aria-label="Group refund summary">
+      <div class="rc-sum-top">
+        <div class="rc-label">Group expected refund</div>
+        <div class="rc-big"><span class="tnum" id="rcGroupExpected">¥0</span><span class="tnum rc-big-rm" id="rcGroupExpectedRm"></span></div>
+        <div class="rc-bar" aria-hidden="true"><span class="got" id="rcGroupBarReceived"></span><span class="wait" id="rcGroupBarWaiting"></span></div>
+      </div>
+      <div class="rc-sum-grid two">
+        <div><div class="rc-label"><span class="rc-key got" aria-hidden="true"></span>Received</div><div class="tnum rc-num"><span id="rcGroupReceived">¥0</span> <small id="rcGroupReceivedRm"></small></div></div>
+        <div><div class="rc-label"><span class="rc-key wait" aria-hidden="true"></span>Waiting</div><div class="tnum rc-num"><span id="rcGroupWaiting">¥0</span> <small id="rcGroupWaitingRm"></small></div></div>
+      </div>
+    </section>
+    <h2 class="sec" style="margin:26px 0 10px">By person</h2>
+    <div class="rc-people" id="rcPeople"></div>
+  </div>
+
+  <div id="rcMine">
   <section class="rc-summary" aria-label="Refund summary">
     <div class="rc-sum-top">
       <div class="rc-label">Expected tax refund</div>
@@ -25,6 +44,7 @@
   <div class="rc-none hidden" id="rcNone">
     <h2>No receipts yet</h2>
     <p>After you pay at a tax-free shop, snap the receipt. Spend ¥5,000 or more before tax at one store in one day to qualify.</p>
+  </div>
   </div>
 
   <p class="rc-note"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Refunds are paid by each store after customs confirms you took the goods out of Japan. Amounts are expected, not guaranteed. They don’t change your shopping balance.</span></p>

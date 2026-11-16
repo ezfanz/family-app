@@ -8,7 +8,7 @@ import { S, UI, canManageShoppingOf } from './store.js';
 import { $, esc, yen, rm, fmtDate, weekday, toast, uuid } from './util.js';
 import { apiUrl } from './api.js';
 import { write } from './writer.js';
-import { rate, selectedShopper } from './shopping.js';
+import { rate, selectedShopper, avatar, displayName, ROLE_LABEL } from './shopping.js';
 import * as tax from './taxcalc.js';
 import { queuePhoto, flushPhotos, localPhotoUrl, waitingReceiptIds, onPhotosChanged, restoreLocalUrls } from './photo-queue.js';
 import { openCamera } from './camera.js';
@@ -153,12 +153,11 @@ function renderList(receipts) {
         const tag = pending ? '' : short === 0
             ? '<span class="rc-tag ok">Eligible</span>'
             : `<span class="rc-tag short tnum">${yen(short)} more to qualify</span>`;
-        const who = selectedShopper() === 'all' ? `${nameOf(first.user_id)} · ` : '';
         const sub = [first.branch, `${members.length} receipt${members.length === 1 ? '' : 's'}`, `${yen(total)} before tax`].filter(Boolean).join(' · ');
 
         html.push(`<section class="rc-group">
             <div class="rc-head">
-                <div style="min-width:0"><div class="rc-store">${esc(first.store_name || 'Store not set')}</div><div class="rc-sub tnum">${esc(who + sub)}</div></div>
+                <div style="min-width:0"><div class="rc-store">${esc(first.store_name || 'Store not set')}</div><div class="rc-sub tnum">${esc(sub)}</div></div>
                 ${tag}
             </div>
             <ul class="rc-list">${rows.map(([r, status]) => rowHtml(r, status, canManageShoppingOf(r.user_id))).join('')}</ul>
@@ -171,9 +170,78 @@ function renderList(receipts) {
     $('rcNone').classList.toggle('hidden', receipts.length !== 0);
 }
 
+/** One line about where a person's refunds stand, most useful first. */
+function personLine(receipts) {
+    if (!receipts.length) return 'No receipts yet';
+    const groups = tax.groupTotals(receipts);
+    const statuses = receipts.map((r) => tax.statusOf(r, groups, minimum()));
+    const count = (status) => statuses.filter((s) => s === status).length;
+    const qualifying = statuses.filter((s) => !['captured', 'not_eligible'].includes(s)).length;
+    const parts = [`${receipts.length} receipt${receipts.length === 1 ? '' : 's'}`];
+    if (count('captured')) {
+        parts.push(`${count('captured')} need${count('captured') === 1 ? 's' : ''} an amount`);
+    } else if (count('eligible')) {
+        parts.push(`${count('eligible')} to confirm`);
+    } else if (!qualifying) {
+        const short = receipts
+            .filter((r, i) => statuses[i] === 'not_eligible')
+            .map((r) => ({ store: r.store_name || 'a store', amount: tax.shortfall(r, groups, minimum()) }))
+            .sort((a, b) => a.amount - b.amount)[0];
+        if (short) parts.push(`${yen(short.amount)} short at ${short.store}`);
+    } else if (count('refunded') === qualifying) {
+        parts.push('all refunded');
+    } else if (count('refunded')) {
+        parts.push(`${count('refunded')} refunded`);
+    } else {
+        parts.push('all confirmed');
+    }
+    return parts.join(' · ');
+}
+
+/** Owner on "Everyone": group totals and a card per person. Waiting = expected − received. */
+function renderAdmin() {
+    const all = [...S.receipts.values()];
+    const sum = tax.totals(all, minimum());
+    const waiting = sum.expected - sum.received;
+    const pct = (value, of) => (of ? ((value / of) * 100).toFixed(1) : 0);
+    const toRm = (y) => rm((y * rate()) / 100);
+    $('rcGroupExpected').textContent = yen(sum.expected);
+    $('rcGroupExpectedRm').textContent = `≈ ${toRm(sum.expected)}`;
+    $('rcGroupReceived').textContent = yen(sum.received);
+    $('rcGroupReceivedRm').textContent = toRm(sum.received);
+    $('rcGroupWaiting').textContent = yen(waiting);
+    $('rcGroupWaitingRm').textContent = toRm(waiting);
+    $('rcGroupBarReceived').style.width = `${pct(sum.received, sum.expected)}%`;
+    $('rcGroupBarWaiting').style.width = `${pct(waiting, sum.expected)}%`;
+
+    $('rcPeople').innerHTML = S.shoppers.map((person) => {
+        const mine = all.filter((r) => Number(r.user_id) === Number(person.user_id));
+        const t = tax.totals(mine, minimum());
+        const left = t.expected - t.received;
+        return `<button type="button" class="rc-person" data-shopper="${person.user_id}">
+            ${avatar(person)}
+            <span class="rc-person-main">
+                <span class="rc-person-name">${esc(displayName(person))}<span class="role-pill">${ROLE_LABEL[person.role] || person.role}</span></span>
+                <span class="rc-person-line tnum">${esc(personLine(mine))}</span>
+                <span class="rc-bar small" aria-hidden="true"><span class="got" style="width:${pct(t.received, t.expected)}%"></span><span class="wait" style="width:${pct(left, t.expected)}%"></span></span>
+                <span class="rc-person-line tnum">${yen(t.received)} received · ${yen(left)} waiting</span>
+            </span>
+            <span class="rc-person-side">${t.expected ? `<span class="tnum rc-person-exp">${yen(t.expected)}</span><span class="rc-person-word">expected</span>` : '<span class="rc-person-word">No refund yet</span>'}</span>
+        </button>`;
+    }).join('');
+}
+
 export function renderReceipts() {
     const receipts = receiptsInView();
     const sel = selectedShopper();
+    const admin = sel === 'all';
+    $('rcAdmin').classList.toggle('hidden', !admin);
+    $('rcMine').classList.toggle('hidden', admin);
+    if (admin) {
+        $('shopLede').textContent = 'Everyone’s tax refunds';
+        renderAdmin();
+        return;
+    }
     $('shopLede').textContent = sel === 'all'
         ? 'Everyone’s receipts and tax refunds'
         : `${S.shoppers.find((p) => p.user_id === sel)?.is_me ? 'Your' : `${nameOf(sel)}’s`} receipts and tax refunds`;

@@ -11,7 +11,7 @@ import { renderFx, bindFx, liveRate } from './fx.js';
 import { renderShopTab } from './receipts.js';
 
 const AVATAR_COLOURS = ['#2A3B8F', '#6A3E9A', '#00776F', '#1F5591', '#B7791F', '#C2255C', '#4A8410', '#8A5A00'];
-const ROLE_LABEL = { owner: 'Owner', editor: 'Editor', viewer: 'Viewer' };
+export const ROLE_LABEL = { owner: 'Owner', editor: 'Editor', viewer: 'Viewer' };
 
 let openItemForm = () => {};
 export function setItemFormOpener(fn) {
@@ -32,7 +32,7 @@ function colourOf(userId) {
     return AVATAR_COLOURS[(index < 0 ? 0 : index) % AVATAR_COLOURS.length];
 }
 
-function displayName(person) {
+export function displayName(person) {
     return person.is_me ? `${person.name} (you)` : person.name;
 }
 
@@ -90,7 +90,7 @@ function totalsHtml(m) {
         </div>`;
 }
 
-function avatar(person, size = '') {
+export function avatar(person, size = '') {
     return `<span class="avatar ${size}" aria-hidden="true" style="background:${colourOf(person.user_id)};color:#FFFFFF">${esc(initials(person.name))}</span>`;
 }
 
