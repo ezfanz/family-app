@@ -55,6 +55,13 @@
         <div class="field"><label for="i-store">Store</label><input id="i-store" name="store" type="text" class="input" maxlength="60" placeholder="e.g. MUJI" list="storeList"><datalist id="storeList"></datalist></div>
         <div class="field"><label for="i-for">For who</label><input id="i-for" name="for_whom" type="text" class="input" maxlength="80" placeholder="e.g. Mak" list="forList"><datalist id="forList"></datalist></div>
       </div>
+      <div class="field"><label for="i-category">Category</label>
+        <select id="i-category" name="category" class="input">
+          @foreach (\App\Enums\ShoppingCategory::cases() as $category)
+            <option value="{{ $category->value }}">{{ $category->label() }}</option>
+          @endforeach
+        </select>
+      </div>
       <div class="field"><label for="i-details">Details<span class="hint">Colour, size or code</span></label><input id="i-details" name="details" type="text" class="input" maxlength="160"></div>
       <div class="grid2">
         <div class="field"><label for="i-qty">Quantity</label><input id="i-qty" name="qty" type="number" min="1" max="999" step="1" inputmode="numeric" class="input tnum"></div>

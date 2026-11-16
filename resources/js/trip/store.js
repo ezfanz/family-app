@@ -32,8 +32,11 @@ export const UI = {
     shopSel: null,
     /** Shopping list filter by who an item is for: 'all', a name key, or '__none__'. */
     forWho: 'all',
-    /** Shopping: 'list' or 'receipts' (tax refunds). */
-    shopTab: 'list',
+    /** Shopping: 'overview', 'list' or 'receipts' (tax refunds). */
+    shopTab: 'overview',
+    /** Overview: 'all' (owner only) or a user id, and the selected trip day (null = latest with spending). */
+    ovWho: 'all',
+    ovDay: null,
     /** Receipts filter chip: 'all', 'eligible', 'customs_confirmed', 'refunded', 'not_eligible'. */
     receiptFilter: 'all',
     /** Itinerary: 'all' or a city name; the day strip only shows that city's days. */

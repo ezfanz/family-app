@@ -183,6 +183,7 @@ export function openItemForm(id, forUserId = null) {
     itemListOwner = listOwner;
     f.name.value = it.name;
     f.for_whom.value = it.for_whom || '';
+    f.category.value = it.category || 'other';
     f.store.value = it.store || '';
     f.details.value = it.details || '';
     f.link.value = it.link || '';
@@ -215,6 +216,7 @@ function submitItem(e) {
         store: f.store.value.trim().slice(0, 60) || null,
         details: f.details.value.trim().slice(0, 160) || null,
         for_whom: f.for_whom.value.trim().slice(0, 80) || null,
+        category: f.category.value || 'other',
         link: f.link.value.trim().slice(0, 500) || null,
         notes: f.notes.value.trim().slice(0, 1000) || null,
         qty: Math.min(999, Math.max(1, Math.round(Number(f.qty.value) || 1))),

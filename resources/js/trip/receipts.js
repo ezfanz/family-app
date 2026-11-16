@@ -4,16 +4,17 @@
  * expect back. Refunds never change the shopping Balance (budget − spent).
  */
 
-import { S, UI, canManageShoppingOf } from './store.js';
+import { S, UI, canManageShoppingOf, isOwner } from './store.js';
 import { $, esc, yen, rm, fmtDate, weekday, toast, uuid } from './util.js';
 import { apiUrl } from './api.js';
 import { write } from './writer.js';
-import { rate, selectedShopper, avatar, displayName, ROLE_LABEL } from './shopping.js';
+import { rate, selectedShopper, avatar, displayName, ROLE_LABEL, renderShop } from './shopping.js';
 import * as tax from './taxcalc.js';
 import { queuePhoto, flushPhotos, localPhotoUrl, waitingReceiptIds, onPhotosChanged, restoreLocalUrls } from './photo-queue.js';
 import { openCamera } from './camera.js';
 import { openReview, bindReview } from './receipt-review.js';
 import { openAirport, bindDeparture } from './departure.js';
+import { renderOverview, bindOverview } from './overview.js';
 
 /** Receipts with a photo still on this phone, waiting to upload. */
 let waitingUpload = new Set();
@@ -253,11 +254,11 @@ export function renderReceipts() {
 
 /** Switch the Shopping page between the list and receipts. */
 export function renderShopTab() {
-    const receiptsTab = UI.shopTab === 'receipts';
     $('v-shopping').dataset.tab = UI.shopTab;
     document.querySelectorAll('[data-shop-tab]').forEach((b) => b.setAttribute('aria-current', b.dataset.shopTab === UI.shopTab ? 'page' : 'false'));
-    if (!receiptsTab) $('shopLede').textContent = 'Barang kirim for family back home';
-    if (receiptsTab) renderReceipts();
+    if (UI.shopTab === 'overview') renderOverview();
+    else if (UI.shopTab === 'receipts') renderReceipts();
+    else $('shopLede').textContent = 'Barang kirim for family back home';
 }
 
 let markingId = null;
@@ -346,6 +347,14 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
     restoreLocalUrls();
     bindReview({ onChange: () => { renderReceipts(); uploadWaitingPhotos(); } });
     bindDeparture({ onChange: () => { if (UI.view === 'shopping') renderReceipts(); } });
+    // Overview tiles open List or Receipts for the person being shown.
+    bindOverview({
+        onGo: (tab, userId) => {
+            UI.shopTab = tab;
+            if (isOwner()) UI.shopSel = userId ?? 'all';
+            renderShop();
+        },
+    });
     window.addEventListener('online', () => uploadWaitingPhotos());
 
     $('v-shopping').addEventListener('click', (e) => {

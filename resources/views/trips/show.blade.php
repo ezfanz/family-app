@@ -78,8 +78,9 @@
       </div>
 
       <div class="view-seg" role="group" aria-label="Shopping view">
-        <button type="button" data-shop-tab="list" aria-current="page"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg>List</button>
-        <button type="button" data-shop-tab="receipts" aria-current="false"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Receipts</button>
+        <button type="button" data-shop-tab="overview" aria-current="page"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Overview</button>
+        <button type="button" data-shop-tab="list" aria-current="false"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>List</button>
+        <button type="button" data-shop-tab="receipts" aria-current="false"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Receipts</button>
       </div>
 
       {{-- Yen to Ringgit converter (collapsed by default), rate from Bank Negara Malaysia --}}
@@ -152,6 +153,7 @@
         </form>
       </details>
 
+      @include('trips.partials.overview')
       @include('trips.partials.receipts')
 
       {{-- Everyone (owner only) --}}

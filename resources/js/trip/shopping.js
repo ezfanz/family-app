@@ -539,6 +539,8 @@ export function bindShopping() {
         // The box is the price for one; the stored amount is the total for the quantity.
         const each = Math.max(0, Math.round(Number(e.target.value.replace(/[^0-9]/g, '')) || 0));
         item.actual_yen = each ? Math.min(10_000_000, each * (Number(item.qty) || 1)) : null;
+        // Same rule as the server: an item counts towards the day Paid ¥ was first entered.
+        if (item.actual_yen != null && !item.paid_at) item.paid_at = new Date().toISOString();
         const row = e.target.closest('li');
         if (each > 0 && !item.is_bought) {
             item.is_bought = true;

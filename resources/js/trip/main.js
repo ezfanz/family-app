@@ -13,6 +13,7 @@ import { showLoader } from './loader.js';
 import { bindImport } from './importer.js';
 import { bindReceipts, uploadWaitingPhotos } from './receipts.js';
 import { bindCamera } from './camera.js';
+import { resetOverview } from './overview.js';
 import { loadFx } from './fx.js';
 import { setWriterHooks } from './writer.js';
 import { net, initSync, loadCache, saveCache, clearTripStorage, flushQueue, queueLength, startPolling } from './sync.js';
@@ -90,6 +91,8 @@ function route() {
     UI.view = VIEWS[hash] ? hash : 'plan';
     if (UI.view === 'shopping' && previous !== 'shopping') {
         resetShopperToMe();
+        UI.shopTab = 'overview';
+        resetOverview();
         loadFx();
     }
     Object.entries(VIEWS).forEach(([view, id]) => $(id).classList.toggle('hidden', view !== UI.view));
