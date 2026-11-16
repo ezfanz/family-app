@@ -75,7 +75,7 @@ class ShoppingItemController extends Controller
      */
     private static function attributesFrom(array $input): array
     {
-        $attributes = Arr::only($input, ['name', 'store', 'details', 'for_whom', 'link', 'notes', 'qty', 'estimated_yen', 'actual_yen', 'is_bought']);
+        $attributes = Arr::only($input, ['name', 'store', 'details', 'for_whom', 'category', 'link', 'notes', 'qty', 'estimated_yen', 'actual_yen', 'is_bought']);
 
         foreach (['store', 'details', 'for_whom', 'link', 'notes'] as $optional) {
             if (array_key_exists($optional, $attributes) && $attributes[$optional] === '') {

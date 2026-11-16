@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ShoppingCategory;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreShoppingItemRequest extends FormRequest
 {
@@ -47,6 +49,7 @@ class StoreShoppingItemRequest extends FormRequest
             'store' => ['sometimes', 'nullable', 'string', 'max:60'],
             'details' => ['sometimes', 'nullable', 'string', 'max:160'],
             'for_whom' => ['sometimes', 'nullable', 'string', 'max:80'],
+            'category' => ['sometimes', Rule::enum(ShoppingCategory::class)],
             'link' => ['sometimes', 'nullable', 'string', 'max:500', 'url:http,https'],
             'notes' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'qty' => ['sometimes', 'integer', 'min:1', 'max:999'],

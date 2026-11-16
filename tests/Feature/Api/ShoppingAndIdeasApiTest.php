@@ -13,6 +13,34 @@ class ShoppingAndIdeasApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_items_default_to_other_and_take_a_category(): void
+    {
+        ['editor' => $editor, 'item' => $item] = $this->tripFixture();
+
+        $this->assertSame('other', $item->fresh()->category->value);
+
+        $this->actingAs($editor)->patchJson("/api/shopping-items/{$item->id}", ['category' => 'snacks_food'])
+            ->assertOk()
+            ->assertJsonPath('data.category', 'snacks_food');
+        $this->actingAs($editor)->patchJson("/api/shopping-items/{$item->id}", ['category' => 'cars'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('category');
+    }
+
+    public function test_the_paid_date_is_the_first_time_paid_is_entered(): void
+    {
+        ['editor' => $editor, 'item' => $item] = $this->tripFixture();
+        $this->assertNull($item->paid_at);
+
+        $this->travelTo('2026-11-22 03:00:00');
+        $this->actingAs($editor)->patchJson("/api/shopping-items/{$item->id}", ['actual_yen' => 2000])
+            ->assertJsonPath('data.paid_at', '2026-11-22T03:00:00+00:00');
+
+        $this->travelTo('2026-11-25 03:00:00');
+        $this->actingAs($editor)->patchJson("/api/shopping-items/{$item->id}", ['actual_yen' => 2400])
+            ->assertJsonPath('data.paid_at', '2026-11-22T03:00:00+00:00');
+    }
+
     public function test_members_manage_their_own_shopping_list(): void
     {
         ['viewer' => $viewer, 'trip' => $trip] = $this->tripFixture();

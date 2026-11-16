@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ShoppingCategory;
 use App\Enums\TripRole;
 use Database\Factories\ShoppingItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'store', 'details', 'for_whom', 'link', 'notes', 'qty', 'estimated_yen', 'actual_yen', 'is_bought', 'sort_order'])]
+#[Fillable(['name', 'store', 'details', 'for_whom', 'category', 'link', 'notes', 'qty', 'estimated_yen', 'actual_yen', 'is_bought', 'sort_order'])]
 class ShoppingItem extends Model
 {
     /** @use HasFactory<ShoppingItemFactory> */
@@ -29,7 +30,20 @@ class ShoppingItem extends Model
         'estimated_yen' => 0,
         'is_bought' => false,
         'sort_order' => 0,
+        'category' => 'other',
     ];
+
+    /**
+     * Stamp the day an item was paid for: the first time Paid ¥ gets a value.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (ShoppingItem $item): void {
+            if ($item->actual_yen !== null && $item->paid_at === null) {
+                $item->paid_at = now();
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -43,6 +57,8 @@ class ShoppingItem extends Model
             'estimated_yen' => 'integer',
             'actual_yen' => 'integer',
             'is_bought' => 'boolean',
+            'category' => ShoppingCategory::class,
+            'paid_at' => 'datetime',
         ];
     }
 

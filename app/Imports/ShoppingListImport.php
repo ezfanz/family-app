@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Enums\ShoppingCategory;
 use App\Enums\TripRole;
 use App\Models\ShoppingItem;
 use App\Models\Trip;
@@ -45,6 +46,7 @@ class ShoppingListImport
         'price each (¥)' => 'est_price_yen',
         'for (who)' => 'for_who',
         'for who' => 'for_who',
+        'category' => 'category',
         'buyer' => 'buyer',
         'link' => 'link',
         'notes' => 'notes',
@@ -237,6 +239,9 @@ class ShoppingListImport
                 'notes' => $this->limit($values['notes'] ?? '', 1000, 'Notes'),
             ], fn ($v) => $v !== null && $v !== '');
 
+            if (trim((string) ($values['category'] ?? '')) !== '') {
+                $attributes['category'] = ShoppingCategory::fromText($values['category'])->value;
+            }
             if ($qty !== null) {
                 $attributes['qty'] = $qty;
             }
