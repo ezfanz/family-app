@@ -1,0 +1,87 @@
+@php($close = '<svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>')
+
+{{-- ---------- Add / edit a stop ---------- --}}
+<dialog class="sheet" id="actDlg" aria-labelledby="actDlgTitle">
+  <form id="actForm" novalidate>
+    <div class="grab" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="actDlgTitle">Add a stop</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close">{!! $close !!}</button>
+    </div>
+    <div class="sheet-body form">
+      <div class="split">
+        <div class="field"><label for="f-day">Day</label><select id="f-day" name="day" class="input"></select></div>
+        <div class="field"><label for="f-time">Time</label><input id="f-time" name="time" type="time" class="input tnum" style="font-weight:700" required></div>
+      </div>
+      <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" type="text" class="input" maxlength="160" placeholder="e.g. Osaka Castle" required></div>
+      <div class="field"><label for="f-places">Places<span class="hint">One per line. Each becomes a Google Maps link.</span></label><textarea id="f-places" name="places" rows="3" class="input"></textarea></div>
+      <div class="field"><label for="f-transport">Getting there</label><textarea id="f-transport" name="transport" rows="2" class="input" maxlength="200" placeholder="e.g. Midosuji Line → Umeda"></textarea></div>
+      <fieldset class="plain field"><legend>Meal</legend>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="meal" value="" checked><span>None</span></label>
+          <label class="pill"><input type="radio" name="meal" value="Breakfast"><span>Breakfast</span></label>
+          <label class="pill"><input type="radio" name="meal" value="Lunch"><span>Lunch</span></label>
+          <label class="pill"><input type="radio" name="meal" value="Dinner"><span>Dinner</span></label>
+          <label class="pill"><input type="radio" name="meal" value="Snack"><span>Snack</span></label>
+        </div>
+      </fieldset>
+      <div class="field"><label for="f-ticket">Ticket<span class="hint">Where it’s booked, e.g. Klook. Shows an amber tag.</span></label><input id="f-ticket" name="ticket" type="text" class="input" maxlength="40"></div>
+      <label class="check-row" for="f-halal"><input id="f-halal" name="halal" type="checkbox"><span><strong>Halal</strong><small>Shows a green Halal tag</small></span></label>
+      <div class="field"><label for="f-notes">Notes<span class="hint">Everyone in the group can see these.</span></label><textarea id="f-notes" name="notes" rows="3" class="input" maxlength="1000" placeholder="Opening hours, what to order, meeting point"></textarea></div>
+      <div class="danger-row"><button type="button" class="btn danger compact" id="actDel">Delete this stop</button></div>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn secondary" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save stop</button>
+    </div>
+  </form>
+</dialog>
+
+{{-- ---------- Add / edit a shopping item ---------- --}}
+<dialog class="sheet" id="itemDlg" aria-labelledby="itemDlgTitle">
+  <form id="itemForm" novalidate>
+    <div class="grab" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="itemDlgTitle">Add an item</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close">{!! $close !!}</button>
+    </div>
+    <div class="sheet-body form">
+      <div class="field"><label for="i-name">Item</label><input id="i-name" name="name" type="text" class="input" maxlength="160" placeholder="e.g. Tokyo Banana, 8 pcs" required></div>
+      <div class="field"><label for="i-for">For who<span class="hint">Optional, e.g. For Mak</span></label><input id="i-for" name="for_whom" type="text" class="input" maxlength="80"></div>
+      <div class="grid2">
+        <div class="field"><label for="i-qty">Quantity</label><input id="i-qty" name="qty" type="number" min="1" max="999" step="1" inputmode="numeric" class="input tnum"></div>
+        <div class="field"><label for="i-est">Estimated total ¥</label><input id="i-est" name="est" type="number" min="0" step="10" inputmode="numeric" class="input tnum"></div>
+      </div>
+      <p class="muted" id="itemRm" style="margin:-10px 0 0"></p>
+      <div class="danger-row"><button type="button" class="btn danger compact" id="itemDel">Delete this item</button></div>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn secondary" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save item</button>
+    </div>
+  </form>
+</dialog>
+
+{{-- ---------- Add / edit an idea ---------- --}}
+<dialog class="sheet" id="ideaDlg" aria-labelledby="ideaDlgTitle">
+  <form id="ideaForm" novalidate>
+    <div class="grab" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="ideaDlgTitle">Add an idea</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close">{!! $close !!}</button>
+    </div>
+    <div class="sheet-body form">
+      <div class="field"><label for="d-name">Place</label><input id="d-name" name="name" type="text" class="input" maxlength="160" placeholder="e.g. Fushimi Inari Taisha" required></div>
+      <div class="grid2">
+        <div class="field"><label for="d-region">Group</label><input id="d-region" name="region" type="text" class="input" maxlength="32" list="regionList" placeholder="e.g. Kansai" required><datalist id="regionList"></datalist></div>
+        <div class="field"><label for="d-city">City</label><select id="d-city" name="city" class="input"><option value="">Not set</option><option>Osaka</option><option>Nara</option><option>Kyoto</option><option>Tokyo</option><option>Fuji</option></select></div>
+      </div>
+      <div class="field"><label for="d-area">Area<span class="hint">Optional, e.g. Fushimi</span></label><input id="d-area" name="area" type="text" class="input" maxlength="80"></div>
+      <div class="danger-row"><button type="button" class="btn danger compact" id="ideaDel">Delete this idea</button></div>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn secondary" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save idea</button>
+    </div>
+  </form>
+</dialog>

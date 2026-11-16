@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Enums\TripRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\JoinTripRequest;
+use App\Http\Requests\StoreTripRequest;
 use App\Models\Trip;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,6 +33,26 @@ class TripController extends Controller
         return view('trips.index', [
             'trips' => $request->user()->trips()->orderBy('start_date')->get(),
         ]);
+    }
+
+    /**
+     * Form for starting a new trip.
+     */
+    public function create(): View
+    {
+        return view('trips.create');
+    }
+
+    /**
+     * Start a new trip with the user as owner.
+     */
+    public function store(StoreTripRequest $request): RedirectResponse
+    {
+        $trip = Trip::startFor($request->user(), $request->validated());
+
+        return redirect()
+            ->route('trips.show', $trip)
+            ->with('status', 'Trip created. Share the join code from the Group page.');
     }
 
     /**

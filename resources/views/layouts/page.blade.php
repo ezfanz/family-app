@@ -1,25 +1,39 @@
 @extends('layouts.app')
 
 @section('body')
-<header class="top"><div class="top-in">
-  <div class="title-row">
-    <h1>@yield('heading', 'Japan Trip')</h1>
-    @auth
-      <nav class="top-nav" aria-label="Account">
-        <a href="{{ route('trips.index') }}">Trips</a>
-        <form method="POST" action="{{ route('logout') }}">
-          @csrf
-          <button type="submit">Log out</button>
-        </form>
-      </nav>
-    @endauth
-  </div>
-</div></header>
-
-<main class="page">
-  @if (session('status'))
-    <div class="flash" role="status">{{ session('status') }}</div>
+<div class="shell no-nav">
+  @hasSection('back')
+    <header class="back-header">
+      <a class="back-link" href="@yield('back')"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>@yield('back-label', 'Back')</a>
+    </header>
+  @else
+    <header class="simple-header">
+      <span class="brand">Tabi</span>
+      <div class="aside">
+        @auth
+          @hasSection('aside')
+            @yield('aside')
+          @else
+            <a href="{{ route('trips.index') }}">Trips</a>
+          @endif
+          <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit">Log out</button>
+          </form>
+        @else
+          @yield('aside')
+        @endauth
+      </div>
+    </header>
   @endif
-  @yield('content')
-</main>
+
+  <main class="page">
+    <div class="narrow">
+      @if (session('status'))
+        <div class="flash" role="status">{{ session('status') }}</div>
+      @endif
+      @yield('content')
+    </div>
+  </main>
+</div>
 @endsection

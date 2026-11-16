@@ -19,6 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [TripController::class, 'home'])->name('home');
     Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
     Route::post('/trips/join', [TripController::class, 'join'])->name('trips.join')->middleware('throttle:10,1');
+    Route::get('/trips/create', [TripController::class, 'create'])->name('trips.create');
+    Route::post('/trips', [TripController::class, 'store'])->name('trips.store')->middleware('throttle:10,1');
     Route::get('/trips/{trip}', [TripController::class, 'show'])->name('trips.show')->can('view', 'trip');
 
     Route::get('/trips/{trip}/members', [TripMemberController::class, 'index'])
