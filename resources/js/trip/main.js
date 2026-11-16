@@ -3,7 +3,8 @@
 import { api, setApiBase } from './api.js';
 import { S, UI, canEdit, loadFull, mergeChanges } from './store.js';
 import { $, ICON, toast } from './util.js';
-import { renderHeader, renderPlan, bindItinerary, setActFormOpener, defaultDayId, scrollDayIntoView } from './itinerary.js';
+import { renderHeader, renderPlan, bindItinerary, setActFormOpener, setAirportOpener, defaultDayId, scrollDayIntoView } from './itinerary.js';
+import { openAirport } from './departure.js';
 import { renderShop, bindShopping, setItemFormOpener, resetShopperToMe } from './shopping.js';
 import { renderIdeas, bindIdeas, setIdeaHandlers } from './ideas.js';
 import { bindSheets, openActForm, openItemForm, openIdeaForm, planIdea } from './sheets.js';
@@ -178,6 +179,7 @@ export async function bootTrip(root) {
     S.me = Number(root.dataset.userId);
 
     setActFormOpener(openActForm);
+    setAirportOpener(openAirport);
     setItemFormOpener(openItemForm);
     setIdeaHandlers({ openIdeaForm, planIdea, rerender: render });
     bindItinerary(render);

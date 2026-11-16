@@ -234,6 +234,7 @@ class ReceiptApiTest extends TestCase
         $stop = Activity::where('system_key', 'tax_refund')->sole();
         $this->assertSame($trip->days()->reorder('day_number', 'desc')->first()->id, $stop->day_id);
         $this->assertSame('09:00', $stop->timeLabel());
+        $this->actingAs($user)->getJson("/api/trips/{$trip->id}")->assertJsonPath('days.13.activities.0.system_key', 'tax_refund');
 
         $stop->delete();
         $trip->ensureTaxRefundStop();

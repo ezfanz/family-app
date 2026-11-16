@@ -32,6 +32,7 @@ class ActivityResource extends JsonResource
             'places' => $this->places ?? [],
             'is_halal' => $this->is_halal,
             'status' => $this->status->value,
+            'system_key' => $this->system_key,
             'sort_order' => $this->sort_order,
             'updated_at' => $this->updated_at?->toIso8601String(),
             'deleted_at' => $this->deleted_at?->toIso8601String(),

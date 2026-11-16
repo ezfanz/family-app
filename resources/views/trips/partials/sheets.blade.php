@@ -204,6 +204,38 @@
   </form>
 </dialog>
 
+{{-- ---------- Departure day: tax refund at the airport ---------- --}}
+<dialog class="sheet tall" id="airDlg" aria-labelledby="airTitle">
+  <div class="grab" aria-hidden="true"></div>
+  <div class="sheet-head">
+    <div><p class="muted tnum air-day" id="airDay"></p><h2 id="airTitle">Tax refund at the airport</h2></div>
+    <button type="button" class="icon-btn" data-close aria-label="Close">{!! $close !!}</button>
+  </div>
+  <div class="sheet-body">
+    <div class="air-alert">
+      <svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>
+      <div><div class="air-alert-title">Get there 3 hours early</div><p>Customs comes first. Skip it and the stores can’t refund the tax.</p></div>
+    </div>
+
+    <h3 class="air-h">Before you queue</h3>
+    <ul class="air-steps" id="airSteps"></ul>
+
+    <div class="row-between air-h-row">
+      <h3 class="air-h" style="margin:0">At customs</h3>
+      <span class="muted tnum" id="airProgress"></span>
+    </div>
+    <div class="air-bar" aria-hidden="true"><div id="airBar"></div></div>
+    <p class="muted air-how">Scan your passport at the customs kiosk (or use Visit Japan Web). It confirms all your tax-free purchases at once.</p>
+    <ul class="air-list" id="airReceipts"></ul>
+    <p class="muted air-none hidden" id="airNone">No eligible receipts yet. Snap receipts under Shopping → Receipts as you shop.</p>
+
+    <p class="rc-note"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>After customs, each store sends the refund to the card or method you chose when buying. Track it under Receipts.</span></p>
+  </div>
+  <div class="sheet-foot rv-foot">
+    <button type="button" class="btn primary" id="airDone">I’ve done customs</button>
+  </div>
+</dialog>
+
 {{-- ---------- Mark a tax refund as received ---------- --}}
 <dialog class="sheet" id="refundDlg" aria-labelledby="refundDlgTitle">
   <form id="refundForm" novalidate>

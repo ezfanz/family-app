@@ -725,3 +725,29 @@ dialog.sheet.tall { height: calc(100dvh - var(--safe-top) - 24px); }
 .rv-expected strong span { font-size: 14px; font-weight: 700; color: var(--stone); }
 .rv-pick-list .check-row { border: 0; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 8px 0; background: none; }
 .rv-pick-list .check-row small { display: block; font-size: 13px; font-weight: 500; color: var(--stone); }
+
+/* ---------- departure: tax refund at the airport ---------- */
+.air-day { margin: 0; font-size: 13px; }
+.air-alert { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--hair); border-left: 4px solid var(--now); }
+.air-alert svg { flex: none; color: var(--now-text); margin-top: 1px; }
+.air-alert-title { font-size: 16px; font-weight: 900; }
+.air-alert p { margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: var(--stone); }
+.air-h { margin: 24px 0 8px; font-size: 20px; font-weight: 900; }
+.air-h-row { margin-top: 24px; }
+.air-steps, .air-list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+.air-steps li + li, .air-list li + li { border-top: 1px solid var(--hair); }
+.air-step { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 14px; cursor: pointer; }
+.air-step input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--done); }
+.air-step > span { flex: 1; min-width: 0; }
+.air-step-title { display: block; font-size: 16px; font-weight: 700; }
+.air-step.done .air-step-title { color: var(--stone); text-decoration: line-through; }
+.air-step-sub { display: block; font-size: 13px; font-weight: 500; color: var(--stone); margin-top: 2px; }
+.air-bar { height: 6px; margin-top: 10px; border-radius: 3px; background: var(--hair); overflow: hidden; }
+.air-bar div { height: 6px; width: 0; background: var(--done); transition: width .3s; }
+.air-how { margin: 10px 0; font-size: 13px; line-height: 1.5; }
+.air-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 10px 14px; }
+.air-store { font-size: 15px; font-weight: 700; overflow-wrap: anywhere; }
+.air-meta { font-size: 13px; margin-top: 2px; }
+.air-state { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: var(--soft); color: var(--stone); }
+.air-state.done { background: color-mix(in srgb, var(--done) 14%, var(--surface)); color: var(--halal-text); }
+.air-none { margin: 10px 0 0; }

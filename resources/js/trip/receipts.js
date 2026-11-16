@@ -13,6 +13,7 @@ import * as tax from './taxcalc.js';
 import { queuePhoto, flushPhotos, localPhotoUrl, waitingReceiptIds, onPhotosChanged, restoreLocalUrls } from './photo-queue.js';
 import { openCamera } from './camera.js';
 import { openReview, bindReview } from './receipt-review.js';
+import { openAirport, bindDeparture } from './departure.js';
 
 /** Receipts with a photo still on this phone, waiting to upload. */
 let waitingUpload = new Set();
@@ -276,6 +277,7 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
     });
     restoreLocalUrls();
     bindReview({ onChange: () => { renderReceipts(); uploadWaitingPhotos(); } });
+    bindDeparture({ onChange: () => { if (UI.view === 'shopping') renderReceipts(); } });
     window.addEventListener('online', () => uploadWaitingPhotos());
 
     $('v-shopping').addEventListener('click', (e) => {
@@ -310,7 +312,7 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
     });
 
     $('rcSnap').addEventListener('click', () => (onSnap ? onSnap() : openCamera((blobs) => saveSnapped(blobs))));
-    $('rcAirport').addEventListener('click', () => (onAirport ? onAirport() : toast('Airport checklist comes in a later step.')));
+    $('rcAirport').addEventListener('click', () => (onAirport ? onAirport() : openAirport()));
 
     $('refundForm').addEventListener('submit', (e) => {
         e.preventDefault();

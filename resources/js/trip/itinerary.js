@@ -13,6 +13,12 @@ export function setActFormOpener(fn) {
     openActForm = fn;
 }
 
+let openAirport = () => {};
+/** The tax refund stop on the last day opens the airport checklist. */
+export function setAirportOpener(fn) {
+    openAirport = fn;
+}
+
 const tz = () => S.trip?.timezone || 'Asia/Tokyo';
 
 export function todayDay() {
@@ -160,6 +166,7 @@ function stopHtml(a, day, nn) {
     if (a.is_halal) tags.push('<span class="tag halal">Halal</span>');
     if (a.ticket) tags.push(`<span class="tag ticket">${esc(a.ticket)}</span>`);
     if (note.trim()) tags.push('<span class="tag note">Has note</span>');
+    if (a.system_key === 'tax_refund') tags.push('<span class="tag ticket">Tax refund</span>');
     if (isQueued(`act:${a.id}`) || isQueued(`status:${a.id}`) || isQueued(`note:${a.id}`)) tags.push('<span class="tag sync">Waiting to sync</span>');
 
     let detail = '';
@@ -170,6 +177,7 @@ function stopHtml(a, day, nn) {
             ${a.transport ? `<div><span class="k">Getting there</span><p>${esc(a.transport)}</p></div>` : ''}
             ${a.notes ? `<div><span class="k">Notes</span><p>${esc(a.notes)}</p></div>` : ''}
             ${places ? `<div><span class="k">Places</span><div class="places">${places}</div></div>` : ''}
+            ${a.system_key === 'tax_refund' ? '<button type="button" class="btn primary compact" data-act="airport">Open airport checklist</button>' : ''}
             <fieldset class="plain"><legend class="k">Status</legend><div class="seg">${segs}</div></fieldset>
             <div><label class="k" for="note-${a.id}">My note</label><textarea id="note-${a.id}" class="note-input" data-note="${a.id}" rows="2" maxlength="1000" placeholder="Only you can see this">${esc(note)}</textarea></div>
             ${canEdit() ? '<button type="button" class="text-link" data-act="edit">Edit or delete this stop</button>' : ''}
@@ -301,6 +309,8 @@ export function bindItinerary(rerender) {
             setStatus(id, el.dataset.v, rerender);
         } else if (act === 'edit') {
             openActForm(id);
+        } else if (act === 'airport') {
+            openAirport();
         }
     });
 
