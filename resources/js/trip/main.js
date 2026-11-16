@@ -1,7 +1,7 @@
 /* Trip app: boots the itinerary, shopping and ideas screens on /trips/{id}. */
 
 import { api, setApiBase } from './api.js';
-import { S, UI, canEdit, loadFull } from './store.js';
+import { S, UI, canEdit, loadFull, mergeChanges } from './store.js';
 import { $, ICON, toast } from './util.js';
 import { renderHeader, renderPlan, bindItinerary, setActFormOpener, defaultDayId, scrollDayIntoView } from './itinerary.js';
 import { renderShop, bindShopping, setItemFormOpener } from './shopping.js';
@@ -63,6 +63,47 @@ function route() {
     if (UI.view === 'plan') scrollDayIntoView();
 }
 
+let refreshing = null;
+
+/**
+ * Pull changes made by others since the last sync and merge them in.
+ * Falls back to a full reload when there is no sync cursor yet.
+ *
+ * @returns {Promise<boolean>} true when the server answered
+ */
+export function refreshTrip() {
+    if (refreshing) return refreshing;
+    const tripId = $('app').dataset.tripId;
+    refreshing = (async () => {
+        try {
+            if (S.serverTime) {
+                mergeChanges(await api('GET', `/trips/${tripId}/changes?since=${encodeURIComponent(S.serverTime)}`));
+            } else {
+                loadFull(await api('GET', `/trips/${tripId}`));
+            }
+            syncStatus();
+            safeRender();
+            return true;
+        } catch {
+            setSync('offline', 'Offline, showing saved');
+            return false;
+        } finally {
+            refreshing = null;
+        }
+    })();
+    return refreshing;
+}
+
+function bindRefreshButton() {
+    const button = $('refreshBtn');
+    button.addEventListener('click', async () => {
+        button.setAttribute('aria-busy', 'true');
+        const ok = await refreshTrip();
+        button.removeAttribute('aria-busy');
+        toast(ok ? 'Up to date.' : 'Couldn’t reach the server. Showing what you have.');
+    });
+}
+
 function showLoadError(message) {
     $('dayTitle').textContent = 'Couldn’t load the trip';
     $('dayMeta').textContent = message;
@@ -80,6 +121,7 @@ export async function bootTrip(root, { beforeLoad, afterLoad } = {}) {
     bindIdeas();
     bindSheets(render);
     bindDayStrip();
+    bindRefreshButton();
 
     document.addEventListener('focusout', () => {
         if (pendingRender) {

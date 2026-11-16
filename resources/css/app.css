@@ -124,7 +124,12 @@ a { color: var(--action); }
 .dayhead .meta { margin: 4px 0 0; font-size: 15px; font-weight: 500; color: var(--stone); }
 .dayhead .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .pill-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--hair); border-radius: 999px; background: var(--surface); color: var(--action); font-size: 15px; font-weight: 700; white-space: nowrap; text-decoration: none; }
+.pill-btn.round { width: 44px; padding: 0; justify-content: center; }
+.pill-btn.round[aria-busy="true"] svg { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .pill-btn.solid { background: var(--action); border-color: var(--action); color: var(--on-action); }
+.dayhead > div:first-child { min-width: 0; }
+@media (max-width: 480px) { .wide-only { display: none; } .dayhead .actions { flex-wrap: nowrap; } }
 @media (max-width: 380px) { .dayhead { flex-wrap: wrap; align-items: flex-start; } .dayhead h1 { font-size: 24px; } }
 
 /* ---------- rail timeline ---------- */
