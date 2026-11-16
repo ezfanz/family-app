@@ -31,7 +31,9 @@ class ReceiptPhotoController extends Controller
         $path = $file->storeAs(
             "trips/{$receipt->trip_id}/{$receipt->id}",
             "{$part}-".Str::random(16).'.'.$file->extension(),
-            ['disk' => config('tax_refund.disk'), 'visibility' => 'private'],
+            // Privacy comes from the disk/bucket itself: per-file ACLs are rejected by
+            // Cloud Object Storage (R2), so none are sent.
+            ['disk' => config('tax_refund.disk')],
         );
 
         $previous = $receipt->photos()->where('part', $part)->first();
