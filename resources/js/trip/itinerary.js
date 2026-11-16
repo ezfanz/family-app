@@ -3,6 +3,7 @@
 import { S, UI, canEdit, dayActs, allActs, dayById } from './store.js';
 import { $, esc, fmtDate, weekday, zonedNow, toMins, daysBetween, cityColor, cityLetter, mapUrl, ICON, debounceKeyed } from './util.js';
 import { write } from './writer.js';
+import { isQueued } from './sync.js';
 
 const WORD = { pending: 'Not done', done: 'Done', skipped: 'Skipped' };
 const NEXT = { pending: 'done', done: 'skipped', skipped: 'pending' };
@@ -116,7 +117,7 @@ function stopHtml(a, day, nn) {
     if (a.is_halal) tags.push('<span class="tag halal">Halal</span>');
     if (a.ticket) tags.push(`<span class="tag ticket">${esc(a.ticket)}</span>`);
     if (note.trim()) tags.push('<span class="tag note">Has note</span>');
-    if (S.pending.has(`act:${a.id}`) || S.pending.has(`status:${a.id}`)) tags.push('<span class="tag sync">Waiting to sync</span>');
+    if (isQueued(`act:${a.id}`) || isQueued(`status:${a.id}`) || isQueued(`note:${a.id}`)) tags.push('<span class="tag sync">Waiting to sync</span>');
 
     let detail = '';
     if (open) {

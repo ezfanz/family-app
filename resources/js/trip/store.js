@@ -22,9 +22,12 @@ export const UI = {
 
 export const canEdit = () => S.role === 'owner' || S.role === 'editor';
 
+/** Pending-write key prefixes that protect each record type from being overwritten. */
+const GUARDS = { act: ['act', 'status'], item: ['item'], idea: ['idea'] };
+
 function upsertAll(map, list, key) {
     for (const record of list || []) {
-        if (S.pending.has(`${key}:${record.id}`)) {
+        if (GUARDS[key].some((prefix) => S.pending.has(`${prefix}:${record.id}`))) {
             continue;
         }
         if (record.deleted_at) {

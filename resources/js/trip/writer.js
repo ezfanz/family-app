@@ -5,6 +5,9 @@ import { S } from './store.js';
 import { toast } from './util.js';
 
 const hooks = {
+    /** True when earlier writes are still queued, so this one must wait its turn. */
+    shouldQueue: () => false,
+    enqueue: () => {},
     /** Replaced by the offline queue: return true when the write was queued for retry. */
     onRetryable: () => false,
     onChange: () => {},
@@ -31,6 +34,11 @@ export function clearPending(key) {
  * @param {{key: string, method: string, path: string, body?: object, revert?: () => void, onSaved?: (data: any) => void}} op
  */
 export async function write(op) {
+    if (hooks.shouldQueue()) {
+        hooks.enqueue(op);
+        hooks.onChange();
+        return null;
+    }
     markPending(op.key);
     hooks.onChange();
     try {
