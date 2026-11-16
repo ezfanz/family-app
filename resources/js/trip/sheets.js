@@ -1,7 +1,7 @@
 /* Bottom sheets for adding and editing stops, shopping items and ideas. */
 
 import { S, UI, canEdit, canManageShoppingOf, shoppingList } from './store.js';
-import { $, fmtDate, weekday, rm, uuid, toast } from './util.js';
+import { $, esc, fmtDate, weekday, rm, uuid, toast } from './util.js';
 import { write } from './writer.js';
 import { regions, saveIdea, deleteIdeaWithUndo } from './ideas.js';
 import { googleUrl } from './shopping.js';
@@ -264,17 +264,36 @@ function deleteItem() {
 const ideaDlg = () => $('ideaDlg');
 let editingIdea = null;
 
+/** Which Ideas section a city belongs in, when that section exists. */
+const CITY_SECTION = { Osaka: 'Kansai', Nara: 'Kansai', Kyoto: 'Kansai', Tokyo: 'Tokyo', Fuji: 'Tokyo' };
+const NEW_SECTION = '__new__';
+
+function renderRegionPills(selected) {
+    const sections = regions();
+    if (selected && !sections.includes(selected)) sections.push(selected);
+    const pill = (value, label) => `<label class="pill"><input type="radio" name="region" value="${esc(value)}"${value === selected ? ' checked' : ''}><span>${esc(label)}</span></label>`;
+    $('regionPills').innerHTML = sections.map((r) => pill(r, r)).join('') + pill(NEW_SECTION, '+ New section');
+    toggleNewSection();
+}
+
+function toggleNewSection() {
+    const f = $('ideaForm').elements;
+    const isNew = f.region.value === NEW_SECTION || regions().length === 0;
+    $('d-region-new').classList.toggle('hidden', !isNew);
+    if (isNew && document.activeElement?.name === 'region') $('d-region-new').focus();
+}
+
 export function openIdeaForm(id) {
     const f = $('ideaForm').elements;
     const idea = id ? S.ideas.get(id) : { name: '', region: regions()[0] || '', city: '', area: '' };
     if (!idea) return;
     editingIdea = id;
-    $('regionList').innerHTML = regions().map((r) => `<option value="${r.replace(/"/g, '&quot;')}"></option>`).join('');
     f.name.value = idea.name;
-    f.region.value = idea.region;
     f.city.value = idea.city || '';
     f.area.value = idea.area || '';
-    [f.name, f.region].forEach((el) => el.removeAttribute('aria-invalid'));
+    $('d-region-new').value = '';
+    renderRegionPills(idea.region || (regions().length ? regions()[0] : NEW_SECTION));
+    [f.name, $('d-region-new')].forEach((el) => el.removeAttribute('aria-invalid'));
     $('ideaDlgTitle').textContent = id ? 'Edit idea' : 'Add an idea';
     resetDelete($('ideaDel'), 'Delete this idea');
     $('ideaDel').closest('.danger-row').classList.toggle('hidden', !id);
@@ -286,9 +305,10 @@ async function submitIdea(e) {
     e.preventDefault();
     const f = $('ideaForm').elements;
     const name = f.name.value.trim().slice(0, 160);
-    const region = f.region.value.trim().slice(0, 32);
+    const picked = f.region.value;
+    const region = (picked === NEW_SECTION || !picked ? $('d-region-new').value : picked).trim().slice(0, 32);
     if (!name) return invalid(f.name, 'Give the place a name.');
-    if (!region) return invalid(f.region, 'Pick a group, e.g. Kansai.');
+    if (!region) return invalid($('d-region-new'), 'Name the new section, e.g. Hokkaido.');
     const data = { name, region, city: f.city.value || null, area: f.area.value.trim().slice(0, 80) || null };
 
     if (editingIdea) {
@@ -342,5 +362,10 @@ export function bindSheets(render) {
     ['name', 'store', 'details'].forEach((field) => $('itemForm').elements[field].addEventListener('input', updateItemWebLinks));
     $('itemDel').addEventListener('click', (e) => armDelete(e.currentTarget, 'Delete this item', deleteItem));
     $('ideaForm').addEventListener('submit', submitIdea);
+    $('regionPills').addEventListener('change', toggleNewSection);
+    $('ideaForm').elements.city.addEventListener('change', (e) => {
+        const section = CITY_SECTION[e.target.value];
+        if (section && regions().includes(section)) renderRegionPills(section);
+    });
     $('ideaDel').addEventListener('click', (e) => armDelete(e.currentTarget, 'Delete this idea', deleteIdea));
 }

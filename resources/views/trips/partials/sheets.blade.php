@@ -82,10 +82,12 @@
     </div>
     <div class="sheet-body form">
       <div class="field"><label for="d-name">Place</label><input id="d-name" name="name" type="text" class="input" maxlength="160" placeholder="e.g. Fushimi Inari Taisha" required></div>
-      <div class="grid2">
-        <div class="field"><label for="d-region">Group</label><input id="d-region" name="region" type="text" class="input" maxlength="32" list="regionList" placeholder="e.g. Kansai" required><datalist id="regionList"></datalist></div>
-        <div class="field"><label for="d-city">City</label><select id="d-city" name="city" class="input"><option value="">Not set</option><option>Osaka</option><option>Nara</option><option>Kyoto</option><option>Tokyo</option><option>Fuji</option></select></div>
-      </div>
+      <div class="field"><label for="d-city">City<span class="hint">Picks the section for you</span></label><select id="d-city" name="city" class="input"><option value="">Not set</option><option>Osaka</option><option>Nara</option><option>Kyoto</option><option>Tokyo</option><option>Fuji</option></select></div>
+      <fieldset class="plain field">
+        <legend>Section<span class="hint">Where it appears on the Ideas page</span></legend>
+        <div class="pills" id="regionPills"></div>
+        <input id="d-region-new" name="region_new" type="text" class="input hidden" maxlength="32" placeholder="New section name, e.g. Hokkaido" aria-label="New section name">
+      </fieldset>
       <div class="field"><label for="d-area">Area<span class="hint">Optional, e.g. Fushimi</span></label><input id="d-area" name="area" type="text" class="input" maxlength="80"></div>
       <div class="danger-row"><button type="button" class="btn danger compact" id="ideaDel">Delete this idea</button></div>
     </div>
