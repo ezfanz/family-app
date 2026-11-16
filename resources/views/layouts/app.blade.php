@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-@php($theme = in_array(request()->cookie('theme'), ['light', 'dark'], true) ? request()->cookie('theme') : null)
+@php($theme = in_array(request()->cookie('theme'), ['light', 'dark', 'sakura'], true) ? request()->cookie('theme') : null)
 <html lang="en"@if ($theme) data-theme="{{ $theme }}"@endif>
 <head>
 <script>
   {{-- Apply the saved theme before first paint (also covers pages served offline from cache). --}}
-  try { var t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') { document.documentElement.dataset.theme = t; } else if (t === 'system') { document.documentElement.removeAttribute('data-theme'); } } catch (e) {}
+  try { var t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark' || t === 'sakura') { document.documentElement.dataset.theme = t; } else if (t === 'system') { document.documentElement.removeAttribute('data-theme'); } } catch (e) {}
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<meta name="theme-color" content="#2A3B8F">
+<meta name="theme-color" content="{{ $theme === 'sakura' ? '#C2255C' : '#2A3B8F' }}">
 <meta name="format-detection" content="telephone=no">
 <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="any">

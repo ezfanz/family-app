@@ -50,6 +50,16 @@ class AccountTest extends TestCase
             ->assertSee('<html lang="en" data-theme="light">', false);
     }
 
+    public function test_the_sakura_theme_is_applied_and_preselected(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->withUnencryptedCookie('theme', 'sakura')
+            ->get(route('account'))
+            ->assertSee('<html lang="en" data-theme="sakura">', false)
+            ->assertSee('<meta name="theme-color" content="#C2255C">', false)
+            ->assertSee('value="sakura" data-label="Sakura" checked', false);
+    }
+
     public function test_unknown_theme_values_are_ignored(): void
     {
         $this->actingAs(User::factory()->create())

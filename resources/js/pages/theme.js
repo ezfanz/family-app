@@ -1,6 +1,8 @@
-/* Appearance: System / Light / Dark. Saved in localStorage (works offline) and a cookie (no flash on load). */
+/* Appearance: System / Light / Dark / Sakura. Saved in localStorage (works offline) and a cookie (no flash on load). */
 
-const CHOICES = ['system', 'light', 'dark'];
+const CHOICES = ['system', 'light', 'dark', 'sakura'];
+/** Browser bar colour per theme (the cookie sets it on the server for the first paint). */
+const BAR_COLOUR = { sakura: '#C2255C' };
 const YEAR = 60 * 60 * 24 * 365;
 
 export function currentTheme() {
@@ -21,7 +23,8 @@ export function applyTheme(choice, { animate = true } = {}) {
         setTimeout(() => root.classList.remove('theme-anim'), 350);
     }
 
-    if (choice === 'light' || choice === 'dark') {
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', BAR_COLOUR[choice] || '#2A3B8F');
+    if (choice !== 'system' && CHOICES.includes(choice)) {
         root.dataset.theme = choice;
         document.cookie = `theme=${choice}; path=/; max-age=${YEAR}; SameSite=Lax`;
     } else {

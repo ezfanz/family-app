@@ -77,7 +77,7 @@
         <button type="button" class="pill-btn round" id="shopRefreshBtn" data-refresh="shopping" aria-label="Refresh shopping lists" title="Get the latest lists and today’s rate"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button>
       </div>
 
-      <div class="seg" role="group" aria-label="Shopping view">
+      <div class="view-seg" role="group" aria-label="Shopping view">
         <button type="button" data-shop-tab="list" aria-current="page"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg>List</button>
         <button type="button" data-shop-tab="receipts" aria-current="false"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Receipts</button>
       </div>

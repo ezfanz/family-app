@@ -29,7 +29,7 @@ class AccountController extends Controller
         return view('account', [
             'back' => $back,
             'backLabel' => $currentTripId !== null ? 'Itinerary' : 'Back',
-            'theme' => in_array($theme, ['light', 'dark'], true) ? $theme : 'system',
+            'theme' => in_array($theme, ['light', 'dark', 'sakura'], true) ? $theme : 'system',
             'user' => $request->user(),
             'trips' => $request->user()->trips()->orderBy('start_date')->get(),
             'currentTripId' => $currentTripId,

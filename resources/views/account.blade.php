@@ -38,10 +38,10 @@
   <fieldset class="plain acct-pref">
     <legend>Appearance</legend>
     <div class="seg seg-pref" role="radiogroup">
-      @foreach (['light' => 'Light', 'dark' => 'Dark', 'system' => 'Auto'] as $value => $label)
+      @foreach (['light' => 'Light', 'dark' => 'Dark', 'system' => 'Auto', 'sakura' => 'Sakura'] as $value => $label)
         <label class="seg-opt">
           <input type="radio" name="theme" value="{{ $value }}" data-label="{{ $label }}" @checked($theme === $value)>
-          <span>{{ $label }}</span>
+          <span>@if ($value === 'sakura')<svg class="i sakura-mark" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4c1.6 1.4 2 3.2 1 5 2-.6 3.8 0 4.9 1.6-1.9.8-3.7.6-5 .3 1.6 1.3 2.2 3.2 1.6 5.1-1.7-.9-2.5-2.5-2.5-4-.1 1.5-.9 3.1-2.5 4-.6-1.9 0-3.8 1.6-5.1-1.3.3-3.1.5-5-.3C7.2 9 9 8.4 11 9c-1-1.8-.6-3.6 1-5z"/></svg>@endif{{ $label }}</span>
         </label>
       @endforeach
     </div>
