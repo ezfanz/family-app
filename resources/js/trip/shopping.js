@@ -122,6 +122,7 @@ function renderAll() {
             <span class="pc-bal"><span class="tnum ${m.balance < 0 ? 'neg' : 'pos'}">${rm(Math.abs(m.balance))}</span><span>${m.balance < 0 ? 'over' : 'left'}</span></span>
         </button>`;
     }).join('');
+    renderResults();
 }
 
 /** Google search for an item: store + name + details finds the right product. */
@@ -246,12 +247,96 @@ function itemRowHtml(item, editable) {
         </div></li>`;
 }
 
+/* ---------- Search & filter form ---------- */
+
+const STATUS_LABEL = { to_buy: 'To buy', bought: 'Bought' };
+
+export const filterActive = () => {
+    const f = UI.filter;
+    return Boolean(f.q || f.forWho || f.store || f.status !== 'all');
+};
+
+function matchesFilter(item) {
+    const f = UI.filter;
+    if (f.status === 'to_buy' && item.is_bought) return false;
+    if (f.status === 'bought' && !item.is_bought) return false;
+    if (f.forWho && forWhoKey(item.for_whom) !== forWhoKey(f.forWho)) return false;
+    if (f.store && !String(item.store || '').toLowerCase().includes(f.store.toLowerCase())) return false;
+    if (f.q) {
+        const haystack = [item.name, item.store, item.details, item.for_whom, item.notes].join(' ').toLowerCase();
+        if (!f.q.toLowerCase().split(/\s+/).every((word) => haystack.includes(word))) return false;
+    }
+    return true;
+}
+
+function filterDescription() {
+    const f = UI.filter;
+    const parts = [];
+    if (f.q) parts.push(`“${f.q}”`);
+    if (f.forWho) parts.push(`For ${forWhoLabel(f.forWho)}`);
+    if (f.store) parts.push(f.store);
+    if (f.status !== 'all') parts.push(STATUS_LABEL[f.status]);
+    return parts.join(' · ');
+}
+
+/** Items whose names and stores feed the form's suggestions. */
+function filterScopeItems() {
+    const sel = selectedShopper();
+    return sel === 'all' ? shoppingList() : itemsOf(sel);
+}
+
+function fillFilterSuggestions() {
+    const items = filterScopeItems();
+    const names = [...new Set(items.map((i) => forWhoLabel(i.for_whom)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    const stores = [...new Set(items.map((i) => String(i.store || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    $('fForList').innerHTML = names.map((v) => `<option value="${esc(v)}"></option>`).join('');
+    $('fStoreList').innerHTML = stores.map((v) => `<option value="${esc(v)}"></option>`).join('');
+}
+
+function renderFilterSummary() {
+    $('filterSummary').textContent = filterActive() ? filterDescription() : 'All items';
+    $('filterFold').classList.toggle('active', filterActive());
+}
+
+/** Owner on "Everyone": matching items from every member's list, grouped by person. */
+function renderResults() {
+    const box = $('shopResults');
+    const active = filterActive();
+    box.classList.toggle('hidden', !active);
+    if (!active) return;
+
+    const all = shoppingList();
+    const matches = all.filter(matchesFilter);
+    $('resultsCount').textContent = `${matches.length} of ${all.length} items match · ${filterDescription()}`;
+    if (!matches.length) {
+        $('resultsList').innerHTML = '<li class="empty-list">No items match. Try a different name or clear the filter.</li>';
+        return;
+    }
+    $('resultsList').innerHTML = S.shoppers.map((p) => {
+        const items = matches.filter((i) => Number(i.user_id) === Number(p.user_id));
+        if (!items.length) return '';
+        return `<li class="for-head"><h3>${esc(displayName(p))}</h3><span class="tnum">${esc(groupMoney(items))}</span></li>`
+            + items.map((item) => itemRowHtml(item, canManageShoppingOf(item.user_id))).join('');
+    }).join('');
+}
+
 function renderPersonList(person) {
     const editable = canManageShoppingOf(person.user_id);
-    const items = itemsOf(person.user_id);
-    if (!items.length) {
+    const allItems = itemsOf(person.user_id);
+    const active = filterActive();
+    const items = active ? allItems.filter(matchesFilter) : allItems;
+
+    $('filterBar').classList.toggle('hidden', !active);
+    if (active) $('filterBarText').textContent = `Showing ${items.length} of ${allItems.length} items · ${filterDescription()}`;
+
+    if (!allItems.length) {
         $('forChips').classList.add('hidden');
         $('shopList').innerHTML = `<li class="empty-list">Nothing on ${person.is_me ? 'your' : `${esc(person.name)}’s`} list yet.</li>`;
+        return;
+    }
+    if (!items.length) {
+        $('forChips').classList.add('hidden');
+        $('shopList').innerHTML = '<li class="empty-list">No items match this filter.</li>';
         return;
     }
 
@@ -329,6 +414,7 @@ export function renderShop() {
     $('shopPerson').classList.toggle('hidden', !person);
     if (sel === 'all') renderAll();
     else if (person) renderPerson(person);
+    renderFilterSummary();
     renderFx();
 }
 
@@ -432,7 +518,8 @@ export function bindShopping() {
         }
     });
 
-    $('shopList').addEventListener('change', (e) => {
+    // Delegated on the whole view so rows in the filter results work too.
+    $('v-shopping').addEventListener('change', (e) => {
         if (e.target.dataset.act !== 'buy') return;
         const item = S.items.get(e.target.closest('li').dataset.id);
         if (!item || !canManageShoppingOf(item.user_id)) return;
@@ -442,7 +529,7 @@ export function bindShopping() {
         saveItem(item, { is_bought: item.is_bought }, () => { item.is_bought = before; renderShop(); });
     });
 
-    $('shopList').addEventListener('input', (e) => {
+    $('v-shopping').addEventListener('input', (e) => {
         const id = e.target.dataset.paid;
         if (!id) return;
         const item = S.items.get(id);
@@ -519,6 +606,41 @@ export function bindShopping() {
     });
 
     $('addItem').addEventListener('click', () => openItemForm(null, selectedShopper()));
+
+    bindFilter();
+}
+
+function bindFilter() {
+    const form = $('filterForm');
+    const fold = $('filterFold');
+
+    fold.addEventListener('toggle', () => { if (fold.open) fillFilterSuggestions(); });
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = new FormData(form);
+        UI.filter = {
+            q: String(data.get('q') || '').trim(),
+            forWho: String(data.get('for_who') || '').trim(),
+            store: String(data.get('store') || '').trim(),
+            status: String(data.get('status') || 'all'),
+        };
+        UI.forWho = 'all';
+        renderShop();
+        fold.open = false;
+        const target = selectedShopper() === 'all' ? $('shopResults') : $('filterBar');
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    const clear = () => {
+        form.reset();
+        UI.filter = { q: '', forWho: '', store: '', status: 'all' };
+        renderShop();
+    };
+    $('filterClear').addEventListener('click', clear);
+    $('v-shopping').addEventListener('click', (e) => {
+        if (e.target.closest('[data-filter-clear]')) clear();
+    });
 }
 
 export function computeTotals() {

@@ -552,3 +552,13 @@ fieldset.acct-pref .seg { clear: both; }
 .for-head span { font-size: 13px; font-weight: 500; color: var(--stone); }
 .for-head.none { border-bottom-color: var(--hair); }
 .for-head.none h3 { color: var(--stone); }
+
+/* ---------- shopping: search & filter form ---------- */
+.filter-form { display: grid; gap: 14px; }
+.filter-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-top: 4px; }
+.filter-fold.active { border-color: var(--action); }
+.filter-fold.active .fold-title .muted { color: var(--action); font-weight: 700; }
+.filter-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 8px 0 0; padding: 4px 12px; border-radius: 10px; background: var(--soft); color: var(--stone); font-size: 13px; font-weight: 500; }
+.filter-bar .text-link { font-size: 14px; }
+#resultsCount { margin-bottom: 4px; }
+#filterBar, #shopResults { scroll-margin-top: 96px; }

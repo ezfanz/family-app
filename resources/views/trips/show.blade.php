@@ -117,6 +117,33 @@
         </div>
       </details>
 
+      {{-- Search & filter (everyone; the owner on "Everyone" searches all lists) --}}
+      <details class="fold filter-fold" id="filterFold">
+        <summary class="fold-sum">
+          <svg class="i fold-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4 2v-8.5z"/></svg>
+          <span class="fold-title"><strong>Search &amp; filter</strong><span class="muted" id="filterSummary">All items</span></span>
+          <svg class="i fold-chev" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <form class="fold-body form filter-form" id="filterForm" role="search" novalidate data-no-loader>
+          <div class="field"><label for="fQ">Search</label><input id="fQ" name="q" type="search" class="input" maxlength="80" placeholder="Item, store or details" autocomplete="off"></div>
+          <div class="grid2">
+            <div class="field"><label for="fFor">For who</label><input id="fFor" name="for_who" type="text" class="input" maxlength="80" list="fForList" placeholder="e.g. Mak" autocomplete="off"><datalist id="fForList"></datalist></div>
+            <div class="field"><label for="fStore">Store</label><input id="fStore" name="store" type="text" class="input" maxlength="60" list="fStoreList" placeholder="e.g. MUJI" autocomplete="off"><datalist id="fStoreList"></datalist></div>
+          </div>
+          <fieldset class="plain field"><legend>Status</legend>
+            <div class="pills">
+              <label class="pill"><input type="radio" name="status" value="all" checked><span>All</span></label>
+              <label class="pill"><input type="radio" name="status" value="to_buy"><span>To buy</span></label>
+              <label class="pill"><input type="radio" name="status" value="bought"><span>Bought</span></label>
+            </div>
+          </fieldset>
+          <div class="filter-actions">
+            <button type="button" class="btn secondary compact" id="filterClear">Clear</button>
+            <button type="submit" class="btn primary compact">Show results</button>
+          </div>
+        </form>
+      </details>
+
       {{-- Everyone (owner only) --}}
       <div id="shopAll" class="hidden">
         <div class="totals" id="allTotals" aria-live="polite"></div>
@@ -124,6 +151,14 @@
           <input id="rateAll" class="rate-input tnum" inputmode="decimal" type="number" step="0.0001" min="0" data-rate>
         </label>
         @include('trips.partials.auto-rate', ['suffix' => 'All'])
+        <div id="shopResults" class="hidden">
+          <div class="row-between" style="margin-top:28px">
+            <h2 class="sec" style="margin:0">Results</h2>
+            <button type="button" class="text-link" data-filter-clear>Clear filter</button>
+          </div>
+          <p class="filter-bar tnum" id="resultsCount"></p>
+          <ul class="list" id="resultsList"></ul>
+        </div>
         <h2 class="sec" style="margin:28px 0 10px">By person</h2>
         <div class="people" id="shopPeople"></div>
       </div>
@@ -142,6 +177,7 @@
           <h2 class="sec" style="margin:0">List</h2>
           <span class="muted tnum" id="shopCount"></span>
         </div>
+        <div class="filter-bar hidden" id="filterBar"><span class="tnum" id="filterBarText"></span><button type="button" class="text-link" data-filter-clear>Clear</button></div>
         <nav class="chips for-chips hidden" id="forChips" aria-label="Filter by who it is for"></nav>
         <ul class="list" id="shopList"></ul>
         <button type="button" class="add-row" id="addItem"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add an item</button>
