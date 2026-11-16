@@ -125,8 +125,6 @@ a { color: var(--action); }
 .dayhead .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .pill-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--hair); border-radius: 999px; background: var(--surface); color: var(--action); font-size: 15px; font-weight: 700; white-space: nowrap; text-decoration: none; }
 .pill-btn.round { width: 44px; padding: 0; justify-content: center; }
-.pill-btn.round[aria-busy="true"] svg { animation: spin .8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
 .pill-btn.solid { background: var(--action); border-color: var(--action); color: var(--on-action); }
 .dayhead > div:first-child { min-width: 0; }
 @media (max-width: 480px) { .wide-only { display: none; } .dayhead .actions { flex-wrap: nowrap; } }
@@ -293,6 +291,12 @@ dialog.sheet::backdrop { background: var(--dim); }
   .sheet .grab { display: none; }
   .sheet .sheet-foot { padding-bottom: 20px; }
 }
+
+/* ---------- loading fill text (after motion.dev loading-fill-text) ---------- */
+.fill-loader { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--paper) 72%, transparent); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+.fill-text { position: relative; font-size: clamp(44px, 14vw, 64px); font-weight: 900; line-height: 1; letter-spacing: -.01em; color: var(--action); white-space: nowrap; }
+.fill-text .bg { position: absolute; top: 0; left: 0; opacity: .2; }
+.fill-text .fg { display: block; clip-path: inset(0 100% 0 0); will-change: clip-path; }
 
 /* ---------- toast ---------- */
 .toast { position: fixed; left: 50%; bottom: calc(var(--nav-h) + var(--safe-bottom) + 12px); transform: translateX(-50%); z-index: 30; max-width: min(92vw, 480px); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 10px; font-size: 15px; font-weight: 500; box-shadow: 0 6px 20px rgba(0, 0, 0, .2); }

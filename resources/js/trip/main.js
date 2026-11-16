@@ -8,6 +8,7 @@ import { renderShop, bindShopping, setItemFormOpener } from './shopping.js';
 import { renderIdeas, bindIdeas, setIdeaHandlers } from './ideas.js';
 import { bindSheets, openActForm, openItemForm, openIdeaForm, planIdea } from './sheets.js';
 import { bindDayStrip } from './daystrip.js';
+import { showLoader } from './loader.js';
 
 const VIEWS = { plan: 'v-plan', shopping: 'v-shopping', ideas: 'v-ideas' };
 
@@ -98,7 +99,9 @@ function bindRefreshButton() {
     const button = $('refreshBtn');
     button.addEventListener('click', async () => {
         button.setAttribute('aria-busy', 'true');
+        const loader = showLoader('Loading');
         const ok = await refreshTrip();
+        await loader.finish();
         button.removeAttribute('aria-busy');
         toast(ok ? 'Up to date.' : 'Couldn’t reach the server. Showing what you have.');
     });
@@ -138,9 +141,12 @@ export async function bootTrip(root, { beforeLoad, afterLoad } = {}) {
         route();
     }
 
+    const loader = restored ? null : showLoader('Loading');
     try {
         loadFull(await api('GET', `/trips/${root.dataset.tripId}`));
+        await loader?.finish();
     } catch (error) {
+        await loader?.finish();
         if (!restored) {
             showLoadError(error.status === 404 ? 'You’re not in this trip any more.' : 'Check your connection and try again.');
         }
