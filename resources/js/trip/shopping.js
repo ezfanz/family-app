@@ -7,6 +7,7 @@
 import { S, UI, canEdit, isOwner, canManageShoppingOf, shoppingList } from './store.js';
 import { $, esc, yen, rm, debounce, debounceKeyed } from './util.js';
 import { write } from './writer.js';
+import { renderFx, bindFx } from './fx.js';
 
 const AVATAR_COLOURS = ['#2A3B8F', '#6A3E9A', '#00776F', '#1F5591', '#B7791F', '#C2255C', '#4A8410', '#8A5A00'];
 const ROLE_LABEL = { owner: 'Owner', editor: 'Editor', viewer: 'Viewer' };
@@ -198,6 +199,16 @@ export function renderShop() {
     $('shopPerson').classList.toggle('hidden', !person);
     if (sel === 'all') renderAll();
     else if (person) renderPerson(person);
+    renderFx();
+}
+
+/** Set the trip's shopping rate (RM per ¥100), e.g. from today's Bank Negara rate. */
+export function setTripRate(value) {
+    if (!canEdit()) return;
+    S.trip.exchange_rate_rm_per_100_yen = Math.max(0, Number(value) || 0);
+    document.querySelectorAll('[data-rate]').forEach((input) => { input.value = S.trip.exchange_rate_rm_per_100_yen; });
+    renderShop();
+    saveRate();
 }
 
 /** Refresh numbers without rebuilding inputs, so typing is not interrupted. */
@@ -241,6 +252,8 @@ const savePaid = debounceKeyed((id) => {
 }, 700);
 
 export function bindShopping() {
+    bindFx({ onUseRate: setTripRate });
+
     $('v-shopping').addEventListener('click', (e) => {
         const pick = e.target.closest('[data-shopper]');
         if (pick && isOwner()) {

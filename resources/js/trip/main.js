@@ -10,6 +10,7 @@ import { bindSheets, openActForm, openItemForm, openIdeaForm, planIdea } from '.
 import { bindDayStrip } from './daystrip.js';
 import { showLoader } from './loader.js';
 import { bindImport } from './importer.js';
+import { loadFx } from './fx.js';
 import { setWriterHooks } from './writer.js';
 import { net, initSync, loadCache, saveCache, clearTripStorage, flushQueue, queueLength, startPolling } from './sync.js';
 
@@ -84,7 +85,10 @@ function route() {
     const hash = window.location.hash.replace('#', '');
     const previous = UI.view;
     UI.view = VIEWS[hash] ? hash : 'plan';
-    if (UI.view === 'shopping' && previous !== 'shopping') resetShopperToMe();
+    if (UI.view === 'shopping' && previous !== 'shopping') {
+        resetShopperToMe();
+        loadFx();
+    }
     Object.entries(VIEWS).forEach(([view, id]) => $(id).classList.toggle('hidden', view !== UI.view));
     document.querySelectorAll('.tabs a').forEach((a) => a.setAttribute('aria-current', a.dataset.v === UI.view ? 'page' : 'false'));
     render();

@@ -301,6 +301,26 @@ fieldset.plain legend { padding: 0; }
 .avatar.lg { width: 48px; height: 48px; font-size: 16px; font-weight: 900; }
 .empty-list { padding: 16px 4px; color: var(--stone); font-size: 15px; }
 
+/* ---------- shopping: yen to ringgit converter ---------- */
+.fx-card { margin-top: 16px; padding: 14px 16px 12px; background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; }
+.fx-head { display: flex; align-items: center; gap: 12px; }
+.flag-jp { flex: none; border-radius: 4px; box-shadow: 0 0 0 1px var(--hair); }
+.fx-titles { flex: 1; min-width: 0; }
+.fx-titles h2 { margin: 0; font-size: 16px; font-weight: 900; }
+.fx-titles p { margin: 2px 0 0; overflow-wrap: anywhere; }
+.fx-refresh { margin-right: -10px; color: var(--action); }
+.fx-refresh[aria-busy="true"] svg { animation: fx-spin .8s linear infinite; }
+@keyframes fx-spin { to { transform: rotate(360deg); } }
+.fx-row { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; padding: 8px 12px; border-radius: 12px; background: var(--paper); border: 1px solid var(--hair); cursor: text; }
+.fx-row:focus-within { border-color: var(--action); box-shadow: 0 0 0 3px color-mix(in srgb, var(--action) 18%, transparent); }
+.fx-sym { flex: none; font-size: 22px; font-weight: 500; color: var(--stone); min-width: 34px; }
+.fx-row input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--ink); font-size: 32px; font-weight: 900; line-height: 1.2; padding: 0; outline: none; }
+.fx-code { flex: none; font-size: 13px; font-weight: 700; color: var(--stone); }
+.fx-rate { margin: 10px 2px 0; font-size: 13px; font-weight: 500; color: var(--stone); }
+.fx-compare { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--hair); font-size: 14px; }
+.fx-use { min-height: 40px; }
+@media (max-width: 360px) { .fx-row input { font-size: 26px; } }
+
 /* ---------- shopping: Excel import ---------- */
 .import-card { position: relative; margin-top: 32px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--surface); border: 1.5px dashed var(--hair); border-radius: 14px; }
 .ic-head { display: flex; gap: 12px; align-items: flex-start; }

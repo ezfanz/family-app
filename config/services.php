@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    /*
+    | Yen to Ringgit rate. Bank Negara Malaysia's official API first, the
+    | European Central Bank (via Frankfurter) as a backup. No API keys needed.
+    */
+    'exchange_rates' => [
+        'bnm_url' => env('BNM_API_URL', 'https://api.bnm.gov.my/public'),
+        'frankfurter_url' => env('FRANKFURTER_API_URL', 'https://api.frankfurter.dev/v1'),
+        'cache_minutes' => (int) env('EXCHANGE_RATE_CACHE_MINUTES', 180),
+    ],
+
 ];

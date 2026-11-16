@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\ExchangeRateController;
 use App\Http\Controllers\Api\IdeaController;
 use App\Http\Controllers\Api\ShoppingBudgetController;
 use App\Http\Controllers\Api\ShoppingImportController;
@@ -26,6 +27,8 @@ Route::post('/auth/token', [TokenController::class, 'store'])->middleware('throt
 Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::delete('/auth/token', [TokenController::class, 'destroy'])->name('token.destroy');
     Route::get('/user', fn (Request $request) => $request->user()->only(['id', 'name', 'email']))->name('user');
+
+    Route::get('/exchange-rates/jpy-myr', ExchangeRateController::class)->name('exchange-rates.jpy-myr')->middleware('throttle:30,1');
 
     Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
     Route::post('/trips', [TripController::class, 'store'])->name('trips.store')->middleware('throttle:10,1');
