@@ -28,5 +28,10 @@
 </head>
 <body>
 @yield('body')
+
+{{-- Full-screen "Loading" fill text (motion.dev style), shown while the server answers. --}}
+<div class="fill-loader hidden" id="loader" role="status" aria-live="polite" aria-label="Loading…">
+  <div class="fill-text" aria-hidden="true"><span class="bg">Loading</span><span class="fg">Loading</span></div>
+</div>
 </body>
 </html>

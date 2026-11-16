@@ -9,6 +9,7 @@ import { renderIdeas, bindIdeas, setIdeaHandlers } from './ideas.js';
 import { bindSheets, openActForm, openItemForm, openIdeaForm, planIdea } from './sheets.js';
 import { bindDayStrip } from './daystrip.js';
 import { showLoader } from './loader.js';
+import { setWriterHooks } from './writer.js';
 import { net, initSync, loadCache, saveCache, clearTripStorage, flushQueue, queueLength, startPolling } from './sync.js';
 
 const VIEWS = { plan: 'v-plan', shopping: 'v-shopping', ideas: 'v-ideas' };
@@ -24,6 +25,23 @@ export function setSync(kind, text) {
     if (icon) dot.insertAdjacentHTML('afterend', `<span class="ico" aria-hidden="true" style="display:flex">${icon}</span>`);
 }
 
+let saving = false;
+let savingTimer = null;
+
+/** Show "Saving…" in the header while a change is on its way, unless it lands within 250ms. */
+function onBusy(count) {
+    clearTimeout(savingTimer);
+    if (count > 0) {
+        savingTimer = setTimeout(() => {
+            saving = true;
+            syncStatus();
+        }, 250);
+    } else if (saving) {
+        saving = false;
+        syncStatus();
+    }
+}
+
 export function syncStatus() {
     const offline = !navigator.onLine || !net.online;
     $('offline').classList.toggle('hidden', !offline);
@@ -32,6 +50,8 @@ export function syncStatus() {
         setSync('off', 'Offline, showing saved');
     } else if (queued) {
         setSync('warn', `Saving ${queued} change${queued === 1 ? '' : 's'}…`);
+    } else if (saving) {
+        setSync('saving', 'Saving…');
     } else if (!canEdit()) {
         setSync('view', 'View only');
     } else {
@@ -168,6 +188,8 @@ export async function bootTrip(root) {
             safeRender();
         },
     });
+
+    setWriterHooks({ onBusy });
 
     // Show the saved copy straight away, then catch up with the server.
     if (loadCache()) {

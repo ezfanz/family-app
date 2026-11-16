@@ -8,7 +8,7 @@
 <h1>Start a new trip</h1>
 <p class="lede">You’ll be the owner. Share the join code with your group afterwards.</p>
 
-<form class="form" method="POST" action="{{ route('trips.store') }}" novalidate style="margin-top:28px">
+<form class="form" method="POST" action="{{ route('trips.store') }}" data-loading="Creating" novalidate style="margin-top:28px">
   @csrf
   <div class="field">
     <label for="name">Trip name</label>

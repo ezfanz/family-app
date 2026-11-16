@@ -80,6 +80,8 @@ a { color: var(--action); }
 .sync .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--skip); flex: none; }
 .sync.on .dot { background: var(--done); }
 .sync.warn .dot { background: var(--amber-line); }
+.sync.saving .dot { background: var(--action); animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .25; } }
 .progress { height: 3px; background: var(--hair); }
 .progress > div { height: 3px; width: 0; background: var(--ink); transition: width .3s; }
 .simple-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: calc(var(--safe-top) + 14px) 20px 12px; border-bottom: 1px solid var(--hair); }

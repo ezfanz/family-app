@@ -26,7 +26,7 @@
       <button type="button" data-share><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>Share</button>
     </div>
   </section>
-  <form method="POST" action="{{ route('trips.join-code.regenerate', $trip) }}">
+  <form method="POST" action="{{ route('trips.join-code.regenerate', $trip) }}" data-loading="Saving">
     @csrf
     <button type="submit" class="underline-btn">Make a new code</button>
   </form>
@@ -44,7 +44,7 @@
       @if ($isMe || ! $isOwner || $member->pivot->role === \App\Enums\TripRole::Owner)
         <span class="role-text">{{ $member->pivot->role->value }}</span>
       @else
-        <form method="POST" action="{{ route('trips.members.update', [$trip, $member]) }}">
+        <form method="POST" action="{{ route('trips.members.update', [$trip, $member]) }}" data-loading="Saving">
           @csrf
           @method('PATCH')
           <div class="select-wrap">
@@ -58,7 +58,7 @@
           </div>
           <button type="submit" class="pill-btn" data-autosubmit-button>Save</button>
         </form>
-        <form method="POST" action="{{ route('trips.members.destroy', [$trip, $member]) }}" onsubmit="return confirm('Remove {{ e(addslashes($member->name)) }} from the trip?')">
+        <form method="POST" action="{{ route('trips.members.destroy', [$trip, $member]) }}" data-loading="Removing" onsubmit="return confirm('Remove {{ e(addslashes($member->name)) }} from the trip?')">
           @csrf
           @method('DELETE')
           <button type="submit" class="icon-btn" aria-label="Remove {{ $member->name }}"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>

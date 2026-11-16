@@ -7,7 +7,7 @@
 <h1>Log in</h1>
 <p class="lede">Use the account you made for this trip.</p>
 
-<form class="form" method="POST" action="{{ route('login') }}" novalidate style="margin-top:28px">
+<form class="form" method="POST" action="{{ route('login') }}" data-loading="Logging in" novalidate style="margin-top:28px">
   @csrf
   <div class="field">
     <label for="email">Email</label>

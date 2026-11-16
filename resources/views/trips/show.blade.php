@@ -112,9 +112,6 @@
 
   <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
 
-  <div class="fill-loader hidden" id="loader" role="status" aria-live="polite" aria-label="Loading…">
-    <div class="fill-text" aria-hidden="true"><span class="bg">Loading</span><span class="fg">Loading</span></div>
-  </div>
 
   @include('trips.partials.sheets')
 </div>

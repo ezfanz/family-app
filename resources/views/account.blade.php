@@ -60,7 +60,7 @@
   </label>
 </div>
 
-<form id="logoutForm" method="POST" action="{{ route('logout') }}" style="margin-top:20px">
+<form id="logoutForm" method="POST" action="{{ route('logout') }}" data-loading="Logging out" style="margin-top:20px">
   @csrf
   <button type="submit" class="btn logout-btn" data-confirm-logout>
     <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h11"/></svg>

@@ -7,7 +7,7 @@
 <h1>Make an account</h1>
 <p class="lede">Then join your group’s trip with the code from the owner.</p>
 
-<form class="form" method="POST" action="{{ route('register') }}" novalidate style="margin-top:28px">
+<form class="form" method="POST" action="{{ route('register') }}" data-loading="Creating" novalidate style="margin-top:28px">
   @csrf
   <div class="field">
     <label for="name">Your name in the group</label>

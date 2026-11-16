@@ -24,7 +24,7 @@
   <p class="lede" style="font-size:16px;line-height:1.55;margin-top:8px">Ask the trip owner for the 8-character join code.</p>
 @endif
 
-<form method="POST" action="{{ route('trips.join') }}" novalidate style="margin-top:20px">
+<form method="POST" action="{{ route('trips.join') }}" data-loading="Joining" novalidate style="margin-top:20px">
   @csrf
   <label for="code" class="field" style="display:block"><span style="font-size:15px;font-weight:700">Join code</span></label>
   <input id="code" name="code" class="code-input tnum" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD1234" value="{{ old('code') }}" required

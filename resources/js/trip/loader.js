@@ -14,6 +14,14 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 
 let active = null;
 
+/** Hide immediately without animation (e.g. page restored from the back/forward cache). */
+export function resetLoader() {
+    const overlay = $('loader');
+    overlay?.classList.add('hidden');
+    if (overlay) overlay.style.opacity = '';
+    active = null;
+}
+
 /**
  * Show the overlay. Call the returned finish() when the work is done.
  *

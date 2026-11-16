@@ -11,7 +11,11 @@ const hooks = {
     /** Replaced by the offline queue: return true when the write was queued for retry. */
     onRetryable: () => false,
     onChange: () => {},
+    /** Number of requests currently on their way to the server. */
+    onBusy: () => {},
 };
+
+let inFlight = 0;
 
 export function setWriterHooks(next) {
     Object.assign(hooks, next);
@@ -41,6 +45,7 @@ export async function write(op) {
     }
     markPending(op.key);
     hooks.onChange();
+    hooks.onBusy(++inFlight);
     try {
         const data = await api(op.method, op.path, op.body);
         op.onSaved?.(data);
@@ -64,5 +69,6 @@ export async function write(op) {
     } finally {
         clearPending(op.key);
         hooks.onChange();
+        hooks.onBusy(--inFlight);
     }
 }
