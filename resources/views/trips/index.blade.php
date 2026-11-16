@@ -1,6 +1,6 @@
 @extends('layouts.page')
 
-@section('title', 'Trips · Tabi')
+@section('title', 'Trips · E-Itinerary')
 
 @section('content')
 @if ($trips->isNotEmpty())

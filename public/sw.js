@@ -1,5 +1,5 @@
 /*
- * Tabi service worker: lets the app open with no signal.
+ * E-Itinerary service worker: lets the app open with no signal.
  *
  * - App files (Vite build, icons, font) are cached on install and served cache-first.
  * - Pages (/, /trips, /trips/{id}, ...) are network-first with a short timeout and
@@ -7,13 +7,16 @@
  * - /api is never cached here; the app keeps trip data in localStorage itself.
  */
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const STATIC_CACHE = `tabi-static-${VERSION}`;
 const PAGE_CACHE = `tabi-pages-${VERSION}`;
 const FONT_CACHE = `tabi-fonts-${VERSION}`;
 const NETWORK_TIMEOUT_MS = 4000;
 
-const CORE = ['/offline.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png', '/icons/favicon-64.png'];
+const CORE = [
+    '/offline.html', '/manifest.webmanifest', '/favicon.ico',
+    '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-maskable-512.png', '/icons/apple-touch-icon.png',
+];
 
 async function buildAssets() {
     try {
@@ -129,7 +132,7 @@ self.addEventListener('fetch', (event) => {
             event.respondWith(handlePage(request));
             return;
         }
-        if (url.pathname.startsWith('/build/') || url.pathname.startsWith('/icons/') || url.pathname === '/manifest.webmanifest') {
+        if (url.pathname.startsWith('/build/') || url.pathname.startsWith('/icons/') || url.pathname === '/manifest.webmanifest' || url.pathname === '/favicon.ico') {
             event.respondWith(cacheFirst(request, STATIC_CACHE));
         }
         return;

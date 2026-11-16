@@ -8,7 +8,7 @@
     </header>
   @else
     <header class="simple-header">
-      <span class="brand">Tabi</span>
+      <span class="brand"><img src="/icons/icon.svg" alt="" width="28" height="28">E-Itinerary</span>
       <div class="aside">
         @auth
           @hasSection('aside')

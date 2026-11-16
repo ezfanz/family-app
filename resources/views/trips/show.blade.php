@@ -13,6 +13,7 @@
 
   <header class="app-header">
     <div class="row">
+      <img class="logo" src="/icons/icon.svg" alt="" width="32" height="32">
       <div class="titles">
         <p class="title" id="tripTitle">{{ $trip->name }}</p>
         <div class="subtitle tnum" id="tripSub">{{ $trip->start_date->format('j M') }} – {{ $trip->end_date->format('j M') }}</div>

@@ -1,6 +1,6 @@
 @extends('layouts.page')
 
-@section('title', 'Start a new trip · Tabi')
+@section('title', 'Start a new trip · E-Itinerary')
 @section('back', route('trips.index'))
 @section('back-label', 'Trips')
 

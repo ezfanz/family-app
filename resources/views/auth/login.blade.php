@@ -1,6 +1,6 @@
 @extends('layouts.page')
 
-@section('title', 'Log in · Tabi')
+@section('title', 'Log in · E-Itinerary')
 @section('aside', 'Trip planner for the group')
 
 @section('content')
