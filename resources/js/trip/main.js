@@ -4,7 +4,7 @@ import { api, setApiBase } from './api.js';
 import { S, UI, canEdit, loadFull, mergeChanges } from './store.js';
 import { $, ICON, toast } from './util.js';
 import { renderHeader, renderPlan, bindItinerary, setActFormOpener, defaultDayId, scrollDayIntoView } from './itinerary.js';
-import { renderShop, bindShopping, setItemFormOpener } from './shopping.js';
+import { renderShop, bindShopping, setItemFormOpener, resetShopperToMe } from './shopping.js';
 import { renderIdeas, bindIdeas, setIdeaHandlers } from './ideas.js';
 import { bindSheets, openActForm, openItemForm, openIdeaForm, planIdea } from './sheets.js';
 import { bindDayStrip } from './daystrip.js';
@@ -84,6 +84,7 @@ function route() {
     const hash = window.location.hash.replace('#', '');
     const previous = UI.view;
     UI.view = VIEWS[hash] ? hash : 'plan';
+    if (UI.view === 'shopping' && previous !== 'shopping') resetShopperToMe();
     Object.entries(VIEWS).forEach(([view, id]) => $(id).classList.toggle('hidden', view !== UI.view));
     document.querySelectorAll('.tabs a').forEach((a) => a.setAttribute('aria-current', a.dataset.v === UI.view ? 'page' : 'false'));
     render();

@@ -30,14 +30,20 @@ function displayName(person) {
     return person.is_me ? `${person.name} (you)` : person.name;
 }
 
-/** Which list is showing: the owner can pick "all" or anyone; others always see their own. */
+/** Which list is showing: your own by default; the owner can switch to "all" or anyone. */
 export function selectedShopper() {
+    const known = (id) => S.shoppers.some((p) => p.user_id === id);
     if (!isOwner()) {
         UI.shopSel = S.me;
-    } else if (UI.shopSel !== 'all' && !S.shoppers.some((p) => p.user_id === UI.shopSel)) {
-        UI.shopSel = 'all';
+    } else if (UI.shopSel !== 'all' && !known(UI.shopSel)) {
+        UI.shopSel = known(S.me) ? S.me : 'all';
     }
     return UI.shopSel;
+}
+
+/** Opening the Shopping tab always starts on your own list. */
+export function resetShopperToMe() {
+    UI.shopSel = S.me;
 }
 
 function itemsOf(userId) {
@@ -139,9 +145,16 @@ function renderPersonList(person) {
 function renderPersonTotals(person) {
     const m = money(Number(person.budget_rm) || 0, itemsOf(person.user_id));
     $('personTotals').innerHTML = totalsHtml(m);
-    $('personLeft').textContent = m.left > 0
-        ? `Still to buy, about ${rm(m.left)}. Not counted until paid.`
-        : (m.count ? 'Everything on the list is bought.' : '');
+    const toBuy = m.count - m.bought;
+    let leftLine = '';
+    if (m.count && toBuy === 0) {
+        leftLine = 'Everything on the list is bought.';
+    } else if (m.left > 0) {
+        leftLine = `Still to buy, about ${rm(m.left)}. Not counted until paid.`;
+    } else if (toBuy > 0) {
+        leftLine = `${toBuy} item${toBuy === 1 ? '' : 's'} still to buy. Add estimates to see the cost.`;
+    }
+    $('personLeft').textContent = leftLine;
     $('shopCount').textContent = `${m.count} item${m.count === 1 ? '' : 's'} · ${m.bought} bought`;
 }
 
