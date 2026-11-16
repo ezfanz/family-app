@@ -4,7 +4,7 @@ import { S, UI, canEdit, canManageShoppingOf, shoppingList } from './store.js';
 import { $, esc, fmtDate, weekday, rm, uuid, toast } from './util.js';
 import { write } from './writer.js';
 import { regions, saveIdea, deleteIdeaWithUndo } from './ideas.js';
-import { googleUrl } from './shopping.js';
+import { googleUrl, activeForWhoLabel, forWhoNames } from './shopping.js';
 
 let rerender = () => {};
 
@@ -174,7 +174,7 @@ function guardShopping(userId) {
 let itemListOwner = null;
 
 export function openItemForm(id, forUserId = null) {
-    const it = id ? S.items.get(id) : { name: '', store: '', details: '', for_whom: '', link: '', notes: '', qty: 1, estimated_yen: '' };
+    const it = id ? S.items.get(id) : { name: '', store: '', details: '', for_whom: activeForWhoLabel(), link: '', notes: '', qty: 1, estimated_yen: '' };
     if (!it) return;
     const listOwner = id ? Number(it.user_id) : Number(forUserId && forUserId !== 'all' ? forUserId : S.me);
     if (!guardShopping(listOwner)) return;
@@ -190,6 +190,7 @@ export function openItemForm(id, forUserId = null) {
     const open = $('itemLinkOpen');
     open.classList.toggle('hidden', !it.link);
     if (it.link) open.href = it.link;
+    $('forList').innerHTML = forWhoNames().map((v) => `<option value="${esc(v)}"></option>`).join('');
     $('storeList').innerHTML = [...new Set(shoppingList().map((i) => i.store).filter(Boolean))].map((v) => `<option value="${v.replace(/"/g, '&quot;')}"></option>`).join('');
     f.qty.value = it.qty;
     f.est.value = it.estimated_yen || '';

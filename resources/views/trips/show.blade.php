@@ -142,6 +142,7 @@
           <h2 class="sec" style="margin:0">List</h2>
           <span class="muted tnum" id="shopCount"></span>
         </div>
+        <nav class="chips for-chips hidden" id="forChips" aria-label="Filter by who it is for"></nav>
         <ul class="list" id="shopList"></ul>
         <button type="button" class="add-row" id="addItem"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add an item</button>
       </div>

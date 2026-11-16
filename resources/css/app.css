@@ -539,3 +539,16 @@ fieldset.acct-pref .seg { clear: both; }
 .auto-rate .acct-who strong { font-size: 15px; }
 .switch input:disabled { cursor: not-allowed; }
 .switch input:disabled + .track { opacity: .6; }
+
+/* ---------- shopping: filter and sections by "for who" ---------- */
+.for-chips { margin-top: 10px; margin-bottom: 4px; }
+.for-chip { padding: 0 8px 0 14px; gap: 8px; }
+.for-chip.none { color: var(--stone); }
+.chip-count { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 24px; padding: 0 7px; border-radius: 999px; background: var(--soft); color: var(--stone); font-size: 13px; font-weight: 700; }
+.chip[aria-pressed="true"] .chip-count { background: color-mix(in srgb, var(--paper) 22%, transparent); color: var(--paper); }
+.list > li.for-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 18px 2px 8px; border-bottom: 2px solid var(--ink); }
+.list > li.for-head:first-child { padding-top: 10px; }
+.for-head h3 { margin: 0; font-size: 16px; font-weight: 900; }
+.for-head span { font-size: 13px; font-weight: 500; color: var(--stone); }
+.for-head.none { border-bottom-color: var(--hair); }
+.for-head.none h3 { color: var(--stone); }

@@ -49,6 +49,7 @@ export function selectedShopper() {
 /** Opening the Shopping tab always starts on your own list. */
 export function resetShopperToMe() {
     UI.shopSel = S.me;
+    UI.forWho = 'all';
 }
 
 function itemsOf(userId) {
@@ -141,7 +142,6 @@ function metaText(item) {
     } else {
         parts.push(est ? `est ${yen(est)} ≈ ${rm(toRm(est), 0)}` : 'no estimate');
     }
-    if (item.for_whom) parts.push(item.for_whom);
     return parts.join(' · ');
 }
 
@@ -164,10 +164,76 @@ function qtyHtml(item, editable) {
     </div>`;
 }
 
-function renderPersonList(person) {
-    const editable = canManageShoppingOf(person.user_id);
-    const items = itemsOf(person.user_id);
-    $('shopList').innerHTML = items.length ? items.map((item) => `
+/* ---------- "For who" groups and filter ---------- */
+
+const UNASSIGNED = '__none__';
+
+/** "For Mak", "for mak " and "Mak" are the same person. */
+export function forWhoLabel(value) {
+    const text = String(value ?? '').trim().replace(/^for\s+/i, '').replace(/\s+/g, ' ');
+    return text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
+}
+const forWhoKey = (value) => forWhoLabel(value).toLowerCase() || UNASSIGNED;
+
+/** Groups in display order: names A–Z, "Not assigned" last. */
+function forWhoGroups(items) {
+    const groups = new Map();
+    for (const item of items) {
+        const key = forWhoKey(item.for_whom);
+        if (!groups.has(key)) groups.set(key, { key, label: key === UNASSIGNED ? 'Not assigned' : forWhoLabel(item.for_whom), items: [] });
+        groups.get(key).items.push(item);
+    }
+    return [...groups.values()].sort((a, b) => {
+        if (a.key === UNASSIGNED) return 1;
+        if (b.key === UNASSIGNED) return -1;
+        return a.label.localeCompare(b.label);
+    });
+}
+
+function groupMoney(items) {
+    let paid = 0;
+    let est = 0;
+    for (const item of items) {
+        paid += Number(item.actual_yen) || 0;
+        est += Number(item.estimated_yen) || 0;
+    }
+    const parts = [`${items.length} item${items.length === 1 ? '' : 's'}`];
+    if (paid > 0) parts.push(`paid ${rm(toRm(paid), 2)}`);
+    if (est > 0) parts.push(`est ${rm(toRm(est), 0)}`);
+    return parts.join(' · ');
+}
+
+function renderForChips(groups) {
+    const nav = $('forChips');
+    // Only worth showing once at least one item says who it is for.
+    const useful = groups.some((g) => g.key !== UNASSIGNED);
+    nav.classList.toggle('hidden', !useful);
+    if (!useful) {
+        UI.forWho = 'all';
+        return;
+    }
+    if (UI.forWho !== 'all' && !groups.some((g) => g.key === UI.forWho)) UI.forWho = 'all';
+    const total = groups.reduce((sum, g) => sum + g.items.length, 0);
+    const chip = (key, label, count) => `<button type="button" class="chip for-chip${key === UNASSIGNED ? ' none' : ''}" data-for="${esc(key)}" aria-pressed="${UI.forWho === key}">${esc(label)}<span class="chip-count tnum">${count}</span></button>`;
+    nav.innerHTML = chip('all', 'All', total) + groups.map((g) => chip(g.key, g.label, g.items.length)).join('');
+}
+
+/** Label of the active "for who" filter, to prefill a new item; '' when none. */
+export function activeForWhoLabel() {
+    if (UI.forWho === 'all' || UI.forWho === UNASSIGNED) return '';
+    const match = shoppingList().find((i) => forWhoKey(i.for_whom) === UI.forWho);
+    return match ? forWhoLabel(match.for_whom) : '';
+}
+
+/** Names already used for "for who" on the list being viewed, as suggestions in the item sheet. */
+export function forWhoNames() {
+    const sel = selectedShopper();
+    const items = sel === 'all' ? itemsOf(S.me) : itemsOf(sel);
+    return [...new Set(items.map((i) => forWhoLabel(i.for_whom)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+}
+
+function itemRowHtml(item, editable) {
+    return `
         <li class="${item.is_bought ? 'bought' : ''}" data-id="${item.id}"><div class="shop-row">
             <label class="check"><input type="checkbox" data-act="buy" ${item.is_bought ? 'checked' : ''} ${editable ? '' : 'disabled'} aria-label="Bought ${esc(item.name)}"></label>
             <button type="button" class="item-main" data-act="edit-item"${editable ? '' : ' aria-disabled="true" tabindex="-1"'}>
@@ -177,8 +243,29 @@ function renderPersonList(person) {
             ${qtyHtml(item, editable)}
             <a class="search-btn" href="${esc(googleUrl(item))}" target="_blank" rel="noopener" aria-label="Search Google for ${esc(item.name)}" title="Search on Google">${SEARCH_ICON}</a>
             <div class="paid"><span aria-hidden="true">¥ each</span><input class="tnum" inputmode="numeric" pattern="[0-9]*" placeholder="0" data-paid="${item.id}" value="${paidEach(item)}" aria-label="Price paid for one ${esc(item.name)}, in yen" ${editable ? '' : 'readonly'}></div>
-        </div></li>`).join('')
-        : `<li class="empty-list">Nothing on ${person.is_me ? 'your' : `${esc(person.name)}’s`} list yet.</li>`;
+        </div></li>`;
+}
+
+function renderPersonList(person) {
+    const editable = canManageShoppingOf(person.user_id);
+    const items = itemsOf(person.user_id);
+    if (!items.length) {
+        $('forChips').classList.add('hidden');
+        $('shopList').innerHTML = `<li class="empty-list">Nothing on ${person.is_me ? 'your' : `${esc(person.name)}’s`} list yet.</li>`;
+        return;
+    }
+
+    const groups = forWhoGroups(items);
+    renderForChips(groups);
+    const showHeadings = groups.some((g) => g.key !== UNASSIGNED);
+    const shown = UI.forWho === 'all' ? groups : groups.filter((g) => g.key === UI.forWho);
+
+    $('shopList').innerHTML = shown.map((g) => {
+        const heading = showHeadings
+            ? `<li class="for-head${g.key === UNASSIGNED ? ' none' : ''}"><h3>${g.key === UNASSIGNED ? 'Not assigned' : `For ${esc(g.label)}`}</h3><span class="tnum">${esc(groupMoney(g.items))}</span></li>`
+            : '';
+        return heading + g.items.map((item) => itemRowHtml(item, editable)).join('');
+    }).join('');
 }
 
 function renderPersonTotals(person) {
@@ -321,8 +408,15 @@ export function bindShopping() {
         const pick = e.target.closest('[data-shopper]');
         if (pick && isOwner()) {
             UI.shopSel = pick.dataset.shopper === 'all' ? 'all' : Number(pick.dataset.shopper);
+            UI.forWho = 'all';
             renderShop();
             if (pick.classList.contains('person-card')) window.scrollTo({ top: 0 });
+            return;
+        }
+        const forChip = e.target.closest('[data-for]');
+        if (forChip) {
+            UI.forWho = forChip.dataset.for;
+            renderShop();
             return;
         }
         const step = e.target.closest('[data-act="qty"]');

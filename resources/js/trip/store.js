@@ -24,6 +24,8 @@ export const UI = {
     expandedRegions: new Set(),
     /** Shopping: 'all' (owner only) or a user id. */
     shopSel: null,
+    /** Shopping list filter by who an item is for: 'all', a name key, or '__none__'. */
+    forWho: 'all',
     /** Ideas: id whose ⋯ menu is open, and id armed for delete. */
     ideaMenu: null,
     ideaArmed: null,

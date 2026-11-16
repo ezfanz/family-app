@@ -53,7 +53,7 @@
       </div>
       <div class="grid2">
         <div class="field"><label for="i-store">Store</label><input id="i-store" name="store" type="text" class="input" maxlength="60" placeholder="e.g. MUJI" list="storeList"><datalist id="storeList"></datalist></div>
-        <div class="field"><label for="i-for">For who</label><input id="i-for" name="for_whom" type="text" class="input" maxlength="80" placeholder="e.g. For Mak"></div>
+        <div class="field"><label for="i-for">For who</label><input id="i-for" name="for_whom" type="text" class="input" maxlength="80" placeholder="e.g. Mak" list="forList"><datalist id="forList"></datalist></div>
       </div>
       <div class="field"><label for="i-details">Details<span class="hint">Colour, size or code</span></label><input id="i-details" name="details" type="text" class="input" maxlength="160"></div>
       <div class="grid2">
