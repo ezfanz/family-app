@@ -28,6 +28,21 @@
       <div class="field"><label for="f-ticket">Ticket<span class="hint">Where it’s booked, e.g. Klook. Shows an amber tag.</span></label><input id="f-ticket" name="ticket" type="text" class="input" maxlength="40"></div>
       <label class="check-row" for="f-halal"><input id="f-halal" name="halal" type="checkbox"><span><strong>Halal</strong><small>Shows a green Halal tag</small></span></label>
       <div class="field"><label for="f-notes">Notes<span class="hint">Everyone in the group can see these.</span></label><textarea id="f-notes" name="notes" rows="3" class="input" maxlength="1000" placeholder="Opening hours, what to order, meeting point"></textarea></div>
+      <div class="field hidden" id="actPhotoField">
+        <div class="flabel">Photo<span class="hint">Found on Wikipedia, or upload your own. Everyone in the trip sees it.</span></div>
+        <div class="act-photo">
+          <span class="act-photo-img" id="actPhotoImg"></span>
+          <div class="act-photo-text">
+            <p class="muted" id="actPhotoCredit"></p>
+            <div class="rv-photo-actions">
+              <button type="button" class="rv-mini" id="actPhotoUpload">Upload photo</button>
+              <button type="button" class="rv-mini" id="actPhotoFind">Find on Wikipedia</button>
+              <button type="button" class="rv-mini" id="actPhotoRemove">Remove</button>
+            </div>
+          </div>
+        </div>
+        <input type="file" id="actPhotoFile" accept="image/*" hidden>
+      </div>
       <div class="danger-row"><button type="button" class="btn danger compact" id="actDel">Delete this stop</button></div>
     </div>
     <div class="sheet-foot">

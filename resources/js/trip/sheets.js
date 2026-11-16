@@ -5,6 +5,8 @@ import { $, esc, fmtDate, weekday, rm, uuid, toast } from './util.js';
 import { write } from './writer.js';
 import { regions, saveIdea, deleteIdeaWithUndo } from './ideas.js';
 import { googleUrl, activeForWhoLabel, forWhoNames } from './shopping.js';
+import { api, apiUrl } from './api.js';
+import { preparePhoto } from './photo-queue.js';
 
 let rerender = () => {};
 
@@ -62,11 +64,93 @@ export function openActForm(id, preset = {}, ideaId = null) {
     f.notes.value = a.notes || '';
     [f.name, f.time].forEach((el) => el.removeAttribute('aria-invalid'));
 
+    renderActPhoto(id ? a : null);
     $('actDlgTitle').textContent = id ? 'Edit stop' : 'Add a stop';
     resetDelete($('actDel'), 'Delete this stop');
     $('actDel').closest('.danger-row').classList.toggle('hidden', !id);
     actDlg().showModal();
     if (!id) f.name.focus();
+}
+
+/* ---------------- stop photo ---------------- */
+
+/** Photo controls in the stop sheet; new stops get a photo looked up after saving. */
+function renderActPhoto(stop) {
+    $('actPhotoField').classList.toggle('hidden', !stop);
+    if (!stop) return;
+    const photo = stop.photo;
+    $('actPhotoImg').innerHTML = photo
+        ? `<img src="${esc(photo.thumb_url)}" alt="" referrerpolicy="no-referrer">`
+        : '<span class="act-photo-none" aria-hidden="true">No photo</span>';
+    $('actPhotoCredit').textContent = photo
+        ? photo.credit || ''
+        : (stop.photo_removed ? 'Photo removed. It won’t be looked up again unless you ask.' : 'No photo found for this stop yet.');
+    $('actPhotoRemove').hidden = !photo;
+    $('actPhotoFind').textContent = photo?.source === 'wikimedia' ? 'Find again' : 'Find on Wikipedia';
+}
+
+/** Apply a stop from the server to the local copy, the sheet and the timeline. */
+function photoSaved(data) {
+    if (!data?.data) return;
+    S.acts.set(data.data.id, data.data);
+    renderActPhoto(data.data);
+    rerender();
+}
+
+async function photoAction(button, label, run) {
+    if (!navigator.onLine) {
+        toast('Photos need a connection. Try again when you’re online.');
+        return;
+    }
+    const before = button.textContent;
+    button.disabled = true;
+    button.textContent = label;
+    try {
+        await run();
+    } catch (error) {
+        toast(error?.firstError || 'Couldn’t update the photo. Try again.');
+    } finally {
+        button.disabled = false;
+        button.textContent = before;
+    }
+}
+
+function bindActPhoto() {
+    $('actPhotoUpload').addEventListener('click', () => $('actPhotoFile').click());
+    $('actPhotoFile').addEventListener('change', (e) => {
+        const [file] = e.target.files;
+        e.target.value = '';
+        if (!file || !editingAct) return;
+        photoAction($('actPhotoUpload'), 'Uploading…', async () => {
+            const form = new FormData();
+            form.append('photo', await preparePhoto(file), 'stop.jpg');
+            const response = await fetch(apiUrl(`/activities/${editingAct}/photo`), {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '' },
+                body: form,
+            });
+            const body = await response.json().catch(() => null);
+            if (!response.ok) throw { firstError: body?.errors ? Object.values(body.errors)[0]?.[0] : body?.message };
+            photoSaved(body);
+            toast('Photo added.');
+        });
+    });
+    $('actPhotoFind').addEventListener('click', () => {
+        if (!editingAct) return;
+        photoAction($('actPhotoFind'), 'Looking…', async () => {
+            const data = await api('POST', `/activities/${editingAct}/photo/lookup`);
+            photoSaved(data);
+            toast(data?.data?.photo ? 'Photo found.' : 'No photo found on Wikipedia for this stop.');
+        });
+    });
+    $('actPhotoRemove').addEventListener('click', () => {
+        if (!editingAct) return;
+        photoAction($('actPhotoRemove'), 'Removing…', async () => {
+            photoSaved(await api('DELETE', `/activities/${editingAct}/photo`));
+            toast('Photo removed.');
+        });
+    });
 }
 
 function submitAct(e) {
@@ -360,6 +444,7 @@ export function bindSheets(render) {
 
     $('actForm').addEventListener('submit', submitAct);
     $('actDel').addEventListener('click', (e) => armDelete(e.currentTarget, 'Delete this stop', deleteAct));
+    bindActPhoto();
     $('itemForm').addEventListener('submit', submitItem);
     $('itemForm').elements.est.addEventListener('input', updateItemRm);
     ['name', 'store', 'details'].forEach((field) => $('itemForm').elements[field].addEventListener('input', updateItemWebLinks));

@@ -7,10 +7,12 @@
  * - /api is never cached here; the app keeps trip data in localStorage itself.
  */
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const STATIC_CACHE = `tabi-static-${VERSION}`;
 const PAGE_CACHE = `tabi-pages-${VERSION}`;
 const FONT_CACHE = `tabi-fonts-${VERSION}`;
+/** Stop photos from Wikimedia Commons, kept across app updates so they work offline. */
+const PHOTO_CACHE = 'tabi-photos';
 const NETWORK_TIMEOUT_MS = 4000;
 
 const CORE = [
@@ -43,7 +45,7 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
     event.waitUntil((async () => {
-        const keep = [STATIC_CACHE, PAGE_CACHE, FONT_CACHE];
+        const keep = [STATIC_CACHE, PAGE_CACHE, FONT_CACHE, PHOTO_CACHE];
         const names = await caches.keys();
         await Promise.all(names.filter((n) => n.startsWith('tabi-') && !keep.includes(n)).map((n) => caches.delete(n)));
         await self.clients.claim();
@@ -140,5 +142,10 @@ self.addEventListener('fetch', (event) => {
 
     if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
         event.respondWith(cacheFirst(request, FONT_CACHE));
+        return;
+    }
+
+    if (url.hostname === 'upload.wikimedia.org') {
+        event.respondWith(cacheFirst(request, PHOTO_CACHE));
     }
 });

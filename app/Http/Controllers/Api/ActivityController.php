@@ -12,6 +12,7 @@ use App\Http\Resources\ActivityResource;
 use App\Models\Activity;
 use App\Models\ActivityNote;
 use App\Models\Day;
+use App\Services\StopPhotos;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
@@ -43,6 +44,7 @@ class ActivityController extends Controller
         $activity->day_id = $day->id;
         $activity->sort_order = $day->activities()->count();
         $activity->save();
+        self::findPhotoLater($activity);
 
         return ActivityResource::make($activity->refresh())->response()->setStatusCode(201);
     }
@@ -62,7 +64,12 @@ class ActivityController extends Controller
             $activity->day_id = $day->id;
         }
 
-        $activity->fill(self::attributesFrom($request->validated()))->save();
+        $activity->fill(self::attributesFrom($request->validated()));
+        $renamed = $activity->isDirty(['name', 'places']);
+        $activity->save();
+        if ($renamed) {
+            self::findPhotoLater($activity);
+        }
 
         return ActivityResource::make($activity);
     }
@@ -108,6 +115,25 @@ class ActivityController extends Controller
         $note->save();
 
         return ActivityNoteResource::make($note)->response()->setStatusCode(200);
+    }
+
+    /**
+     * Look up a photo after the response is sent, so saving never waits on Wikipedia.
+     * The result reaches everyone through the changes feed.
+     */
+    private static function findPhotoLater(Activity $activity): void
+    {
+        if (! config('itinerary.auto_photos')) {
+            return;
+        }
+
+        $id = $activity->id;
+        dispatch(function () use ($id): void {
+            $stop = Activity::find($id);
+            if ($stop !== null) {
+                app(StopPhotos::class)->refresh($stop);
+            }
+        })->afterResponse();
     }
 
     /**

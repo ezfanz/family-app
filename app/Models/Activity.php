@@ -43,6 +43,7 @@ class Activity extends Model
             'places' => 'array',
             'is_halal' => 'boolean',
             'status' => ActivityStatus::class,
+            'photo_checked_at' => 'datetime',
         ];
     }
 

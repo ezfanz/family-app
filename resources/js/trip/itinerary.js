@@ -153,6 +153,17 @@ function renderBanner() {
     $('banner').innerHTML = html;
 }
 
+/** Wide photo at the top of an opened stop, with its credit (required for Commons photos). */
+function photoHtml(a) {
+    if (!a.photo) return '';
+    const { url, thumb_url: thumb, credit, link } = a.photo;
+    const srcset = thumb && thumb !== url ? ` srcset="${esc(thumb)} 330w, ${esc(url)} 960w" sizes="(min-width: 720px) 620px, calc(100vw - 120px)"` : '';
+    const caption = credit
+        ? `<figcaption>${link ? `<a href="${esc(link)}" target="_blank" rel="noopener">${esc(credit)}</a>` : esc(credit)}</figcaption>`
+        : '';
+    return `<figure class="stop-photo"><img src="${esc(url)}"${srcset} alt="${esc(`Photo of ${a.name}`)}" loading="lazy" decoding="async" referrerpolicy="no-referrer">${caption}</figure>`;
+}
+
 function stopHtml(a, day, nn) {
     const status = a.status || 'pending';
     const isToday = nn.day && nn.day.id === day.id;
@@ -174,6 +185,7 @@ function stopHtml(a, day, nn) {
         const places = (a.places || []).map((p) => `<a href="${esc(mapUrl(p, day.city))}" target="_blank" rel="noopener">${ICON.pin}<span>${esc(p)}</span></a>`).join('');
         const segs = ['pending', 'done', 'skipped'].map((k) => `<button type="button" data-act="set" data-v="${k}" aria-pressed="${status === k}">${WORD[k]}</button>`).join('');
         detail = `<div class="detail rise" id="d-${a.id}">
+            ${photoHtml(a)}
             ${a.transport ? `<div><span class="k">Getting there</span><p>${esc(a.transport)}</p></div>` : ''}
             ${a.notes ? `<div><span class="k">Notes</span><p>${esc(a.notes)}</p></div>` : ''}
             ${places ? `<div><span class="k">Places</span><div class="places">${places}</div></div>` : ''}
@@ -191,7 +203,8 @@ function stopHtml(a, day, nn) {
         <div class="track"><button type="button" class="dotbtn" data-act="cycle" aria-label="${esc(`${a.name}: ${WORD[status]}. Tap to change.`)}"><span class="dot${isNow ? ' pulse' : ''}">${ICON.tick}<span class="dash"></span></span></button></div>
         <div class="card">
             <button type="button" class="head" data-act="toggle" aria-expanded="${open}"${open ? ` aria-controls="d-${a.id}"` : ''}>
-                ${label}<span class="name">${esc(a.name)}</span>${tags.length ? `<span class="tags">${tags.join('')}</span>` : ''}
+                <span class="head-text">${label}<span class="name">${esc(a.name)}</span>${tags.length ? `<span class="tags">${tags.join('')}</span>` : ''}</span>
+                ${a.photo && !open ? `<img class="stop-thumb" src="${esc(a.photo.thumb_url)}" alt="" width="56" height="56" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : ''}
             </button>${detail}
         </div></li>`;
 }
@@ -313,6 +326,13 @@ export function bindItinerary(rerender) {
             openAirport();
         }
     });
+
+    // A photo that fails to load (offline and never seen, or removed upstream) just disappears.
+    $('rail').addEventListener('error', (e) => {
+        if (e.target instanceof HTMLImageElement) {
+            (e.target.closest('.stop-photo') || e.target).classList.add('broken');
+        }
+    }, true);
 
     $('rail').addEventListener('input', (e) => {
         const id = e.target.dataset.note;

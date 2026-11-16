@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ShoppingBudgetController;
 use App\Http\Controllers\Api\ShoppingImportController;
 use App\Http\Controllers\Api\ShoppingItemController;
 use App\Http\Controllers\Api\ShoppingOverviewController;
+use App\Http\Controllers\Api\StopPhotoController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\TripChangesController;
 use App\Http\Controllers\Api\TripController;
@@ -53,6 +54,10 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::delete('/activities/{activity}', [ActivityController::class, 'destroy'])->name('activities.destroy');
     Route::patch('/activities/{activity}/status', [ActivityController::class, 'updateStatus'])->name('activities.status');
     Route::put('/activities/{activity}/note', [ActivityController::class, 'updateNote'])->name('activities.note');
+    Route::get('/activities/{activity}/photo', [StopPhotoController::class, 'show'])->name('activities.photo.show');
+    Route::post('/activities/{activity}/photo', [StopPhotoController::class, 'store'])->name('activities.photo.store')->middleware('throttle:30,1');
+    Route::post('/activities/{activity}/photo/lookup', [StopPhotoController::class, 'lookup'])->name('activities.photo.lookup')->middleware('throttle:20,1');
+    Route::delete('/activities/{activity}/photo', [StopPhotoController::class, 'destroy'])->name('activities.photo.destroy');
 
     Route::post('/shopping-items', [ShoppingItemController::class, 'store'])->name('shopping-items.store');
     Route::patch('/shopping-items/{shoppingItem}', [ShoppingItemController::class, 'update'])->name('shopping-items.update');
