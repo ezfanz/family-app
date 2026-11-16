@@ -302,12 +302,28 @@ fieldset.plain legend { padding: 0; }
 .empty-list { padding: 16px 4px; color: var(--stone); font-size: 15px; }
 
 /* ---------- shopping: yen to ringgit converter ---------- */
-.fx-card { margin-top: 16px; padding: 14px 16px 12px; background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; }
+.fx-card { margin-top: 16px; }
+.fx-src { flex: 1; min-width: 0; margin: 0; }
+
+/* collapsible panels (converter, admin view) */
+.fold { margin-top: 12px; background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; }
+.fold.admin-fold { background: var(--soft); border-color: transparent; }
+.fold-sum { list-style: none; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 14px; cursor: pointer; border-radius: 14px; user-select: none; }
+.fold-sum::-webkit-details-marker { display: none; }
+.fold-sum::marker { content: ""; }
+.fold-sum:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
+.fold-title { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fold-title strong { font-size: 15px; font-weight: 900; }
+.fold-title .muted { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fold-chev { color: var(--stone); transition: transform .2s; }
+.fold[open] .fold-chev { transform: rotate(180deg); }
+.fold-ico { color: var(--action); }
+.fold-body { padding: 0 14px 14px; }
+.fold[open] .fold-body { animation: rise .2s ease-out; }
+.fold .chips { margin: 10px -14px 0; padding: 2px 14px 4px; }
+@media (hover: hover) { .fold-sum:hover .fold-chev { color: var(--ink); } }
 .fx-head { display: flex; align-items: center; gap: 12px; }
 .flag-jp { flex: none; border-radius: 4px; box-shadow: 0 0 0 1px var(--hair); }
-.fx-titles { flex: 1; min-width: 0; }
-.fx-titles h2 { margin: 0; font-size: 16px; font-weight: 900; }
-.fx-titles p { margin: 2px 0 0; overflow-wrap: anywhere; }
 .fx-refresh { margin-right: -10px; color: var(--action); }
 .fx-refresh[aria-busy="true"] svg { animation: fx-spin .8s linear infinite; }
 @keyframes fx-spin { to { transform: rotate(360deg); } }

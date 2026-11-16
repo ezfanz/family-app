@@ -32,14 +32,36 @@ class YenRate
      */
     public function current(): array
     {
-        $minutes = (int) config('services.exchange_rates.cache_minutes', 180);
+        $cached = Cache::get(self::CACHE_KEY);
+        if ($cached !== null) {
+            return $cached;
+        }
 
-        return Cache::remember(self::CACHE_KEY, now()->addMinutes($minutes), fn () => $this->fetch());
+        $rate = $this->fetch();
+
+        // Today's rate keeps for hours; an older one (e.g. before BNM's 09:00
+        // session, or a weekend) is re-checked soon so today's appears quickly.
+        $isToday = $rate['date'] === CarbonImmutable::now('Asia/Kuala_Lumpur')->toDateString();
+        $minutes = $isToday ? (int) config('services.exchange_rates.cache_minutes', 180) : 30;
+        Cache::put(self::CACHE_KEY, $rate, now()->addMinutes($minutes));
+
+        return $rate;
     }
 
     public function forget(): void
     {
         Cache::forget(self::CACHE_KEY);
+    }
+
+    /**
+     * Drop the cached rate if it was fetched more than the given minutes ago.
+     */
+    public function forgetIfOlderThan(int $minutes): void
+    {
+        $cached = Cache::get(self::CACHE_KEY);
+        if ($cached !== null && abs(now()->diffInMinutes($cached['fetched_at'] ?? now()->subYear())) > $minutes) {
+            $this->forget();
+        }
     }
 
     /**

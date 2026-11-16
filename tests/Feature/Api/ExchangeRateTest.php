@@ -76,6 +76,33 @@ class ExchangeRateTest extends TestCase
             ->assertStatus(503);
     }
 
+    public function test_an_older_rate_is_rechecked_soon_and_refresh_skips_the_cache(): void
+    {
+        Http::preventStrayRequests();
+        $this->travelTo('2026-11-16 00:30:00'); // 08:30 in Kuala Lumpur, before BNM's 09:00 session
+        $todayPublished = false;
+        Http::fake(function ($request) use (&$todayPublished) {
+            $url = $request->url();
+            if ($todayPublished && str_contains($url, 'exchange-rate/JPY?') && str_contains($url, 'session=0900')) {
+                return Http::response($this->bnmRate('2026-11-16', 2.5562));
+            }
+            if (str_contains($url, 'JPY/date/2026-11-13')) {
+                return Http::response($this->bnmRate('2026-11-13', 2.5558));
+            }
+
+            return Http::response(['message' => 'No records found.', 'code' => 404], 404);
+        });
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->getJson('/api/exchange-rates/jpy-myr')->assertJsonPath('data.date', '2026-11-13');
+
+        // 20 minutes later today's rate is out. The server still serves its 30-minute copy, but ↻ (fresh=1) re-checks.
+        $this->travelTo('2026-11-16 00:50:00');
+        $todayPublished = true;
+        $this->actingAs($user)->getJson('/api/exchange-rates/jpy-myr')->assertJsonPath('data.date', '2026-11-13');
+        $this->actingAs($user)->getJson('/api/exchange-rates/jpy-myr?fresh=1')->assertJsonPath('data.date', '2026-11-16');
+    }
+
     public function test_guests_cannot_call_it(): void
     {
         $this->getJson('/api/exchange-rates/jpy-myr')->assertUnauthorized();

@@ -186,8 +186,11 @@ export function renderShop() {
     const sel = selectedShopper();
     const owner = isOwner();
     $('shopAdminNote').classList.toggle('hidden', !owner);
-    $('shopChips').classList.toggle('hidden', !owner);
-    if (owner) renderChips(sel);
+    if (owner) {
+        renderChips(sel);
+        const showing = S.shoppers.find((p) => p.user_id === sel);
+        $('shopViewing').textContent = sel === 'all' ? 'Showing everyone' : `Showing ${showing ? displayName(showing) : 'your list'}`;
+    }
 
     document.querySelectorAll('[data-rate]').forEach((input) => {
         if (document.activeElement !== input) input.value = rate();

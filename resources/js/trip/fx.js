@@ -64,6 +64,14 @@ export function renderFx() {
     $('fxRateLine').textContent = rate
         ? `1 JPY = ${(rate / 100).toFixed(5)} MYR · ${rm(rate, 4)} per ¥100`
         : '';
+    $('fxSummary').textContent = rate ? `${rm(rate, 4)} per ¥100` : 'Today’s rate';
+
+    // Start with ¥1,000 so the converter never opens empty.
+    const yenInput = $('fxYen');
+    if (!yenInput.value && !$('fxRm').value && document.activeElement !== yenInput) {
+        yenInput.value = '1000';
+        lastEdited = 'yen';
+    }
 
     const compare = $('fxCompare');
     const trip = tripRate();
@@ -87,7 +95,7 @@ export async function loadFx(force = false) {
 
     $('fxRefresh').setAttribute('aria-busy', 'true');
     try {
-        const res = await api('GET', '/exchange-rates/jpy-myr');
+        const res = await api('GET', `/exchange-rates/jpy-myr${force ? '?fresh=1' : ''}`);
         live = res.data;
         writeCache(live);
     } catch {

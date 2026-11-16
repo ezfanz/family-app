@@ -74,38 +74,48 @@
       <h1 id="shopTitle">Shopping</h1>
       <p class="lede">Barang kirim for family back home</p>
 
-      {{-- Yen to Ringgit converter, today's rate from Bank Negara Malaysia --}}
-      <section class="fx-card" aria-labelledby="fxTitle">
-        <div class="fx-head">
-          <svg class="flag-jp" viewBox="0 0 30 20" width="36" height="24" role="img" aria-label="Japan flag"><rect width="30" height="20" fill="#FFFFFF"/><circle cx="15" cy="10" r="6" fill="#BC002D"/></svg>
-          <div class="fx-titles">
-            <h2 id="fxTitle">Yen to Ringgit</h2>
-            <p class="muted" id="fxSource" aria-live="polite">Getting today’s rate…</p>
+      {{-- Yen to Ringgit converter (collapsed by default), rate from Bank Negara Malaysia --}}
+      <details class="fold fx-card" id="fxFold">
+        <summary class="fold-sum">
+          <svg class="flag-jp" viewBox="0 0 30 20" width="30" height="20" role="img" aria-label="Japan flag"><rect width="30" height="20" fill="#FFFFFF"/><circle cx="15" cy="10" r="6" fill="#BC002D"/></svg>
+          <span class="fold-title"><strong>Yen to Ringgit</strong><span class="muted tnum" id="fxSummary">Today’s rate</span></span>
+          <svg class="i fold-chev" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="fold-body">
+          <div class="fx-head">
+            <p class="muted fx-src" id="fxSource" aria-live="polite">Getting today’s rate…</p>
+            <button type="button" class="icon-btn fx-refresh" id="fxRefresh" aria-label="Update rate" title="Update rate"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button>
           </div>
-          <button type="button" class="icon-btn fx-refresh" id="fxRefresh" aria-label="Update rate" title="Update rate"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button>
+          <label class="fx-row" for="fxYen">
+            <span class="fx-sym" aria-hidden="true">¥</span>
+            <input id="fxYen" class="tnum" inputmode="decimal" autocomplete="off" value="1000" aria-label="Amount in Japanese yen">
+            <span class="fx-code">JPY</span>
+          </label>
+          <label class="fx-row" for="fxRm">
+            <span class="fx-sym" aria-hidden="true">RM</span>
+            <input id="fxRm" class="tnum" inputmode="decimal" autocomplete="off" aria-label="Amount in Malaysian ringgit">
+            <span class="fx-code">MYR</span>
+          </label>
+          <p class="fx-rate tnum" id="fxRateLine"></p>
+          <div class="fx-compare hidden" id="fxCompare">
+            <span id="fxCompareText"></span>
+            <button type="button" class="pill-btn fx-use" id="fxUse">Use today’s rate</button>
+          </div>
         </div>
-        <label class="fx-row" for="fxYen">
-          <span class="fx-sym" aria-hidden="true">¥</span>
-          <input id="fxYen" class="tnum" inputmode="decimal" autocomplete="off" value="1000" aria-label="Amount in Japanese yen">
-          <span class="fx-code">JPY</span>
-        </label>
-        <label class="fx-row" for="fxRm">
-          <span class="fx-sym" aria-hidden="true">RM</span>
-          <input id="fxRm" class="tnum" inputmode="decimal" autocomplete="off" aria-label="Amount in Malaysian ringgit">
-          <span class="fx-code">MYR</span>
-        </label>
-        <p class="fx-rate tnum" id="fxRateLine"></p>
-        <div class="fx-compare hidden" id="fxCompare">
-          <span id="fxCompareText"></span>
-          <button type="button" class="pill-btn fx-use" id="fxUse">Use today’s rate</button>
-        </div>
-      </section>
+      </details>
 
-      <div class="info-note hidden" id="shopAdminNote">
-        <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-        <span><b>Admin view.</b> You can see everyone’s spending.</span>
-      </div>
-      <nav class="chips hidden" id="shopChips" aria-label="Whose shopping"></nav>
+      {{-- Owner only: whose list to show (collapsed by default) --}}
+      <details class="fold admin-fold hidden" id="shopAdminNote">
+        <summary class="fold-sum">
+          <svg class="i fold-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+          <span class="fold-title"><strong>Admin view</strong><span class="muted" id="shopViewing">Showing your list</span></span>
+          <svg class="i fold-chev" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="fold-body">
+          <p class="muted" style="margin:0">You can see everyone’s spending. Pick whose list to show.</p>
+          <nav class="chips" id="shopChips" aria-label="Whose shopping"></nav>
+        </div>
+      </details>
 
       {{-- Everyone (owner only) --}}
       <div id="shopAll" class="hidden">
