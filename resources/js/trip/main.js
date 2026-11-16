@@ -10,6 +10,7 @@ import { bindSheets, openActForm, openItemForm, openIdeaForm, planIdea } from '.
 import { bindDayStrip } from './daystrip.js';
 import { showLoader } from './loader.js';
 import { bindImport } from './importer.js';
+import { bindReceipts } from './receipts.js';
 import { loadFx } from './fx.js';
 import { setWriterHooks } from './writer.js';
 import { net, initSync, loadCache, saveCache, clearTripStorage, flushQueue, queueLength, startPolling } from './sync.js';
@@ -179,6 +180,7 @@ export async function bootTrip(root) {
     setIdeaHandlers({ openIdeaForm, planIdea, rerender: render });
     bindItinerary(render);
     bindShopping();
+    bindReceipts();
     bindIdeas();
     bindSheets(render);
     bindDayStrip();

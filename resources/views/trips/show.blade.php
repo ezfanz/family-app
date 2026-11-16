@@ -73,12 +73,17 @@
     {{-- ---------- Shopping (personal lists; the owner sees everyone) ---------- --}}
     <section id="v-shopping" class="page hidden" aria-labelledby="shopTitle">
       <div class="page-head">
-        <div><h1 id="shopTitle">Shopping</h1><p class="lede">Barang kirim for family back home</p></div>
+        <div><h1 id="shopTitle">Shopping</h1><p class="lede" id="shopLede">Barang kirim for family back home</p></div>
         <button type="button" class="pill-btn round" id="shopRefreshBtn" data-refresh="shopping" aria-label="Refresh shopping lists" title="Get the latest lists and today’s rate"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button>
       </div>
 
+      <div class="seg" role="group" aria-label="Shopping view">
+        <button type="button" data-shop-tab="list" aria-current="page"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg>List</button>
+        <button type="button" data-shop-tab="receipts" aria-current="false"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Receipts</button>
+      </div>
+
       {{-- Yen to Ringgit converter (collapsed by default), rate from Bank Negara Malaysia --}}
-      <details class="fold fx-card" id="fxFold">
+      <details class="fold fx-card list-only" id="fxFold">
         <summary class="fold-sum">
           <svg class="flag-jp" viewBox="0 0 30 20" width="30" height="20" role="img" aria-label="Japan flag"><rect width="30" height="20" fill="#FFFFFF"/><circle cx="15" cy="10" r="6" fill="#BC002D"/></svg>
           <span class="fold-title"><strong>Yen to Ringgit</strong><span class="muted tnum" id="fxSummary">Today’s rate</span></span>
@@ -121,7 +126,7 @@
       </details>
 
       {{-- Search & filter (everyone; the owner on "Everyone" searches all lists) --}}
-      <details class="fold filter-fold" id="filterFold">
+      <details class="fold filter-fold list-only" id="filterFold">
         <summary class="fold-sum">
           <svg class="i fold-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4 2v-8.5z"/></svg>
           <span class="fold-title"><strong>Search &amp; filter</strong><span class="muted" id="filterSummary">All items</span></span>
@@ -147,8 +152,10 @@
         </form>
       </details>
 
+      @include('trips.partials.receipts')
+
       {{-- Everyone (owner only) --}}
-      <div id="shopAll" class="hidden">
+      <div id="shopAll" class="hidden list-only">
         <div class="totals" id="allTotals" aria-live="polite"></div>
         <label class="rate-row" for="rateAll">Rate for everyone, RM per ¥100
           <input id="rateAll" class="rate-input tnum" inputmode="decimal" type="number" step="0.0001" min="0" data-rate>
@@ -167,7 +174,7 @@
       </div>
 
       {{-- One person --}}
-      <div id="shopPerson" class="hidden">
+      <div id="shopPerson" class="hidden list-only">
         <div class="person-head" id="personHead"></div>
         <div class="grid2" style="margin-top:16px">
           <div><label class="lbl" for="budget">Budget (RM)</label><input id="budget" class="big-input tnum" inputmode="decimal" type="number" step="1" min="0" placeholder="0"></div>
@@ -187,7 +194,7 @@
       </div>
 
       {{-- Import an Excel shopping list (E-Itinerary template) --}}
-      <section class="import-card" aria-labelledby="importTitle">
+      <section class="import-card list-only" aria-labelledby="importTitle">
         <div class="ic-head">
           <span class="ic-icon" aria-hidden="true">
             <svg class="i" width="24" height="24" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 12l6 6M15 12l-6 6"/></svg>

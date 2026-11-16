@@ -8,6 +8,7 @@ import { S, UI, canEdit, isOwner, canManageShoppingOf, shoppingList } from './st
 import { $, esc, yen, rm, debounce, debounceKeyed } from './util.js';
 import { write } from './writer.js';
 import { renderFx, bindFx, liveRate } from './fx.js';
+import { renderShopTab } from './receipts.js';
 
 const AVATAR_COLOURS = ['#2A3B8F', '#6A3E9A', '#00776F', '#1F5591', '#B7791F', '#C2255C', '#4A8410', '#8A5A00'];
 const ROLE_LABEL = { owner: 'Owner', editor: 'Editor', viewer: 'Viewer' };
@@ -21,7 +22,7 @@ export function setItemFormOpener(fn) {
 export const autoRate = () => S.trip?.exchange_rate_auto !== false;
 
 /** RM per ¥100 used for totals: today's rate when automatic (or as a fallback), else the trip's own. */
-const rate = () => (autoRate() && liveRate()) || Number(S.trip.exchange_rate_rm_per_100_yen) || liveRate() || 0;
+export const rate = () => (autoRate() && liveRate()) || Number(S.trip.exchange_rate_rm_per_100_yen) || liveRate() || 0;
 const toRm = (yenValue) => (yenValue * rate()) / 100;
 
 export const initials = (name) => String(name || '?').trim().slice(0, 2).toUpperCase();
@@ -416,6 +417,7 @@ export function renderShop() {
     else if (person) renderPerson(person);
     renderFilterSummary();
     renderFx();
+    renderShopTab();
 }
 
 /** Set the trip's shopping rate (RM per ¥100), e.g. from today's Bank Negara rate. */

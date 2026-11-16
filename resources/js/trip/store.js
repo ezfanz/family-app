@@ -12,6 +12,12 @@ export const S = {
     items: new Map(),
     ideas: new Map(),
     notes: new Map(),
+    /** Tax refund receipts I can see: mine, or everyone's for the owner. */
+    receipts: new Map(),
+    /** Airport checklist items I have ticked. */
+    checklist: [],
+    /** Rules from config/tax_refund.php. */
+    taxRules: { min_pre_tax_yen: 5000, days_to_export: 90 },
     serverTime: null,
     /** Record keys ("act:<id>") with local writes not yet confirmed by the server. */
     pending: new Map(),
@@ -26,6 +32,10 @@ export const UI = {
     shopSel: null,
     /** Shopping list filter by who an item is for: 'all', a name key, or '__none__'. */
     forWho: 'all',
+    /** Shopping: 'list' or 'receipts' (tax refunds). */
+    shopTab: 'list',
+    /** Receipts filter chip: 'all', 'eligible', 'customs_confirmed', 'refunded', 'not_eligible'. */
+    receiptFilter: 'all',
     /** Itinerary: 'all' or a city name; the day strip only shows that city's days. */
     city: 'all',
     /** Shopping search & filter form: applies to the list in view and to "Everyone" results. */
@@ -52,7 +62,7 @@ function mergeShoppers(list) {
 }
 
 /** Pending-write key prefixes that protect each record type from being overwritten. */
-const GUARDS = { act: ['act', 'status'], item: ['item'], idea: ['idea'] };
+const GUARDS = { act: ['act', 'status'], item: ['item'], idea: ['idea'], receipt: ['receipt'] };
 
 function upsertAll(map, list, key) {
     for (const record of list || []) {
@@ -78,6 +88,9 @@ export function loadFull(payload) {
     S.items = new Map(payload.shopping_items.map((i) => [i.id, i]));
     S.ideas = new Map(payload.ideas.map((i) => [i.id, i]));
     S.notes = new Map(payload.my_notes.map((n) => [n.activity_id, n.note]));
+    S.receipts = new Map((payload.receipts || []).map((r) => [r.id, r]));
+    S.checklist = payload.my_airport_checklist || [];
+    S.taxRules = payload.tax_refund || S.taxRules;
     S.serverTime = payload.server_time;
 }
 
@@ -108,6 +121,7 @@ export function mergeChanges(payload) {
     upsertAll(S.acts, payload.activities, 'act');
     upsertAll(S.items, payload.shopping_items, 'item');
     upsertAll(S.ideas, payload.ideas, 'idea');
+    upsertAll(S.receipts, payload.receipts, 'receipt');
     for (const note of payload.my_notes || []) {
         if (!S.pending.has(`note:${note.activity_id}`)) {
             S.notes.set(note.activity_id, note.note);
@@ -127,6 +141,9 @@ export function snapshot() {
         items: [...S.items.values()],
         ideas: [...S.ideas.values()],
         notes: [...S.notes.entries()],
+        receipts: [...S.receipts.values()],
+        checklist: S.checklist,
+        taxRules: S.taxRules,
         serverTime: S.serverTime,
     };
 }
@@ -140,6 +157,9 @@ export function restore(saved) {
     S.items = new Map(saved.items.map((i) => [i.id, i]));
     S.ideas = new Map(saved.ideas.map((i) => [i.id, i]));
     S.notes = new Map(saved.notes);
+    S.receipts = new Map((saved.receipts || []).map((r) => [r.id, r]));
+    S.checklist = saved.checklist || [];
+    S.taxRules = saved.taxRules || S.taxRules;
     S.serverTime = saved.serverTime;
 }
 

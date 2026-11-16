@@ -7,6 +7,9 @@ export function setApiBase(url) {
     base = url.replace(/\/$/, '');
 }
 
+/** Full URL of an API path, e.g. for an <img> of a private receipt photo. */
+export const apiUrl = (path) => `${base}${path}`;
+
 export class ApiError extends Error {
     /**
      * @param {number} status 0 means the request never reached the server.

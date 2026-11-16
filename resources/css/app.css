@@ -570,3 +570,70 @@ fieldset.acct-pref .seg { clear: both; }
 .city-chip[aria-pressed="true"] { background: var(--c, var(--ink)); border-color: var(--c, var(--ink)); color: #FFFFFF; }
 .city-chip[aria-pressed="true"] .city-dot { background: #FFFFFF; }
 .city-chip[aria-pressed="true"] .chip-count { background: rgba(255, 255, 255, .22); color: #FFFFFF; }
+
+/* ---------- shopping: List | Receipts switch ---------- */
+.seg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; padding: 3px; margin-top: 14px; border-radius: 10px; background: var(--soft); }
+.seg button { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border: 0; border-radius: 8px; background: transparent; color: var(--stone); font-size: 15px; font-weight: 700; cursor: pointer; }
+.seg button[aria-current="page"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+#v-shopping[data-tab="receipts"] .list-only { display: none !important; }
+#v-shopping:not([data-tab="receipts"]) .receipts-only { display: none !important; }
+
+/* ---------- shopping: receipts and tax refunds ---------- */
+.rc-summary { margin-top: 16px; background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; }
+.rc-sum-top { padding: 16px 16px 14px; }
+.rc-label { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--stone); }
+.rc-big { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; }
+.rc-big > span:first-child { font-size: 32px; font-weight: 900; line-height: 1.1; }
+.rc-big-rm { font-size: 16px; font-weight: 700; color: var(--stone); }
+.rc-bar { display: flex; height: 8px; margin-top: 12px; border-radius: 4px; overflow: hidden; background: var(--hair); }
+.rc-bar span { display: block; height: 8px; width: 0; transition: width .3s; }
+.rc-bar .got, .rc-key.got { background: var(--done); }
+.rc-bar .wait, .rc-key.wait { background: var(--action); }
+.rc-key { width: 8px; height: 8px; border-radius: 2px; background: var(--hair); flex: none; }
+.rc-sum-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair); }
+.rc-sum-grid > div { padding: 12px; min-width: 0; }
+.rc-sum-grid > div + div { border-left: 1px solid var(--hair); }
+.rc-num { font-size: 17px; font-weight: 900; margin-top: 2px; }
+.rc-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-top: 12px; }
+.rc-actions .btn { width: auto; }
+.rc-airport { color: var(--action) !important; padding: 0 14px; }
+.rc-filters { margin-top: 20px; }
+.rc-chip { padding: 0 14px; min-height: 40px; font-size: 14px; }
+.rc-day { margin: 22px 0 8px; font-size: 15px; font-weight: 700; color: var(--stone); }
+.rc-group { margin-top: 10px; background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+.rc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 12px 14px 10px; }
+.rc-store { font-size: 16px; font-weight: 900; overflow-wrap: anywhere; }
+.rc-sub { font-size: 13px; font-weight: 500; color: var(--stone); margin-top: 2px; }
+.rc-tag { flex: none; font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
+.rc-tag.ok { border: 1px solid var(--done); color: var(--halal-text); }
+.rc-tag.short { border: 1px solid var(--amber-line); color: var(--amber-text); }
+.rc-list { list-style: none; margin: 0; padding: 0; }
+.rc-row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 10px 14px; border-top: 1px solid var(--hair); }
+.rc-thumb { display: block; width: 40px; height: 52px; border: 1px solid var(--hair); border-radius: 6px; background: var(--surface); object-fit: cover; }
+.rc-thumb.blank { box-sizing: border-box; padding-top: 2px; }
+.rc-thumb.blank span { display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: var(--hair); }
+.rc-thumb.blank span:nth-child(2) { width: 50%; } .rc-thumb.blank span:nth-child(4) { width: 40%; }
+.rc-main { min-width: 0; }
+.rc-title { font-size: 15px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+.rc-meta { font-size: 13px; font-weight: 500; color: var(--stone); margin-top: 2px; }
+.rc-pill { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: var(--soft); color: var(--stone); }
+.rc-pill.eligible { background: color-mix(in srgb, var(--done) 14%, var(--surface)); color: var(--halal-text); }
+.rc-pill.customs_confirmed { background: color-mix(in srgb, var(--action) 14%, var(--surface)); color: var(--action); }
+.rc-pill.refunded { background: var(--done); color: #FFFFFF; }
+.rc-pill.not_received { background: color-mix(in srgb, var(--now) 12%, var(--surface)); color: var(--now-text); }
+.rc-pill.captured { background: color-mix(in srgb, var(--amber-line) 18%, var(--surface)); color: var(--amber-text); }
+.rc-side { text-align: right; }
+.rc-refund { font-size: 15px; font-weight: 900; }
+.rc-refund.got { color: var(--halal-text); }
+.rc-refund.none { color: var(--stone); }
+.rc-word { font-size: 12px; font-weight: 500; color: var(--stone); }
+.rc-mark { margin-top: 6px; min-height: 44px; padding: 0 10px; border: 1px solid var(--hair); border-radius: 8px; background: var(--surface); color: var(--action); font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.rc-empty { margin: 28px 0; text-align: center; font-size: 15px; color: var(--stone); }
+.rc-none { margin-top: 20px; padding: 24px 18px; text-align: center; border: 1px dashed var(--hair); border-radius: 12px; }
+.rc-none h2 { margin: 0; font-size: 18px; font-weight: 900; }
+.rc-none p { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--stone); }
+.rc-note { display: flex; gap: 8px; margin: 20px 2px 0; font-size: 13px; line-height: 1.5; color: var(--stone); }
+.rc-note svg { flex: none; margin-top: 1px; }
+.yen-input { position: relative; }
+.yen-input > span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: var(--stone); }
+.yen-input .input { padding-left: 28px; }

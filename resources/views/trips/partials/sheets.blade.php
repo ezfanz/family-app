@@ -98,6 +98,28 @@
   </form>
 </dialog>
 
+{{-- ---------- Mark a tax refund as received ---------- --}}
+<dialog class="sheet" id="refundDlg" aria-labelledby="refundDlgTitle">
+  <form id="refundForm" novalidate>
+    <div class="grab" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="refundDlgTitle">Refund received</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close">{!! $close !!}</button>
+    </div>
+    <div class="sheet-body form">
+      <p class="muted" id="refundHint" style="margin:0"></p>
+      <div class="field"><label for="refundAmount">Amount received</label>
+        <div class="yen-input"><span aria-hidden="true">¥</span><input id="refundAmount" name="amount" type="number" min="0" max="1000000" step="1" inputmode="numeric" class="input tnum" required></div>
+      </div>
+      <div class="danger-row"><button type="button" class="btn secondary compact" id="refundNotReceived">It never arrived</button></div>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn secondary" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Mark refunded</button>
+    </div>
+  </form>
+</dialog>
+
 {{-- ---------- Review an Excel import before saving ---------- --}}
 <dialog class="sheet" id="importDlg" aria-labelledby="importDlgTitle">
   <div class="grab" aria-hidden="true"></div>
