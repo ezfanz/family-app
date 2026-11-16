@@ -1,58 +1,91 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# E-Itinerary
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A shared Japan trip planner for a small group: day-by-day itinerary, personal shopping lists with budgets, Yen to Ringgit rates, tax refund receipts and a shopping overview. Works offline on a phone (PWA) and syncs when back online.
 
-## About Laravel
+- **Stack:** Laravel 13 (PHP 8.4), Blade + vanilla JS + Vite, Sanctum (web session + mobile tokens), Supabase Postgres.
+- **Design:** `docs/reference/e-itinerary-design.html` is the source of truth for layout, copy and colour tokens.
+- **Roles:** owner (admin), editor, viewer. Shopping, budgets and receipts are personal; the owner can see everyone's.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Local setup (Laravel Herd)
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+1. Fill in the Supabase connection in `.env` (Supabase → **Connect** → *Session pooler*): `DB_HOST`, `DB_USERNAME` (`postgres.<project-ref>`), `DB_PASSWORD`. Keep `DB_SSLMODE=require`.
+2. Create the tables and load the trip:
 
-## Contributing
+   ```bash
+   php artisan migrate
+   php artisan db:seed            # the Japan trip: 14 days, stops, shopping list, ideas
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Register an account at `/register`, then make yourself the trip owner:
 
-## Code of Conduct
+   ```bash
+   php artisan trip:owner you@example.com
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. Run Vite while you work: `npm run dev` (or `composer run dev`). Herd serves the site at **https://my-itenary.test**.
 
-## Security Vulnerabilities
+Laravel is the only database client: no Supabase JS client, Supabase Auth or Row Level Security. All access rules live in `app/Policies/TripPolicy.php`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Tests
 
-## License
+```bash
+php artisan test --compact
+vendor/bin/pint --dirty
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Tests run on in-memory SQLite (see `phpunit.xml`) and never touch Supabase.
+
+## Environment
+
+| Key | What it is |
+|---|---|
+| `APP_URL` | Full https address of the site |
+| `DB_*` | Supabase Postgres (session pooler), `DB_SSLMODE=require` |
+| `SESSION_SECURE_COOKIE` | `true` in production |
+| `SANCTUM_STATEFUL_DOMAINS` | Your domain, if it is not the `APP_URL` host |
+| `BNM_API_URL`, `FRANKFURTER_API_URL`, `EXCHANGE_RATE_CACHE_MINUTES` | Exchange rate sources (no keys needed) |
+| `TAX_REFUND_MIN_PRE_TAX_YEN`, `TAX_REFUND_DAYS_TO_EXPORT` | Tax refund rules (default ¥5,000 and 90 days) |
+| `RECEIPTS_DISK` | `receipts` (private folder) locally; `s3` in production |
+| `AWS_*` | Supabase Storage S3 keys for a **private** `receipts` bucket |
+
+Never commit `.env`.
+
+## Deploying
+
+The app needs a server that runs **PHP 8.4**: it has a database, logins and an API, so it cannot be hosted as a static site (for example Cloudflare Pages alone). Any PHP host works, such as Laravel Cloud, a VPS with Laravel Forge, or a container host (Render, Fly.io, Railway). Cloudflare can sit in front of it for the domain, HTTPS and caching.
+
+1. **Environment:** copy `.env.example`, then set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://your-domain`, `SESSION_SECURE_COOKIE=true`, the `DB_*` values and a new `APP_KEY`.
+2. **Receipt photos:** in Supabase → Storage, create a **private** bucket called `receipts` and an S3 access key. Set `RECEIPTS_DISK=s3` and the `AWS_*` values. Photos are only ever streamed through the app to their owner and the trip owner.
+3. **Build and migrate** on each deploy:
+
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   npm ci && npm run build
+   php artisan migrate --force
+   php artisan config:cache && php artisan route:cache && php artisan view:cache
+   ```
+
+4. **HTTPS behind a proxy:** the app trusts `X-Forwarded-*` headers from any proxy (`bootstrap/app.php`) and forces https links in production (`AppServiceProvider`). Only expose PHP through the proxy or host, never directly.
+5. **Cloudflare in front:** point your domain's DNS at the host with the orange-cloud proxy on, and set SSL/TLS mode to **Full (strict)**. Don't cache `/api/*`, `/login`, `/register` or `/trips/*` (they are personal); the service worker already caches the app shell and `/build/*` assets on the phone.
+6. **Health check:** `GET /up`.
+
+## Offline and the phone app
+
+- The trip is cached in `localStorage`, changes made offline are queued and sent when the connection returns, and receipt photos wait in IndexedDB until they upload (`resources/js/trip/sync.js`, `photo-queue.js`).
+- `public/sw.js` is the service worker; bump its cache version when the app shell changes.
+
+### NativePHP Mobile (later)
+
+The API is ready for a native wrapper:
+
+- **Login:** `POST /api/auth/token` returns a Sanctum bearer token; send it as `Authorization: Bearer …` on every `/api` call. Log out with `DELETE /api/auth/token`.
+- **Same rules:** every endpoint applies the same policies as the web app. The receipt and shopping overview rules also exist on the server (`app/Services/`), so a native screen can use the API instead of the JavaScript copies.
+- **Camera:** receipt photos are uploaded with `POST /api/receipts/{id}/photos` (multipart, part 1 or 2). A native app can use the device camera and on-device text recognition, then fill the same fields; `App\Services\TaxRefund\ReceiptReader` is the hook for automatic reading.
+- **Network:** point the app at the production `APP_URL` over https.

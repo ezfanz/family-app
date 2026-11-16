@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // The web app calls /api with its session cookie; the mobile app uses bearer tokens.
         $middleware->statefulApi();
 
+        // In production the app sits behind Cloudflare and/or the host's load balancer,
+        // which end HTTPS and pass the real scheme and visitor IP in X-Forwarded-* headers.
+        // Their addresses change, so any proxy is trusted; PHP must not be reachable directly.
+        $middleware->trustProxies(at: '*');
+
         // Set by the browser (Settings > Appearance) and read when rendering <html>.
         $middleware->encryptCookies(except: ['theme']);
     })
