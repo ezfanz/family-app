@@ -9,6 +9,7 @@ import { renderIdeas, bindIdeas, setIdeaHandlers } from './ideas.js';
 import { bindSheets, openActForm, openItemForm, openIdeaForm, planIdea } from './sheets.js';
 import { bindDayStrip } from './daystrip.js';
 import { showLoader } from './loader.js';
+import { bindImport } from './importer.js';
 import { setWriterHooks } from './writer.js';
 import { net, initSync, loadCache, saveCache, clearTripStorage, flushQueue, queueLength, startPolling } from './sync.js';
 
@@ -171,6 +172,7 @@ export async function bootTrip(root) {
     bindSheets(render);
     bindDayStrip();
     bindRefreshButton();
+    bindImport({ base: root.dataset.apiBase, onImported: () => refreshTrip() });
 
     document.addEventListener('focusout', () => {
         if (pendingRender) {

@@ -162,7 +162,7 @@ function guardShopping(userId) {
 let itemListOwner = null;
 
 export function openItemForm(id, forUserId = null) {
-    const it = id ? S.items.get(id) : { name: '', for_whom: '', qty: 1, estimated_yen: '' };
+    const it = id ? S.items.get(id) : { name: '', store: '', details: '', for_whom: '', link: '', notes: '', qty: 1, estimated_yen: '' };
     if (!it) return;
     const listOwner = id ? Number(it.user_id) : Number(forUserId && forUserId !== 'all' ? forUserId : S.me);
     if (!guardShopping(listOwner)) return;
@@ -171,6 +171,14 @@ export function openItemForm(id, forUserId = null) {
     itemListOwner = listOwner;
     f.name.value = it.name;
     f.for_whom.value = it.for_whom || '';
+    f.store.value = it.store || '';
+    f.details.value = it.details || '';
+    f.link.value = it.link || '';
+    f.notes.value = it.notes || '';
+    const open = $('itemLinkOpen');
+    open.classList.toggle('hidden', !it.link);
+    if (it.link) open.href = it.link;
+    $('storeList').innerHTML = [...new Set(shoppingList().map((i) => i.store).filter(Boolean))].map((v) => `<option value="${v.replace(/"/g, '&quot;')}"></option>`).join('');
     f.qty.value = it.qty;
     f.est.value = it.estimated_yen || '';
     f.name.removeAttribute('aria-invalid');
@@ -190,10 +198,16 @@ function submitItem(e) {
     if (!name) return invalid(f.name, 'Give the item a name.');
     const data = {
         name,
+        store: f.store.value.trim().slice(0, 60) || null,
+        details: f.details.value.trim().slice(0, 160) || null,
         for_whom: f.for_whom.value.trim().slice(0, 80) || null,
+        link: f.link.value.trim().slice(0, 500) || null,
+        notes: f.notes.value.trim().slice(0, 1000) || null,
         qty: Math.min(999, Math.max(1, Math.round(Number(f.qty.value) || 1))),
         estimated_yen: Math.max(0, Math.round(Number(f.est.value) || 0)),
     };
+
+    if (data.link && !/^https?:\/\//i.test(data.link)) return invalid(f.link, 'Link must start with http:// or https://.');
 
     if (editingItem) {
         const item = S.items.get(editingItem);

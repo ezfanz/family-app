@@ -113,7 +113,8 @@ function renderAll() {
 }
 
 function metaText(item) {
-    const parts = [`×${item.qty}`];
+    const parts = [item.store, item.details].filter(Boolean);
+    parts.push(`×${item.qty}`);
     const est = Number(item.estimated_yen) || 0;
     parts.push(est ? `est ${yen(est)} ≈ ${rm(toRm(est), 0)}` : 'no estimate');
     if (item.for_whom) parts.push(item.for_whom);

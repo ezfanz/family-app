@@ -12,7 +12,7 @@ class StoreShoppingItemRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $clean = [];
-        foreach (['name', 'for_whom'] as $field) {
+        foreach (['name', 'store', 'details', 'for_whom', 'link', 'notes'] as $field) {
             if ($this->has($field)) {
                 $clean[$field] = trim((string) $this->input($field));
             }
@@ -44,7 +44,11 @@ class StoreShoppingItemRequest extends FormRequest
     {
         return [
             'name' => [$partial ? 'sometimes' : 'required', 'string', 'max:160'],
+            'store' => ['sometimes', 'nullable', 'string', 'max:60'],
+            'details' => ['sometimes', 'nullable', 'string', 'max:160'],
             'for_whom' => ['sometimes', 'nullable', 'string', 'max:80'],
+            'link' => ['sometimes', 'nullable', 'string', 'max:500', 'url:http,https'],
+            'notes' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'qty' => ['sometimes', 'integer', 'min:1', 'max:999'],
             'estimated_yen' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:10000000'],
             'actual_yen' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:10000000'],

@@ -47,12 +47,18 @@
     </div>
     <div class="sheet-body form">
       <div class="field"><label for="i-name">Item</label><input id="i-name" name="name" type="text" class="input" maxlength="160" placeholder="e.g. Tokyo Banana, 8 pcs" required></div>
-      <div class="field"><label for="i-for">For who<span class="hint">Optional, e.g. For Mak</span></label><input id="i-for" name="for_whom" type="text" class="input" maxlength="80"></div>
+      <div class="grid2">
+        <div class="field"><label for="i-store">Store</label><input id="i-store" name="store" type="text" class="input" maxlength="60" placeholder="e.g. MUJI" list="storeList"><datalist id="storeList"></datalist></div>
+        <div class="field"><label for="i-for">For who</label><input id="i-for" name="for_whom" type="text" class="input" maxlength="80" placeholder="e.g. For Mak"></div>
+      </div>
+      <div class="field"><label for="i-details">Details<span class="hint">Colour, size or code</span></label><input id="i-details" name="details" type="text" class="input" maxlength="160"></div>
       <div class="grid2">
         <div class="field"><label for="i-qty">Quantity</label><input id="i-qty" name="qty" type="number" min="1" max="999" step="1" inputmode="numeric" class="input tnum"></div>
         <div class="field"><label for="i-est">Estimated total ¥</label><input id="i-est" name="est" type="number" min="0" step="10" inputmode="numeric" class="input tnum"></div>
       </div>
       <p class="muted" id="itemRm" style="margin:-10px 0 0"></p>
+      <div class="field"><label for="i-link">Link<span class="hint">Product page or photo</span></label><input id="i-link" name="link" type="url" inputmode="url" class="input" maxlength="500" placeholder="https://"><a class="text-link hidden" id="itemLinkOpen" target="_blank" rel="noopener">Open link</a></div>
+      <div class="field"><label for="i-notes">Notes</label><textarea id="i-notes" name="notes" rows="2" class="input" maxlength="1000"></textarea></div>
       <div class="danger-row"><button type="button" class="btn danger compact" id="itemDel">Delete this item</button></div>
     </div>
     <div class="sheet-foot">
@@ -84,4 +90,23 @@
       <button type="submit" class="btn primary">Save idea</button>
     </div>
   </form>
+</dialog>
+
+{{-- ---------- Review an Excel import before saving ---------- --}}
+<dialog class="sheet" id="importDlg" aria-labelledby="importDlgTitle">
+  <div class="grab" aria-hidden="true"></div>
+  <div class="sheet-head">
+    <h2 id="importDlgTitle">Check your list</h2>
+    <button type="button" class="icon-btn" data-close aria-label="Close">{!! $close !!}</button>
+  </div>
+  <div class="sheet-body">
+    <p class="import-file" id="importFileName"></p>
+    <div class="import-summary" id="importSummary"></div>
+    <div id="importProblems"></div>
+    <div id="importRows"></div>
+  </div>
+  <div class="sheet-foot">
+    <button type="button" class="btn secondary" data-close>Cancel</button>
+    <button type="button" class="btn primary" id="importConfirm" autofocus>Import</button>
+  </div>
 </dialog>
