@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Offline · Tabi</title>
+<style>
+  :root { --paper:#F7F7F5; --ink:#1C1C1E; --stone:#6B6B70; --action:#2A3B8F; color-scheme: light dark; }
+  @media (prefers-color-scheme: dark) { :root { --paper:#121214; --ink:#EDEDED; --stone:#9A9AA2; --action:#9DAEFF; } }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--paper); color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif; padding:24px; box-sizing:border-box; text-align:center; }
+  h1 { font-size:24px; font-weight:900; margin:16px 0 8px; }
+  p { color:var(--stone); font-size:16px; line-height:1.55; max-width:340px; margin:0 auto; }
+  button { margin-top:24px; min-height:52px; padding:0 24px; border:0; border-radius:12px; background:var(--action); color:#fff; font:inherit; font-weight:700; font-size:16px; }
+  img { width:72px; height:72px; border-radius:16px; }
+</style>
+</head>
+<body>
+<main>
+  <img src="/icons/icon-192.png" alt="">
+  <h1>You’re offline</h1>
+  <p>This page isn’t saved on this phone yet. Open your trip once while you have signal, and it will work offline after that.</p>
+  <button type="button" onclick="location.reload()">Try again</button>
+</main>
+</body>
+</html>

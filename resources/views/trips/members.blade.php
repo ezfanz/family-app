@@ -73,4 +73,15 @@
   <dt>Editor</dt><dd>Add, change and delete stops and items.</dd>
   <dt>Viewer</dt><dd>Sees the plan, ticks stops, keeps own notes.</dd>
 </dl>
+
+<h2 class="sec">You</h2>
+<p class="lede">Logged in as {{ $me->name }} ({{ $me->email }})</p>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+  <a class="btn compact" href="{{ route('trips.index') }}">All trips</a>
+  <form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit" class="btn compact secondary">Log out</button>
+  </form>
+</div>
+<p class="muted" style="margin-top:8px">Logging out also removes the saved copy of your trips from this device.</p>
 @endsection

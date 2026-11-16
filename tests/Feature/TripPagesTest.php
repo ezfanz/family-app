@@ -21,6 +21,7 @@ class TripPagesTest extends TestCase
             ->assertSee('data-trip-id="'.$trip->id.'"', false)
             ->assertSee('id="rail"', false)
             ->assertSee('id="actDlg"', false)
+            ->assertSee('<link rel="manifest" href="/manifest.webmanifest">', false)
             ->assertSee('Itinerary')
             ->assertSee('Shopping')
             ->assertSee('Ideas');
