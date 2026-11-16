@@ -133,11 +133,23 @@ const SEARCH_ICON = '<svg class="i" width="20" height="20" viewBox="0 0 24 24" a
 
 function metaText(item) {
     const parts = [item.store, item.details].filter(Boolean);
-    parts.push(`×${item.qty}`);
     const est = Number(item.estimated_yen) || 0;
     parts.push(est ? `est ${yen(est)} ≈ ${rm(toRm(est), 0)}` : 'no estimate');
     if (item.for_whom) parts.push(item.for_whom);
     return parts.join(' · ');
+}
+
+/** − qty + under the item name; plain "Qty n" when you can't change it. */
+function qtyHtml(item, editable) {
+    const qty = Number(item.qty) || 1;
+    if (!editable) {
+        return `<div class="qty-step readonly"><span class="qty-val tnum">Qty ${qty}</span></div>`;
+    }
+    return `<div class="qty-step" role="group" aria-label="Quantity of ${esc(item.name)}">
+        <button type="button" data-act="qty" data-step="-1" aria-label="One less ${esc(item.name)}"${qty <= 1 ? ' disabled' : ''}>−</button>
+        <span class="qty-val tnum" aria-live="polite">${qty}</span>
+        <button type="button" data-act="qty" data-step="1" aria-label="One more ${esc(item.name)}"${qty >= 999 ? ' disabled' : ''}>+</button>
+    </div>`;
 }
 
 function renderPersonList(person) {
@@ -150,6 +162,7 @@ function renderPersonList(person) {
                 <span class="item-name">${esc(item.name)}</span>
                 <span class="item-meta tnum">${esc(metaText(item))}</span>
             </button>
+            ${qtyHtml(item, editable)}
             <a class="search-btn" href="${esc(googleUrl(item))}" target="_blank" rel="noopener" aria-label="Search Google for ${esc(item.name)}" title="Search on Google">${SEARCH_ICON}</a>
             <div class="paid"><span aria-hidden="true">Paid ¥</span><input class="tnum" inputmode="numeric" pattern="[0-9]*" placeholder="0" data-paid="${item.id}" value="${item.actual_yen ?? ''}" aria-label="Paid in yen for ${esc(item.name)}" ${editable ? '' : 'readonly'}></div>
         </div></li>`).join('')
@@ -264,6 +277,24 @@ const saveBudget = debounceKeyed((userId) => {
     });
 }, 600);
 
+/** Quantity changes are batched so tapping + a few times sends one update. */
+const saveQty = debounceKeyed((id) => {
+    const item = S.items.get(id);
+    if (item) saveItem(item, { qty: item.qty, estimated_yen: item.estimated_yen });
+}, 600);
+
+/** Change quantity by one; the estimate scales with it because it is the total for the quantity. */
+function stepQty(item, step) {
+    const current = Number(item.qty) || 1;
+    const next = Math.min(999, Math.max(1, current + step));
+    if (next === current) return;
+    const est = Number(item.estimated_yen) || 0;
+    if (est > 0) item.estimated_yen = Math.round((est / current) * next);
+    item.qty = next;
+    renderShop();
+    saveQty(item.id);
+}
+
 const savePaid = debounceKeyed((id) => {
     const item = S.items.get(id);
     if (item) saveItem(item, { actual_yen: item.actual_yen, is_bought: item.is_bought });
@@ -278,6 +309,12 @@ export function bindShopping() {
             UI.shopSel = pick.dataset.shopper === 'all' ? 'all' : Number(pick.dataset.shopper);
             renderShop();
             if (pick.classList.contains('person-card')) window.scrollTo({ top: 0 });
+            return;
+        }
+        const step = e.target.closest('[data-act="qty"]');
+        if (step) {
+            const item = S.items.get(step.closest('li').dataset.id);
+            if (item && canManageShoppingOf(item.user_id)) stepQty(item, Number(step.dataset.step));
             return;
         }
         const edit = e.target.closest('[data-act="edit-item"]');

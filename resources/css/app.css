@@ -238,6 +238,19 @@ fieldset.plain legend { padding: 0; }
 .search-btn:active { background: var(--soft); }
 @media (hover: hover) { .search-btn:hover { background: var(--soft); } }
 @media (max-width: 480px) { .shop-row { grid-template-columns: 40px minmax(0, 1fr) 36px 100px; column-gap: 4px; } .search-btn { width: 36px; } .shop-row .paid { padding: 0 8px; } }
+.shop-row .check { grid-column: 1; grid-row: 1 / span 2; }
+.shop-row .item-main { grid-column: 2; grid-row: 1; }
+.shop-row .qty-step { grid-column: 2; grid-row: 2; justify-self: start; margin-top: 6px; }
+.shop-row .search-btn { grid-column: 3; grid-row: 1 / span 2; }
+.shop-row .paid { grid-column: 4; grid-row: 1 / span 2; }
+.qty-step { display: inline-flex; align-items: center; border: 1px solid var(--hair); border-radius: 999px; background: var(--surface); overflow: hidden; }
+.qty-step button { width: 40px; height: 34px; border: 0; background: none; color: var(--action); font-size: 20px; font-weight: 700; line-height: 1; display: flex; align-items: center; justify-content: center; }
+.qty-step button:active { background: var(--soft); }
+.qty-step button:disabled { color: var(--hair); cursor: default; }
+.qty-step .qty-val { min-width: 30px; text-align: center; font-size: 15px; font-weight: 900; }
+.qty-step.readonly { border-color: transparent; background: none; }
+.qty-step.readonly .qty-val { font-size: 13px; font-weight: 500; color: var(--stone); min-width: 0; }
+.bought .qty-step .qty-val { color: var(--stone); }
 .web-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: -8px; }
 .check { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0; }
 .check input { width: 22px; height: 22px; margin: 0; accent-color: var(--done); cursor: inherit; }
