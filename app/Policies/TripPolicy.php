@@ -49,6 +49,22 @@ class TripPolicy
     }
 
     /**
+     * Only the owner (admin) sees the whole group's shopping overview.
+     */
+    public function viewEveryonesShopping(User $user, Trip $trip): Response
+    {
+        $role = $trip->roleFor($user);
+
+        if ($role === null) {
+            return Response::denyAsNotFound();
+        }
+
+        return $role === TripRole::Owner
+            ? Response::allow()
+            : Response::deny('Only the trip owner can see everyone’s shopping.');
+    }
+
+    /**
      * Tax refund receipts are private: each member sees and manages only their
      * own, and the owner (admin) can see everyone's. Editors get no extra access.
      */

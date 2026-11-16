@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ReceiptPhotoController;
 use App\Http\Controllers\Api\ShoppingBudgetController;
 use App\Http\Controllers\Api\ShoppingImportController;
 use App\Http\Controllers\Api\ShoppingItemController;
+use App\Http\Controllers\Api\ShoppingOverviewController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\TripChangesController;
 use App\Http\Controllers\Api\TripController;
@@ -62,6 +63,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
     Route::patch('/ideas/{idea}/restore', [IdeaController::class, 'restore'])->name('ideas.restore')->withTrashed();
 
+    Route::get('/trips/{trip}/shopping-overview', ShoppingOverviewController::class)->name('trips.shopping-overview')->can('view', 'trip');
     Route::get('/trips/{trip}/receipts', [ReceiptController::class, 'index'])->name('trips.receipts.index')->can('view', 'trip');
     Route::post('/receipts', [ReceiptController::class, 'store'])->name('receipts.store');
     Route::patch('/receipts/{receipt}', [ReceiptController::class, 'update'])->name('receipts.update');
