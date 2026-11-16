@@ -46,7 +46,7 @@
           <p class="meta tnum" id="dayMeta"></p>
         </div>
         <div class="actions">
-          <button type="button" class="pill-btn round" id="refreshBtn" aria-label="Refresh trip" title="Get the latest changes"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button>
+          <button type="button" class="pill-btn round" id="refreshBtn" data-refresh="plan" aria-label="Refresh trip" title="Get the latest changes"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button>
           <button type="button" class="pill-btn hidden" id="todayBtn">Today</button>
           <button type="button" class="pill-btn hidden" id="addAct"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add<span class="wide-only">&nbsp;stop</span></button>
         </div>
@@ -72,8 +72,10 @@
 
     {{-- ---------- Shopping (personal lists; the owner sees everyone) ---------- --}}
     <section id="v-shopping" class="page hidden" aria-labelledby="shopTitle">
-      <h1 id="shopTitle">Shopping</h1>
-      <p class="lede">Barang kirim for family back home</p>
+      <div class="page-head">
+        <div><h1 id="shopTitle">Shopping</h1><p class="lede">Barang kirim for family back home</p></div>
+        <button type="button" class="pill-btn round" id="shopRefreshBtn" data-refresh="shopping" aria-label="Refresh shopping lists" title="Get the latest lists and today’s rate"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button>
+      </div>
 
       {{-- Yen to Ringgit converter (collapsed by default), rate from Bank Negara Malaysia --}}
       <details class="fold fx-card" id="fxFold">

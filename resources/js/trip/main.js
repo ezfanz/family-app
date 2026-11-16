@@ -146,15 +146,21 @@ export function refreshTrip() {
     return refreshing;
 }
 
+/** Every [data-refresh] button gets the latest trip; on Shopping it also gets today's rate. */
 function bindRefreshButton() {
-    const button = $('refreshBtn');
-    button.addEventListener('click', async () => {
-        button.setAttribute('aria-busy', 'true');
-        const loader = showLoader('Loading');
-        const ok = await refreshTrip();
-        await loader.finish();
-        button.removeAttribute('aria-busy');
-        toast(ok ? 'Up to date.' : 'Couldn’t reach the server. Showing what you have.');
+    document.querySelectorAll('[data-refresh]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            if (button.getAttribute('aria-busy') === 'true') return;
+            button.setAttribute('aria-busy', 'true');
+            const loader = showLoader('Loading');
+            const [ok] = await Promise.all([
+                refreshTrip(),
+                button.dataset.refresh === 'shopping' ? loadFx(true).catch(() => null) : null,
+            ]);
+            await loader.finish();
+            button.removeAttribute('aria-busy');
+            toast(ok ? 'Up to date.' : 'Couldn’t reach the server. Showing what you have.');
+        });
     });
 }
 
