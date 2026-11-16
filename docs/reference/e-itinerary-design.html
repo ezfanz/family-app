@@ -99,13 +99,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .rise{animation:rise 0.2s ease-out}
 @media (prefers-reduced-motion: reduce){.pulse,.pop,.rise{animation:none}}
 .sw{appearance:none;-webkit-appearance:none;flex:none;width:52px;height:32px;margin:0;border-radius:16px;background:#E4E4E1;position:relative;cursor:pointer;transition:background .15s}.sw::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .15s}.sw:checked{background:#2F7A49}.sw:checked::after{transform:translateX(20px)}@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}.up{animation:up .22s ease-out}@media (prefers-reduced-motion: reduce){.sw,.sw::after{transition:none}.up{animation:none}}
+.i{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.tnum{font-variant-numeric:tabular-nums}
+.strip{scrollbar-width:none}.strip::-webkit-scrollbar{display:none}
+button,input,select,textarea{font-family:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #2A3B8F;outline-offset:2px}
+@keyframes ring{0%,100%{box-shadow:0 0 0 5px rgba(210,40,30,0.18)}50%{box-shadow:0 0 0 9px rgba(210,40,30,0.05)}}
+.pulse{animation:ring 2.4s ease-in-out infinite}
+@keyframes pop{from{transform:scale(0.4);opacity:0}to{transform:scale(1);opacity:1}}
+.pop{animation:pop 0.18s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.rise{animation:rise 0.2s ease-out}
+@media (prefers-reduced-motion: reduce){.pulse,.pop,.rise{animation:none}}
+.pill input{position:absolute;opacity:0;width:1px;height:1px}.pill input:checked + span{border-color:#2A3B8F;box-shadow:0 0 0 1px #2A3B8F;color:#2A3B8F}.pill input:focus-visible + span{outline:2px solid #2A3B8F;outline-offset:2px}
 
 </style>
 </head>
 <body>
 <header class="intro">
 <h1>E-Itinerary: design reference</h1>
-<p>14 screens exported from the design canvas. Each phone frame is 390 px wide and scrolls like the real app. Tap stop dots and cards, shopping checkboxes and amounts, theme cards, the ⋯ menu on Ideas, and Log out: they work. Links between screens jump to that frame. Colour and type tokens are at the top of the &lt;style&gt; block. Each screen's markup is in a &lt;template&gt; and its behaviour in the script right after it; a small renderer at the bottom draws them.</p>
+<p>20 screens exported from the design canvas. Each phone frame is 390 px wide and scrolls like the real app. Tap stop dots and cards, shopping checkboxes and amounts, theme cards, the ⋯ menu on Ideas, and Log out: they work. Links between screens jump to that frame. Colour and type tokens are at the top of the &lt;style&gt; block. Each screen's markup is in a &lt;template&gt; and its behaviour in the script right after it; a small renderer at the bottom draws them.</p>
 </header>
 <main class="gallery">
 <figure class="shot" id="s-main">
@@ -1940,6 +1953,206 @@ class Component extends DCLogic {
   }
 }</script>
 </figure>
+<figure class="shot" id="s-shoppingoverview">
+<figcaption><b>Shopping overview (filter by person, tap a day)</b> <span>ShoppingOverview.dc.html</span></figcaption>
+<div class="frame" data-screen="s-shoppingoverview" style="width: 390px; height: 844px; overflow: auto; border-radius: 28px;"></div>
+<template id="tpl-s-shoppingoverview"><div style="width: 390px; min-height: 1820px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#s-members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 68%; background: #1C1C1E"></div>
+</div>
+</header>
+<main style="flex: 1; padding: 20px 20px 24px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Shopping</h1>
+<p class="tnum" style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">{{subtitle}}</p>
+<div role="group" aria-label="Shopping view" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; margin-top: 14px; border-radius: 10px; background: #EEEEEB"><a href="#s-shoppingoverview" aria-current="page" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: #FFFFFF; color: #1C1C1E; box-shadow: 0 1px 2px rgba(0,0,0,0.08);"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Overview</a><a href="#s-shoppingperson" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: transparent; color: #6B6B70;"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>List</a><a href="#s-taxreceipts" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: transparent; color: #6B6B70;"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Receipts</a></div>
+
+<nav aria-label="Show spending for" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="5"><button type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="flex: none; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px 0 6px; border-radius: 999px; font-size: 15px; font-weight: 700; cursor: pointer; white-space: nowrap; {{c.style}}"><span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; {{c.avatarStyle}}">{{c.ini}}</span>{{c.label}}</button></sc-for>
+</nav>
+
+<section aria-label="Spending" style="margin-top: 12px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px; padding: 16px">
+<div style="font-size: 13px; font-weight: 500; color: #6B6B70">{{heroLabel}}</div>
+<div class="tnum" style="font-size: 40px; font-weight: 900; line-height: 1.05; letter-spacing: -0.01em; margin-top: 4px">{{spent}}</div>
+<div class="tnum" style="font-size: 15px; font-weight: 500; color: #6B6B70; margin-top: 2px">{{budgetLine}}</div>
+<div role="meter" aria-label="Budget used" aria-valuenow="{{usedPct}}" aria-valuemin="0" aria-valuemax="100" style="height: 10px; margin-top: 14px; border-radius: 5px; background: #E4E4E1; overflow: hidden"><div style="height: 10px; border-radius: 5px; {{heroBar}}"></div></div>
+<div class="tnum" style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; font-weight: 500; color: #6B6B70"><span>{{usedPct}}% used</span><span style="font-weight: 700; {{leftStyle}}">{{leftTxt}}</span></div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px">
+<a href="#s-shoppingperson" style="text-decoration: none; color: inherit"><div style="background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px; padding: 14px">
+<div style="font-size: 13px; font-weight: 500; color: #6B6B70">Items to buy</div>
+<div class="tnum" style="font-size: 26px; font-weight: 900; line-height: 1.15; margin-top: 4px">{{toBuy}}</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 4px">{{boughtLine}}</div><div aria-hidden="true" style="height: 6px; margin-top: 10px; border-radius: 3px; background: #E4E4E1; overflow: hidden"><div style="height: 6px; border-radius: 3px; background: #2A3B8F; {{itemsBar}}"></div></div>
+</div></a>
+<a href="#s-taxreceipts" style="text-decoration: none; color: inherit"><div style="background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px; padding: 14px">
+<div style="font-size: 13px; font-weight: 500; color: #6B6B70">Receipts captured</div>
+<div class="tnum" style="font-size: 26px; font-weight: 900; line-height: 1.15; margin-top: 4px">{{receipts}}</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 4px">{{eligibleLine}}</div><div aria-hidden="true" style="height: 6px; margin-top: 10px; border-radius: 3px; background: #E4E4E1; overflow: hidden"><div style="height: 6px; border-radius: 3px; background: #2F7A49; {{receiptsBar}}"></div></div>
+</div></a>
+</div>
+<a href="#s-taxreceipts" style="display: flex; align-items: center; gap: 14px; margin-top: 10px; padding: 14px; text-decoration: none; color: inherit; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<span aria-hidden="true" style="width: 44px; height: 44px; border-radius: 12px; background: #E6F2EA; color: #2F7A49; display: flex; align-items: center; justify-content: center; flex: none"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
+<span style="flex: 1; min-width: 0"><span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Expected tax refund</span><span class="tnum" style="display: block; font-size: 22px; font-weight: 900; margin-top: 2px">{{refundYen}} <span style="font-size: 15px; font-weight: 700; color: #6B6B70">≈ {{refundRm}}</span></span><span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px">{{refundLine}}</span></span>
+<svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;color: #6B6B70"><path d="M9 5l7 7-7 7"/></svg>
+</a>
+
+<section aria-labelledby="s-shoppingoverview-h-day" style="margin-top: 22px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px; padding: 16px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="s-shoppingoverview-h-day" style="margin: 0; font-size: 18px; font-weight: 900">Spent by day</h2><span style="font-size: 13px; font-weight: 500; color: #6B6B70">{{unitLabel}}</span></div>
+<div class="tnum" aria-live="polite" style="margin-top: 10px; min-height: 40px"><div style="font-size: 20px; font-weight: 900">{{selValue}}</div><div style="font-size: 13px; font-weight: 500; color: #6B6B70">{{selLine}}</div></div>
+<div style="position: relative; height: 140px; margin-top: 26px">
+<sc-for list="{{grid}}" as="gl" hint-placeholder-count="3"><div aria-hidden="true" style="position: absolute; left: 0; right: 0; border-top: 1px {{gl.line}} #E4E4E1; {{gl.pos}}"></div><span aria-hidden="true" class="tnum" style="position: absolute; left: 0; font-size: 11px; color: #6B6B70; {{gl.labelPos}}">{{gl.label}}</span></sc-for>
+<div style="position: absolute; inset: 0 0 0 30px; display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); align-items: end; column-gap: 2px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="14"><button type="button" aria-label="{{d.aria}}" aria-pressed="{{d.pressed}}" onClick="{{d.pick}}" style="position: relative; height: 140px; padding: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: flex-end; justify-content: center"><span style="display: block; width: 14px; border-radius: 4px 4px 0 0; {{d.barStyle}}"></span></button></sc-for>
+</div>
+</div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); column-gap: 2px; margin: 6px 0 0 30px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="14"><span class="tnum" style="text-align: center; font-size: 11px; {{d.labelStyle}}">{{d.n}}</span></sc-for>
+</div>
+<div style="display: flex; gap: 14px; margin-top: 10px; font-size: 13px; font-weight: 500; color: #6B6B70"><span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 2px; background: #2A3B8F"></span>Spent</span><span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 2px; border: 1px dashed #6B6B70; box-sizing: border-box"></span>Days ahead</span></div>
+</section>
+
+<section aria-labelledby="s-shoppingoverview-h-cat" style="margin-top: 12px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px; padding: 16px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="s-shoppingoverview-h-cat" style="margin: 0; font-size: 18px; font-weight: 900">Spent by category</h2><span style="font-size: 13px; font-weight: 500; color: #6B6B70">{{unitLabel}}</span></div>
+<ul style="list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{cats}}" as="k" hint-placeholder-count="5"><li style="display: grid; grid-template-columns: 128px minmax(0, 1fr) 82px; align-items: center; column-gap: 10px; min-height: 36px">
+<span style="font-size: 14px; font-weight: 500; line-height: 1.3">{{k.name}}</span>
+<span aria-hidden="true" style="display: block; height: 12px"><span style="display: block; height: 12px; border-radius: 0 4px 4px 0; background: #2A3B8F; {{k.bar}}"></span></span>
+<span class="tnum" style="text-align: right; font-size: 14px; font-weight: 700">{{k.value}}</span>
+</li></sc-for>
+</ul>
+<sc-if value="{{noCats}}" hint-placeholder-val="{{false}}"><p style="margin: 8px 0 0; font-size: 13px; font-weight: 500; color: #6B6B70">Nothing bought yet.</p></sc-if>
+</section>
+
+<section aria-labelledby="s-shoppingoverview-h-ppl" style="margin-top: 12px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px; padding: 16px 16px 4px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="s-shoppingoverview-h-ppl" style="margin: 0; font-size: 18px; font-weight: 900">Budget by person</h2><span style="font-size: 13px; font-weight: 500; color: #6B6B70">Tap to filter</span></div>
+<ul style="list-style: none; margin: 10px 0 0; padding: 0">
+<sc-for list="{{people}}" as="p" hint-placeholder-count="4"><li style="border-top: 1px solid #E4E4E1"><button type="button" onClick="{{p.pick}}" aria-pressed="{{p.pressed}}" style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 12px; align-items: start; width: 100%; padding: 12px 0; border: 0; background: none; text-align: left; color: inherit; cursor: pointer; {{p.rowStyle}}">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; {{p.avatarStyle}}">{{p.ini}}</span>
+<span style="display: block; min-width: 0">
+<span class="tnum" style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><span style="font-size: 15px; font-weight: 700">{{p.name}}</span><span style="font-size: 14px; font-weight: 700">{{p.spent}} <span style="font-weight: 500; color: #6B6B70">of {{p.budget}}</span></span></span>
+<span aria-hidden="true" style="display: block; height: 8px; margin-top: 8px; border-radius: 4px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 8px; border-radius: 4px; {{p.bar}}"></span></span>
+<span class="tnum" style="display: flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6B6B70">{{p.used}}<sc-if value="{{p.over}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; gap: 4px; color: #D2281E; font-weight: 700"><svg class="i" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>{{p.overTxt}}</span></sc-if></span>
+</span>
+</button></li></sc-for>
+</ul>
+</section>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#s-main" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#s-shopping" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#s-ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div></template>
+<script type="text/plain" id="code-s-shoppingoverview">const P = {"paper": "#F7F7F5", "surface": "#FFFFFF", "ink": "#1C1C1E", "stone": "#6B6B70", "hair": "#E4E4E1", "action": "#2A3B8F", "onAction": "#FFFFFF", "done": "#2F7A49", "skip": "#9198A4", "now": "#D2281E", "nowText": "#D2281E", "nowRing": "rgba(210,40,30,0.18)", "soft": "#EEEEEB", "dim": "rgba(28,28,30,0.45)", "amberText": "#8A5A00", "amberLine": "#D9A23A", "halalText": "#2F7A49", "halalLine": "#2F7A49", "skipSeg": "#6B6B70", "onCity": "#FFFFFF"};
+const DATES = ["Sat 21 Nov", "Sun 22 Nov", "Mon 23 Nov", "Tue 24 Nov", "Wed 25 Nov", "Thu 26 Nov", "Fri 27 Nov", "Sat 28 Nov", "Sun 29 Nov", "Mon 30 Nov", "Tue 1 Dec", "Wed 2 Dec", "Thu 3 Dec", "Fri 4 Dec"];
+const TODAY = 10;
+const PEOPLE = [{"id": "irfan", "ini": "IR", "name": "Irfan", "you": true, "color": "#2A3B8F", "budget": 800, "receipts": 6, "eligible": 5, "refund": 3063}, {"id": "amira", "ini": "AM", "name": "Amira", "you": false, "color": "#6A3E9A", "budget": 500, "receipts": 4, "eligible": 4, "refund": 1420}, {"id": "haikal", "ini": "HA", "name": "Haikal", "you": false, "color": "#00776F", "budget": 1200, "receipts": 7, "eligible": 7, "refund": 4288}, {"id": "amalina", "ini": "AL", "name": "Amalina", "you": false, "color": "#1F5591", "budget": 600, "receipts": 1, "eligible": 0, "refund": 0}];
+const CATS = ["Clothing and bags", "Home and kitchen", "Snacks and food", "Games and toys", "Beauty"];
+const ITEMS = [["irfan", 2, "Clothing and bags", 5990], ["irfan", 2, "Clothing and bags", 11960], ["irfan", 0, "Beauty", 0], ["irfan", 0, "Snacks and food", 0], ["amira", 2, "Snacks and food", 2950], ["amira", 2, "Beauty", 2180], ["amira", 0, "Games and toys", 0], ["haikal", 2, "Clothing and bags", 15400], ["haikal", 3, "Games and toys", 6280], ["haikal", 9, "Clothing and bags", 7990], ["haikal", 9, "Snacks and food", 4800], ["haikal", 6, "Home and kitchen", 8800], ["amalina", 3, "Home and kitchen", 1100], ["amalina", 0, "Snacks and food", 0], ["amalina", 0, "Snacks and food", 0]];
+const RATE = 3, H = 140;
+function rm(n) { return 'RM' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function yen(n) { return '\u00A5' + Math.round(n).toLocaleString('en-US'); }
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { who: 'all', sel: 9 }; }
+  pickWho(id) {
+    const days = ITEMS.filter(function (i) { return (id === 'all' || i[0] === id) && i[3] > 0; }).map(function (i) { return i[1]; });
+    this.setState({ who: id, sel: days.length ? Math.max.apply(null, days) : TODAY });
+  }
+  renderVals() {
+    const self = this, who = this.state.who, sel = this.state.sel;
+    const ppl = PEOPLE.filter(function (p) { return who === 'all' || p.id === who; });
+    const its = ITEMS.filter(function (i) { return who === 'all' || i[0] === who; });
+    const budget = ppl.reduce(function (s, p) { return s + p.budget; }, 0);
+    const spentY = its.reduce(function (s, i) { return s + i[3]; }, 0);
+    const spent = spentY * RATE / 100;
+    const bought = its.filter(function (i) { return i[3] > 0; }).length;
+    const receipts = ppl.reduce(function (s, p) { return s + p.receipts; }, 0);
+    const eligible = ppl.reduce(function (s, p) { return s + p.eligible; }, 0);
+    const refund = ppl.reduce(function (s, p) { return s + p.refund; }, 0);
+    const over = spent > budget;
+    const usedPct = budget ? Math.round(spent / budget * 100) : 0;
+    const one = who !== 'all' ? ppl[0] : null;
+    // days
+    const perDay = DATES.map(function (d, i) {
+      const n = i + 1, list = its.filter(function (x) { return x[1] === n; });
+      return { n: n, date: d, future: n > TODAY, rm: list.reduce(function (s, x) { return s + x[3]; }, 0) * RATE / 100, items: list.length };
+    });
+    const peak = Math.max.apply(null, perDay.map(function (d) { return d.rm; }));
+    const MAX = peak <= 300 ? 300 : (peak <= 600 ? 600 : 1200);
+    const cur = perDay[sel - 1];
+    // categories
+    const cats = CATS.map(function (c) {
+      return { name: c, y: its.filter(function (x) { return x[2] === c; }).reduce(function (s, x) { return s + x[3]; }, 0) };
+    }).filter(function (c) { return c.y > 0; }).sort(function (a, b) { return b.y - a.y; });
+    const cmax = cats.length ? cats[0].y : 1;
+    const chipList = [{ id: 'all', label: 'Everyone', ini: 'All', color: P.ink }].concat(PEOPLE.map(function (p) {
+      return { id: p.id, label: p.name + (p.you ? ' (you)' : ''), ini: p.ini, color: p.color };
+    }));
+    return {
+      subtitle: (one ? one.name + (one.you ? ' (you)' : '') : 'Group') + ' overview \u00B7 as of Mon 30 Nov, Day 10',
+      chips: chipList.map(function (c) {
+        const on = c.id === who;
+        return { label: c.label, ini: c.ini, pressed: on ? 'true' : 'false',
+          pick: function () { self.pickWho(c.id); },
+          style: on ? 'background: ' + P.ink + '; color: ' + P.paper + '; border: 1px solid ' + P.ink + ';' : 'background: ' + P.surface + '; color: ' + P.ink + '; border: 1px solid ' + P.hair + ';',
+          avatarStyle: on && c.id === 'all' ? 'background: ' + P.paper + '; color: ' + P.ink + ';' : 'background: ' + c.color + '; color: #FFFFFF;' };
+      }),
+      heroLabel: one ? one.name + ' spent' : 'Group spent',
+      spent: rm(spent), budgetLine: 'of ' + rm(budget) + ' budget \u00B7 ' + yen(spentY),
+      usedPct: usedPct,
+      heroBar: 'width: ' + Math.min(100, usedPct) + '%; background: ' + (over ? P.now : P.action) + ';',
+      leftTxt: over ? 'Over by ' + rm(spent - budget) : rm(budget - spent) + ' left',
+      leftStyle: 'color: ' + (over ? P.now : P.done) + ';',
+      toBuy: its.length - bought, boughtLine: bought + ' of ' + its.length + ' bought',
+      itemsBar: 'width: ' + (its.length ? bought / its.length * 100 : 0).toFixed(1) + '%;',
+      receipts: receipts, eligibleLine: eligible + ' eligible for refund',
+      receiptsBar: 'width: ' + (receipts ? eligible / receipts * 100 : 0).toFixed(1) + '%;',
+      refundYen: yen(refund), refundRm: rm(refund * RATE / 100),
+      refundLine: refund ? 'Claim at customs on Fri 4 Dec' : 'No eligible receipts yet',
+      unitLabel: one ? 'RM, ' + one.name : 'RM, group',
+      selValue: cur.future ? 'Not yet' : rm(cur.rm),
+      selLine: 'Day ' + cur.n + ' \u00B7 ' + cur.date + (cur.future ? ' \u00B7 coming up' : ' \u00B7 ' + cur.items + (cur.items === 1 ? ' item' : ' items')),
+      grid: [0, MAX / 2, MAX].map(function (v) {
+        const b = v / MAX * H;
+        return { line: v === 0 ? 'solid' : 'dashed', pos: 'bottom: ' + b + 'px;', labelPos: 'bottom: ' + (b + 2) + 'px;', label: v.toLocaleString('en-US') };
+      }),
+      days: perDay.map(function (d) {
+        const on = d.n === sel;
+        const h = d.future ? 18 : (d.rm > 0 ? Math.max(4, d.rm / MAX * H) : 2);
+        let bar = d.future ? 'height: ' + h + 'px; border: 1px dashed ' + (on ? P.ink : P.stone) + '; border-bottom: 0; box-sizing: border-box; background: transparent;'
+                           : 'height: ' + h + 'px; background: ' + (on ? P.ink : (d.rm > 0 ? P.action : P.hair)) + ';';
+        if (on && !d.future) bar += ' box-shadow: 0 0 0 2px ' + P.surface + ', 0 0 0 4px ' + P.ink + ';';
+        return { n: d.n, pressed: on ? 'true' : 'false', barStyle: bar,
+          labelStyle: on ? 'color: ' + P.ink + '; font-weight: 900;' : 'color: ' + P.stone + '; font-weight: 500;',
+          aria: 'Day ' + d.n + ', ' + d.date + ': ' + (d.future ? 'coming up' : rm(d.rm)),
+          pick: function () { self.setState({ sel: d.n }); } };
+      }),
+      cats: cats.map(function (c) { return { name: c.name, value: rm(c.y * RATE / 100), bar: 'width: ' + Math.max(2, c.y / cmax * 100).toFixed(1) + '%;' }; }),
+      noCats: cats.length === 0,
+      people: PEOPLE.map(function (p) {
+        const y = ITEMS.filter(function (i) { return i[0] === p.id; }).reduce(function (s, i) { return s + i[3]; }, 0);
+        const v = y * RATE / 100, o = v > p.budget, on = p.id === who;
+        return { name: p.name + (p.you ? ' (you)' : ''), ini: p.ini, spent: rm(v), budget: rm(p.budget),
+          pressed: on ? 'true' : 'false',
+          rowStyle: who === 'all' || on ? 'opacity: 1;' : 'opacity: 0.45;',
+          avatarStyle: 'background: ' + p.color + ';',
+          bar: 'width: ' + Math.min(100, v / p.budget * 100).toFixed(1) + '%; background: ' + (o ? P.now : P.action) + ';',
+          used: Math.round(v / p.budget * 100) + '% used \u00B7 ' + (o ? '' : rm(p.budget - v) + ' left'),
+          over: o, overTxt: 'Over by ' + rm(v - p.budget),
+          pick: function () { self.pickWho(on ? 'all' : p.id); } };
+      })
+    };
+  }
+}</script>
+</figure>
 <figure class="shot" id="s-shopping">
 <figcaption><b>Shopping, everyone (admin view)</b> <span>Shopping.dc.html</span></figcaption>
 <div class="frame" data-screen="s-shopping" style="width: 390px; height: 844px; overflow: auto; border-radius: 28px;"></div>
@@ -3302,6 +3515,508 @@ class Component extends DCLogic {
       closeSheet: function () { self.setState({ sheet: false }); }
     };
   }
+}</script>
+</figure>
+<figure class="shot" id="s-taxreceipts">
+<figcaption><b>Receipts and refunds (filter, mark refunded)</b> <span>TaxReceipts.dc.html</span></figcaption>
+<div class="frame" data-screen="s-taxreceipts" style="width: 390px; height: 844px; overflow: auto; border-radius: 28px;"></div>
+<template id="tpl-s-taxreceipts"><div style="width: 390px; min-height: 1500px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#s-members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 18%; background: #1C1C1E"></div>
+</div>
+</header>
+<main style="flex: 1; padding: 20px 20px 24px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Shopping</h1>
+<p style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Irfan's receipts and tax refunds</p>
+<div role="group" aria-label="Shopping view" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; margin-top: 14px; border-radius: 10px; background: #EEEEEB"><a href="#s-shoppingoverview" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: transparent; color: #6B6B70;"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Overview</a><a href="#s-shoppingperson" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: transparent; color: #6B6B70;"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>List</a><a href="#s-taxreceipts" aria-current="page" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: #FFFFFF; color: #1C1C1E; box-shadow: 0 1px 2px rgba(0,0,0,0.08);"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Receipts</a></div>
+
+<section aria-label="Refund summary" style="margin-top: 16px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<div style="padding: 16px 16px 14px">
+<div style="font-size: 13px; font-weight: 500; color: #6B6B70">Expected tax refund</div>
+<div style="display: flex; align-items: baseline; gap: 10px; margin-top: 4px"><span class="tnum" style="font-size: 32px; font-weight: 900; line-height: 1.1">{{expectedYen}}</span><span class="tnum" style="font-size: 16px; font-weight: 700; color: #6B6B70">≈ {{expectedRm}}</span></div>
+<div aria-hidden="true" style="display: flex; height: 8px; margin-top: 12px; border-radius: 4px; overflow: hidden; background: #E4E4E1"><span style="display: block; height: 8px; background: #2F7A49; {{receivedBar}}"></span><span style="display: block; height: 8px; background: #2A3B8F; {{waitingBar}}"></span></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #E4E4E1">
+<div style="padding: 12px"><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #2F7A49"></span>Received</div><div class="tnum" style="font-size: 17px; font-weight: 900; margin-top: 2px">{{receivedYen}}</div></div>
+<div style="padding: 12px; border-left: 1px solid #E4E4E1"><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #2A3B8F"></span>Waiting</div><div class="tnum" style="font-size: 17px; font-weight: 900; margin-top: 2px">{{waitingYen}}</div></div>
+<div style="padding: 12px; border-left: 1px solid #E4E4E1"><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #E4E4E1"></span>To confirm</div><div class="tnum" style="font-size: 17px; font-weight: 900; margin-top: 2px">{{toConfirmYen}}</div></div>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-top: 12px">
+<a href="#s-taxcamera" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 12px; background: #2A3B8F; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 700"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Snap receipt</a>
+<a href="#s-taxdeparture" style="display: flex; align-items: center; gap: 6px; min-height: 52px; padding: 0 14px; border: 1px solid #E4E4E1; border-radius: 12px; background: #FFFFFF; color: #2A3B8F; text-decoration: none; font-size: 15px; font-weight: 700"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M3 13l18-7-5 14-3-6-6-1z"/></svg>Airport</a>
+</div>
+
+<nav aria-label="Filter receipts" class="strip" style="display: flex; gap: 8px; overflow-x: auto; margin: 20px -20px 0; padding: 2px 20px 4px">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="4"><button type="button" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}" style="flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; {{f.style}}">{{f.label}}</button></sc-for>
+</nav>
+
+<sc-for list="{{groups}}" as="gr" hint-placeholder-count="4">
+<sc-if value="{{gr.showDay}}" hint-placeholder-val="{{true}}"><h2 class="tnum" style="margin: 22px 0 8px; font-size: 15px; font-weight: 700; color: #6B6B70">{{gr.day}}</h2></sc-if>
+<section style="margin-top: 10px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px; overflow: hidden">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 12px 14px 10px">
+<div style="min-width: 0"><div style="font-size: 16px; font-weight: 900">{{gr.store}}</div><div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px">{{gr.sub}}</div></div>
+<span class="tnum" style="flex: none; font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 6px; white-space: nowrap; {{gr.tagStyle}}">{{gr.tag}}</span>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0">
+<sc-for list="{{gr.receipts}}" as="r" hint-placeholder-count="1">
+<li style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 10px 14px; border-top: 1px solid #E4E4E1">
+<span aria-hidden="true" style="flex: none; display: block; width: 40px; height: 52px; box-sizing: border-box; padding-top: 2px; border: 1px solid #E4E4E1; border-radius: 6px; background: #FFFFFF"><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 70%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 50%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 80%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 40%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 60%"></span></span>
+<div style="min-width: 0"><div style="font-size: 15px; font-weight: 700; line-height: 1.35">{{r.items}}</div><div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px">{{r.meta}}</div>
+<span style="display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; {{r.pillStyle}}">{{r.status}}</span></div>
+<div style="text-align: right"><div class="tnum" style="font-size: 15px; font-weight: 900; {{r.refundStyle}}">{{r.refund}}</div><div style="font-size: 12px; font-weight: 500; color: #6B6B70">{{r.refundWord}}</div>
+<sc-if value="{{r.canMark}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{r.mark}}" style="margin-top: 6px; min-height: 36px; padding: 0 10px; border: 1px solid #E4E4E1; border-radius: 8px; background: #FFFFFF; color: #2A3B8F; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap">Mark refunded</button></sc-if>
+</div>
+</li>
+</sc-for>
+</ul>
+</section>
+</sc-for>
+<sc-if value="{{empty}}" hint-placeholder-val="{{false}}"><p style="margin: 28px 0; text-align: center; font-size: 15px; color: #6B6B70">No receipts here.</p></sc-if>
+<p style="display: flex; gap: 8px; margin: 20px 2px 0; font-size: 13px; line-height: 1.5; color: #6B6B70"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;margin-top: 1px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Refunds are paid by each store after customs confirms you took the goods out of Japan. Amounts are expected, not guaranteed.</span></p>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#s-main" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#s-shopping" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#s-ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div></template>
+<script type="text/plain" id="code-s-taxreceipts">const P = {"paper": "#F7F7F5", "surface": "#FFFFFF", "ink": "#1C1C1E", "stone": "#6B6B70", "hair": "#E4E4E1", "action": "#2A3B8F", "onAction": "#FFFFFF", "done": "#2F7A49", "skip": "#9198A4", "now": "#D2281E", "nowText": "#D2281E", "nowRing": "rgba(210,40,30,0.18)", "soft": "#EEEEEB", "dim": "rgba(28,28,30,0.45)", "amberText": "#8A5A00", "amberLine": "#D9A23A", "halalText": "#2F7A49", "halalLine": "#2F7A49", "skipSeg": "#6B6B70", "onCity": "#FFFFFF"};
+const GROUPS = [
+ {
+  "id": "muji",
+  "store": "MUJI",
+  "branch": "Namba Parks",
+  "day": "Sun 22 Nov · Day 2 · Osaka",
+  "receipts": [
+   {
+    "id": "r1",
+    "time": "11:42",
+    "items": "Boston Bag 23L",
+    "pre": 5990,
+    "tax": 599,
+    "status": "Refunded"
+   }
+  ]
+ },
+ {
+  "id": "uniqlo",
+  "store": "UNIQLO",
+  "branch": "Shinsaibashi",
+  "day": "Sun 22 Nov · Day 2 · Osaka",
+  "receipts": [
+   {
+    "id": "r2",
+    "time": "13:05",
+    "items": "Heattech Ultra Warm ×4",
+    "pre": 11960,
+    "tax": 1196,
+    "status": "Customs confirmed"
+   }
+  ]
+ },
+ {
+  "id": "matsukiyo",
+  "store": "Matsumoto Kiyoshi",
+  "branch": "Dotonbori",
+  "day": "Sun 22 Nov · Day 2 · Osaka",
+  "receipts": [
+   {
+    "id": "r3",
+    "time": "16:20",
+    "items": "Hada Labo lotion",
+    "pre": 1980,
+    "tax": 198,
+    "status": "Customs confirmed"
+   },
+   {
+    "id": "r4",
+    "time": "19:48",
+    "items": "Melano CC toner, Retinol mask",
+    "pre": 3200,
+    "tax": 320,
+    "status": "Eligible"
+   }
+  ]
+ },
+ {
+  "id": "seven",
+  "store": "7-Eleven",
+  "branch": "Namba Sennichimae",
+  "day": "Sun 22 Nov · Day 2 · Osaka",
+  "receipts": [
+   {
+    "id": "r5",
+    "time": "21:10",
+    "items": "Cheese biscuits ×8",
+    "pre": 1800,
+    "tax": 144,
+    "status": "Eligible"
+   }
+  ]
+ },
+ {
+  "id": "donki",
+  "store": "Don Quijote",
+  "branch": "Dotonbori",
+  "day": "Mon 23 Nov · Day 3 · Osaka",
+  "receipts": [
+   {
+    "id": "r6",
+    "time": "20:15",
+    "items": "KitKat, snacks, Royce ×3",
+    "pre": 7500,
+    "tax": 750,
+    "status": "Customs confirmed"
+   }
+  ]
+ }
+];
+const RATE = 3.0;
+const FILTERS = ['All', 'Eligible', 'Customs confirmed', 'Refunded', 'Not eligible'];
+function yen(n) { return '\u00A5' + Math.round(n).toLocaleString('en-US'); }
+function rm(n) { return 'RM' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+const PILL = {
+  'Eligible': 'background: #E6F2EA; color: #2F7A49;',
+  'Not eligible': 'background: #EEEEEB; color: #6B6B70;',
+  'Customs confirmed': 'background: #E9ECF8; color: #2A3B8F;',
+  'Refunded': 'background: #2F7A49; color: #FFFFFF;',
+  'Not received': 'background: #FBEAE8; color: #B3261E;'
+};
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const st = {};
+    GROUPS.forEach(function (g) { g.receipts.forEach(function (r) { st[r.id] = r.status; }); });
+    this.state = { st: st, filter: 'All' };
+  }
+  renderVals() {
+    const self = this, st = this.state.st, filter = this.state.filter;
+    let expected = 0, received = 0, toConfirm = 0;
+    let lastDay = null;
+    const groups = [];
+    GROUPS.forEach(function (g) {
+      const pre = g.receipts.reduce(function (s, r) { return s + r.pre; }, 0);
+      const ok = pre >= 5000;
+      const receipts = g.receipts.map(function (r) {
+        const status = ok ? st[r.id] : 'Not eligible';
+        if (ok) {
+          expected += r.tax;
+          if (status === 'Refunded') received += r.tax;
+          if (status === 'Eligible') toConfirm += r.tax;
+        }
+        return {
+          items: r.items, status: status,
+          meta: r.time + ' \u00B7 ' + yen(r.pre + r.tax) + ' paid \u00B7 ' + yen(r.pre) + ' before tax',
+          pillStyle: PILL[status],
+          refund: ok ? yen(r.tax) : '\u2014',
+          refundWord: ok ? (status === 'Refunded' ? 'received' : 'tax back') : 'no refund',
+          refundStyle: 'color: ' + (status === 'Refunded' ? P.done : (ok ? P.ink : P.stone)) + ';',
+          canMark: status === 'Customs confirmed',
+          mark: function () { const n = Object.assign({}, self.state.st); n[r.id] = 'Refunded'; self.setState({ st: n }); }
+        };
+      }).filter(function (r) { return filter === 'All' || r.status === filter; });
+      if (!receipts.length) return;
+      groups.push({
+        store: g.store, day: g.day, showDay: g.day !== lastDay,
+        sub: g.branch + ' \u00B7 ' + g.receipts.length + (g.receipts.length > 1 ? ' receipts' : ' receipt') + ' \u00B7 ' + yen(pre) + ' before tax',
+        tag: ok ? 'Eligible' : yen(5000 - pre) + ' more to qualify',
+        tagStyle: ok ? 'border: 1px solid ' + P.done + '; color: ' + P.done + ';' : 'border: 1px solid #D9A23A; color: #8A5A00;',
+        receipts: receipts
+      });
+      lastDay = g.day;
+    });
+    const waiting = expected - received - toConfirm;
+    const pct = function (v) { return 'width: ' + (expected ? v / expected * 100 : 0).toFixed(1) + '%;'; };
+    return {
+      groups: groups, empty: groups.length === 0,
+      expectedYen: yen(expected), expectedRm: rm(expected * RATE / 100),
+      receivedYen: yen(received), waitingYen: yen(waiting), toConfirmYen: yen(toConfirm),
+      receivedBar: pct(received), waitingBar: pct(waiting),
+      filters: FILTERS.map(function (f) {
+        const on = f === filter;
+        return { label: f, pressed: on ? 'true' : 'false', pick: function () { self.setState({ filter: f }); },
+          style: on ? 'background: ' + P.ink + '; color: ' + P.paper + '; border: 1px solid ' + P.ink + ';' : 'background: ' + P.surface + '; color: ' + P.ink + '; border: 1px solid ' + P.hair + ';' };
+      })
+    };
+  }
+}</script>
+</figure>
+<figure class="shot" id="s-taxcamera">
+<figcaption><b>Snap receipt</b> <span>TaxCamera.dc.html</span></figcaption>
+<div class="frame" data-screen="s-taxcamera" style="width: 390px; height: 844px; overflow: auto; border-radius: 28px;"></div>
+<template id="tpl-s-taxcamera"><div style="width: 390px; min-height: 844px; box-sizing: border-box; background: #0E0E10; color: #FFFFFF; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<div style="flex: 1; display: flex; flex-direction: column; background: #0E0E10; color: #FFFFFF; min-height: 844px">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 8px">
+<a href="#s-taxreceipts" aria-label="Close camera" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+<span style="font-size: 17px; font-weight: 700">Snap receipt</span>
+<button type="button" aria-label="Flash" aria-pressed="false" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: none; color: #FFFFFF; cursor: pointer"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></button>
+</div>
+<div style="flex: 1; position: relative; margin: 8px 24px; border-radius: 16px; background: #26262B; display: flex; align-items: center; justify-content: center; overflow: hidden">
+<div aria-hidden="true" style="width: 220px; height: 440px; background: #F4F4F2; border-radius: 4px; padding-top: 14px; box-sizing: border-box; transform: rotate(-2deg)">
+<span style="display: block; height: 10px; margin: 6px auto 0; width: 50%; border-radius: 3px; background: #9A9AA2"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 55%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 35%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 75%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 60%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 70%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 45%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 65%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 50%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 80%"></span><span style="display: block; height: 6px; margin: 10px 18px 0; border-radius: 3px; background: #D9D9DE; width: 40%"></span>
+<span style="display: block; height: 2px; margin: 16px 18px 0; background: #C9C9CF"></span>
+<span style="display: flex; justify-content: space-between; margin: 12px 18px 0"><span style="height: 8px; width: 30%; border-radius: 3px; background: #9A9AA2"></span><span style="height: 8px; width: 25%; border-radius: 3px; background: #9A9AA2"></span></span>
+</div>
+<div aria-hidden="true" style="position: absolute; inset: 28px 40px">
+<span aria-hidden="true" style="position: absolute; top: 0; left: 0; border-top-width: 4px; border-left-width: 4px; border-top-left-radius: 10px; width: 34px; height: 34px; border-color: #FFFFFF; border-style: solid; border-width: 0"></span>
+<span aria-hidden="true" style="position: absolute; top: 0; right: 0; border-top-width: 4px; border-right-width: 4px; border-top-right-radius: 10px; width: 34px; height: 34px; border-color: #FFFFFF; border-style: solid; border-width: 0"></span>
+<span aria-hidden="true" style="position: absolute; bottom: 0; left: 0; border-bottom-width: 4px; border-left-width: 4px; border-bottom-left-radius: 10px; width: 34px; height: 34px; border-color: #FFFFFF; border-style: solid; border-width: 0"></span>
+<span aria-hidden="true" style="position: absolute; bottom: 0; right: 0; border-bottom-width: 4px; border-right-width: 4px; border-bottom-right-radius: 10px; width: 34px; height: 34px; border-color: #FFFFFF; border-style: solid; border-width: 0"></span>
+</div>
+<span style="position: absolute; top: 40px; left: 50%; transform: translateX(-50%); padding: 6px 12px; border-radius: 999px; background: rgba(47,122,73,0.92); font-size: 13px; font-weight: 700; white-space: nowrap">Receipt found. Hold still.</span>
+</div>
+<p style="margin: 14px 32px 0; text-align: center; font-size: 14px; line-height: 1.5; color: #C9C9CF">Fit the whole receipt in the frame. Long receipt? Take it in two parts.</p>
+<div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 20px 28px 32px">
+<button type="button" style="justify-self: start; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; min-height: 56px; border: 0; background: none; color: #FFFFFF; font-size: 12px; font-weight: 500; cursor: pointer"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M20 16l-5-5-8 8"/></svg>Photos</button>
+<a href="#s-taxreview" aria-label="Take photo" style="width: 76px; height: 76px; border-radius: 50%; border: 4px solid #FFFFFF; box-sizing: border-box; display: flex; align-items: center; justify-content: center"><span style="width: 60px; height: 60px; border-radius: 50%; background: #FFFFFF"></span></a>
+<button type="button" aria-pressed="false" style="justify-self: end; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; min-height: 56px; border: 0; background: none; color: #FFFFFF; font-size: 12px; font-weight: 500; cursor: pointer"><span style="display: flex; align-items: center; justify-content: center; width: 28px; height: 24px; border: 1.5px solid #FFFFFF; border-radius: 6px; font-size: 13px; font-weight: 700">2</span>Two parts</button>
+</div>
+<p style="display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0 0 20px; font-size: 13px; color: #9A9AA2"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M3 3l18 18"/><path d="M8.5 8.6A5 5 0 0 0 6.5 18H17"/><path d="M10.6 6.2A5 5 0 0 1 17.6 10 3.5 3.5 0 0 1 20 16"/></svg>No signal? It saves now and reads later.</p>
+</div>
+</div></template>
+<script type="text/plain" id="code-s-taxcamera">class Component extends DCLogic {
+  renderVals() { return {}; }
+}</script>
+</figure>
+<figure class="shot" id="s-taxreview">
+<figcaption><b>Check receipt after reading</b> <span>TaxReview.dc.html</span></figcaption>
+<div class="frame" data-screen="s-taxreview" style="width: 390px; height: 844px; overflow: auto; border-radius: 28px;"></div>
+<template id="tpl-s-taxreview"><div style="width: 390px; min-height: 1500px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: 6px 12px 6px 8px; border-bottom: 1px solid #E4E4E1; background: #F7F7F5">
+<a href="#s-taxreceipts" style="display: flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 8px 0 4px; color: #2A3B8F; text-decoration: none; font-size: 16px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M15 5l-7 7 7 7"/></svg>Receipts</a>
+<span style="font-size: 13px; font-weight: 500; color: #6B6B70">Read just now</span>
+</header>
+<main style="flex: 1; padding: 20px 20px 24px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Check receipt</h1>
+<p style="margin: 4px 0 0; font-size: 15px; color: #6B6B70">Fix anything that looks wrong, then save.</p>
+<div style="display: flex; gap: 14px; align-items: center; margin-top: 16px; padding: 12px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<span aria-hidden="true" style="flex: none; display: block; width: 72px; height: 96px; box-sizing: border-box; padding-top: 2px; border: 1px solid #E4E4E1; border-radius: 6px; background: #FFFFFF"><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 70%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 50%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 80%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 40%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 60%"></span></span>
+<div style="flex: 1; min-width: 0"><div style="font-size: 16px; font-weight: 700">Photo saved</div><div style="font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px">Kept until the refund arrives</div>
+<div style="display: flex; gap: 8px; margin-top: 10px"><a href="#s-taxcamera" style="display: flex; align-items: center; min-height: 40px; padding: 0 12px; border: 1px solid #E4E4E1; border-radius: 8px; color: #2A3B8F; text-decoration: none; font-size: 14px; font-weight: 700">Retake</a><button type="button" style="min-height: 40px; padding: 0 12px; border: 1px solid #E4E4E1; border-radius: 8px; background: #FFFFFF; color: #2A3B8F; font-size: 14px; font-weight: 700; cursor: pointer">Add part 2</button></div></div>
+</div>
+
+<div style="display: flex; gap: 12px; align-items: flex-start; margin-top: 14px; padding: 14px; border-radius: 12px; background: #E6F2EA; border: 1px solid #BFDCC9">
+<svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;color: #2F7A49"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>
+<div><div style="font-size: 16px; font-weight: 900; color: #2F7A49">Eligible for tax refund</div>
+<p class="tnum" style="margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: #1C1C1E">With your 16:20 receipt here today, you've spent ¥5,180 before tax at this store. ¥5,000 is the minimum.</p></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px">
+<div style="min-width: 0"><label for="s-taxreview-rv-store" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Store</label>
+<div style="position: relative; margin-top: 6px"><input id="s-taxreview-rv-store" class="tnum" type="text" defaultValue="Matsumoto Kiyoshi" style="display: block; width: 100%; box-sizing: border-box; height: 48px; padding: 0 12px 0 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px; font-weight: 700"></div></div>
+<div style="min-width: 0"><label for="s-taxreview-rv-branch" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Branch</label>
+<div style="position: relative; margin-top: 6px"><input id="s-taxreview-rv-branch" class="tnum" type="text" defaultValue="Dotonbori" style="display: block; width: 100%; box-sizing: border-box; height: 48px; padding: 0 12px 0 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px; font-weight: 700"></div></div>
+<div style="min-width: 0"><label for="s-taxreview-rv-date" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Date</label>
+<div style="position: relative; margin-top: 6px"><input id="s-taxreview-rv-date" class="tnum" type="text" defaultValue="22 Nov 2026" style="display: block; width: 100%; box-sizing: border-box; height: 48px; padding: 0 12px 0 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px; font-weight: 700"></div></div>
+<div style="min-width: 0"><label for="s-taxreview-rv-time" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Time</label>
+<div style="position: relative; margin-top: 6px"><input id="s-taxreview-rv-time" class="tnum" type="text" defaultValue="19:48" style="display: block; width: 100%; box-sizing: border-box; height: 48px; padding: 0 12px 0 12px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px; font-weight: 700"></div></div>
+<div style="min-width: 0"><label for="s-taxreview-rv-pre10" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Before tax, 10% items</label>
+<div style="position: relative; margin-top: 6px"><span aria-hidden="true" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: #6B6B70">¥</span><input id="s-taxreview-rv-pre10" class="tnum" type="text" defaultValue="3,200" style="display: block; width: 100%; box-sizing: border-box; height: 48px; padding: 0 12px 0 28px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px; font-weight: 700"></div></div>
+<div style="min-width: 0"><label for="s-taxreview-rv-pre8" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Before tax, 8% items</label>
+<div style="position: relative; margin-top: 6px"><span aria-hidden="true" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: #6B6B70">¥</span><input id="s-taxreview-rv-pre8" class="tnum" type="text" defaultValue="0" style="display: block; width: 100%; box-sizing: border-box; height: 48px; padding: 0 12px 0 28px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px; font-weight: 700"></div></div>
+<div style="min-width: 0"><label for="s-taxreview-rv-tax" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Tax</label>
+<div style="position: relative; margin-top: 6px"><span aria-hidden="true" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: #6B6B70">¥</span><input id="s-taxreview-rv-tax" class="tnum" type="text" defaultValue="320" style="display: block; width: 100%; box-sizing: border-box; height: 48px; padding: 0 12px 0 28px; border: 2px solid #D9A23A; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px; font-weight: 700"></div><span style="display: flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 13px; font-weight: 700; color: #8A5A00"><svg class="i" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Check this: hard to read</span></div>
+<div style="min-width: 0"><label for="s-taxreview-rv-total" style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">Total paid</label>
+<div style="position: relative; margin-top: 6px"><span aria-hidden="true" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: #6B6B70">¥</span><input id="s-taxreview-rv-total" class="tnum" type="text" defaultValue="3,520" style="display: block; width: 100%; box-sizing: border-box; height: 48px; padding: 0 12px 0 28px; border: 1px solid #E4E4E1; border-radius: 10px; background: #FFFFFF; color: #1C1C1E; font-size: 16px; font-weight: 700"></div></div>
+</div>
+
+<fieldset style="border: 0; margin: 22px 0 0; padding: 0; min-width: 0"><legend style="padding: 0; font-size: 15px; font-weight: 700">Whose receipt</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px"><label style="position: relative; cursor: pointer" class="pill"><input type="radio" name="owner" defaultChecked="{{true}}"><span style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 6px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 14px; font-weight: 700"><span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: #2A3B8F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900">IR</span>Irfan</span></label><label style="position: relative; cursor: pointer" class="pill"><input type="radio" name="owner"><span style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 6px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 14px; font-weight: 700"><span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: #6A3E9A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900">AM</span>Amira</span></label><label style="position: relative; cursor: pointer" class="pill"><input type="radio" name="owner"><span style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 6px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 14px; font-weight: 700"><span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: #00776F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900">HA</span>Haikal</span></label><label style="position: relative; cursor: pointer" class="pill"><input type="radio" name="owner"><span style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 6px; border: 1px solid #E4E4E1; border-radius: 999px; background: #FFFFFF; font-size: 14px; font-weight: 700"><span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: #1F5591; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900">AL</span>Amalina</span></label></div></fieldset>
+
+<div style="margin-top: 22px"><div style="font-size: 15px; font-weight: 700">Link to shopping list</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px">
+<span style="display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border-radius: 999px; background: #E9ECF8; color: #2A3B8F; font-size: 14px; font-weight: 700"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 12.5l4 4 10-10"/></svg>Melano CC toner</span>
+<span style="display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border-radius: 999px; background: #E9ECF8; color: #2A3B8F; font-size: 14px; font-weight: 700"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 12.5l4 4 10-10"/></svg>Retinol mask</span>
+<button type="button" style="display: flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 12px; border: 1px dashed #E4E4E1; border-radius: 999px; background: none; color: #2A3B8F; font-size: 14px; font-weight: 700; cursor: pointer"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M12 5v14M5 12h14"/></svg>Link item</button>
+</div>
+<p style="margin: 8px 0 0; font-size: 13px; font-weight: 500; color: #6B6B70">Linked items get "Paid ¥" filled in from this receipt.</p></div>
+
+<p style="display: flex; gap: 8px; margin: 22px 0 0; padding: 12px; border-radius: 10px; background: #EEEEEB; font-size: 13px; line-height: 1.5; color: #1C1C1E"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;margin-top: 1px; color: #6B6B70"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Tax-free goods are for personal use and must leave Japan with you, unused.</span></p>
+</main>
+<div style="position: sticky; bottom: 0; padding: 12px 20px 20px; background: #FFFFFF; border-top: 1px solid #E4E4E1">
+<div class="tnum" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px"><span style="font-size: 13px; font-weight: 500; color: #6B6B70">Expected refund</span><span style="font-size: 18px; font-weight: 900">¥320 <span style="font-size: 14px; font-weight: 700; color: #6B6B70">≈ RM9.60</span></span></div>
+<a href="#s-taxreceipts" style="display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 12px; background: #2A3B8F; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 700">Save receipt</a>
+</div>
+</div></template>
+<script type="text/plain" id="code-s-taxreview">class Component extends DCLogic {
+  renderVals() { return {}; }
+}</script>
+</figure>
+<figure class="shot" id="s-taxdeparture">
+<figcaption><b>Airport checklist (tick and confirm)</b> <span>TaxDeparture.dc.html</span></figcaption>
+<div class="frame" data-screen="s-taxdeparture" style="width: 390px; height: 844px; overflow: auto; border-radius: 28px;"></div>
+<template id="tpl-s-taxdeparture"><div style="width: 390px; min-height: 1360px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#s-members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 100%; background: #1C1C1E"></div>
+</div>
+</header>
+<main style="flex: 1; padding: 20px 20px 24px">
+<p class="tnum" style="margin: 0; font-size: 13px; font-weight: 500; color: #6B6B70">Fri 4 Dec · Day 14 · Departure</p>
+<h1 style="margin: 4px 0 0; font-size: 28px; font-weight: 900; line-height: 1.2">Tax refund at the airport</h1>
+<div style="display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; padding: 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E4E4E1; border-left: 4px solid #D2281E">
+<svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;color: #D2281E; margin-top: 2px"><path d="M3 13l18-7-5 14-3-6-6-1z"/></svg>
+<div><div style="font-size: 16px; font-weight: 900">Get there 3 hours early</div>
+<p style="margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: #6B6B70">Customs comes first. Skip it and the stores can't refund the tax.</p></div>
+</div>
+
+<h2 style="margin: 24px 0 8px; font-size: 20px; font-weight: 900">Before you queue</h2>
+<ul style="list-style: none; margin: 0; padding: 0; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px; overflow: hidden">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+<li style="border-top: 1px solid #E4E4E1; {{s.first}}">
+<label style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 14px; cursor: pointer">
+<input type="checkbox" checked="{{s.done}}" onChange="{{s.toggle}}" style="flex: none; width: 22px; height: 22px; margin: 0; accent-color: #2F7A49">
+<span style="flex: 1; min-width: 0"><span style="display: block; font-size: 16px; font-weight: 700; {{s.titleStyle}}">{{s.title}}</span><span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px">{{s.sub}}</span></span>
+</label>
+</li>
+</sc-for>
+</ul>
+
+<div style="display: flex; align-items: baseline; justify-content: space-between; margin: 26px 0 8px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 900">At customs</h2>
+<span class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70">{{progress}}</span>
+</div>
+<div aria-hidden="true" style="height: 6px; border-radius: 3px; background: #E4E4E1; overflow: hidden; margin-bottom: 10px"><div style="height: 6px; border-radius: 3px; background: #2A3B8F; {{bar}}"></div></div>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{receipts}}" as="r" hint-placeholder-count="5">
+<li style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 10px 12px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<span aria-hidden="true" style="flex: none; display: block; width: 40px; height: 52px; box-sizing: border-box; padding-top: 2px; border: 1px solid #E4E4E1; border-radius: 6px; background: #FFFFFF"><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 70%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 50%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 80%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 40%"></span><span style="display: block; height: 3px; margin: 5px 6px 0; border-radius: 2px; background: #E4E4E1; width: 60%"></span></span>
+<div style="min-width: 0"><div style="font-size: 15px; font-weight: 700; line-height: 1.35">{{r.store}}</div><div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; margin-top: 2px">{{r.meta}}</div></div>
+<button type="button" aria-pressed="{{r.pressed}}" onClick="{{r.toggle}}" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; {{r.btnStyle}}">{{r.btn}}</button>
+</li>
+</sc-for>
+</ul>
+<p style="display: flex; gap: 8px; margin: 18px 2px 0; font-size: 13px; line-height: 1.5; color: #6B6B70"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;margin-top: 1px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>After customs, each store sends the refund to the card or method you chose when buying. Track it under Receipts.</span></p>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#s-main" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#s-shopping" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#s-ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div></template>
+<script type="text/plain" id="code-s-taxdeparture">const P = {"paper": "#F7F7F5", "surface": "#FFFFFF", "ink": "#1C1C1E", "stone": "#6B6B70", "hair": "#E4E4E1", "action": "#2A3B8F", "onAction": "#FFFFFF", "done": "#2F7A49", "skip": "#9198A4", "now": "#D2281E", "nowText": "#D2281E", "nowRing": "rgba(210,40,30,0.18)", "soft": "#EEEEEB", "dim": "rgba(28,28,30,0.45)", "amberText": "#8A5A00", "amberLine": "#D9A23A", "halalText": "#2F7A49", "halalLine": "#2F7A49", "skipSeg": "#6B6B70", "onCity": "#FFFFFF"};
+const STEPS = [{"id": "s1", "icon": "passport", "title": "Passport", "sub": "The real one, not a copy"}, {"id": "s2", "icon": "luggage", "title": "Tax-free goods in hand luggage", "sub": "Officers may ask to see them"}, {"id": "s3", "icon": "receipt", "title": "Receipts open in the app", "sub": "5 eligible receipts, \u00a53,063 tax"}, {"id": "s4", "icon": "shield", "title": "Customs before check-in and security", "sub": "Look for the tax-free export counter"}];
+const RCPTS = [{"id": "r1", "store": "MUJI \u00b7 Namba Parks", "meta": "22 Nov \u00b7 \u00a56,589 paid", "tax": 599}, {"id": "r2", "store": "UNIQLO \u00b7 Shinsaibashi", "meta": "22 Nov \u00b7 \u00a513,156 paid", "tax": 1196}, {"id": "r3", "store": "Matsumoto Kiyoshi \u00b7 Dotonbori", "meta": "22 Nov 16:20 \u00b7 \u00a52,178 paid", "tax": 198}, {"id": "r4", "store": "Matsumoto Kiyoshi \u00b7 Dotonbori", "meta": "22 Nov 19:48 \u00b7 \u00a53,520 paid", "tax": 320}, {"id": "r6", "store": "Don Quijote \u00b7 Dotonbori", "meta": "23 Nov \u00b7 \u00a58,250 paid", "tax": 750}];
+function yen(n) { return '\u00A5' + Math.round(n).toLocaleString('en-US'); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { steps: { s1: true, s2: true }, conf: { r1: true, r2: true } };
+  }
+  renderVals() {
+    const self = this, st = this.state;
+    const n = RCPTS.filter(function (r) { return st.conf[r.id]; }).length;
+    return {
+      steps: STEPS.map(function (s, i) {
+        const done = !!st.steps[s.id];
+        return { title: s.title, sub: s.sub, done: done, first: i === 0 ? 'border-top: 0;' : '',
+          titleStyle: done ? 'color: ' + P.stone + '; text-decoration: line-through;' : 'color: ' + P.ink + ';',
+          toggle: function () { const x = Object.assign({}, st.steps); x[s.id] = !done; self.setState({ steps: x }); } };
+      }),
+      receipts: RCPTS.map(function (r) {
+        const on = !!st.conf[r.id];
+        return { store: r.store, meta: r.meta + ' \u00B7 ' + yen(r.tax) + ' tax', pressed: on ? 'true' : 'false',
+          btn: on ? '\u2713 Confirmed' : 'Confirm',
+          btnStyle: on ? 'border: 1px solid ' + P.done + '; background: #E6F2EA; color: ' + P.done + ';' : 'border: 0; background: ' + P.action + '; color: #FFFFFF;',
+          toggle: function () { const x = Object.assign({}, st.conf); x[r.id] = !on; self.setState({ conf: x }); } };
+      }),
+      progress: n + ' of ' + RCPTS.length + ' confirmed',
+      bar: 'width: ' + (n / RCPTS.length * 100).toFixed(1) + '%;'
+    };
+  }
+}</script>
+</figure>
+<figure class="shot" id="s-taxadmin">
+<figcaption><b>Everyone&#x27;s refunds (admin)</b> <span>TaxAdmin.dc.html</span></figcaption>
+<div class="frame" data-screen="s-taxadmin" style="width: 390px; height: 844px; overflow: auto; border-radius: 28px;"></div>
+<template id="tpl-s-taxadmin"><div style="width: 390px; min-height: 1080px; box-sizing: border-box; background: #F7F7F5; color: #1C1C1E; font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased">
+<header style="position: sticky; top: 0; z-index: 3; background: #F7F7F5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 12px">
+<div style="min-width: 0">
+<div style="font-size: 17px; font-weight: 900; line-height: 1.3">Japan 2026</div>
+<div class="tnum" style="font-size: 13px; font-weight: 500; color: #6B6B70; line-height: 1.4">21 Nov – 4 Dec · 14 days</div>
+</div>
+<a href="#s-members" style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; font-weight: 500; color: #6B6B70; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #2F7A49; flex: none"></span>Shared with group</a>
+</div>
+<div role="progressbar" aria-label="Trip progress" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="height: 3px; background: #E4E4E1">
+<div style="height: 3px; width: 100%; background: #1C1C1E"></div>
+</div>
+</header>
+<main style="flex: 1; padding: 20px 20px 24px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 900; line-height: 1.2">Shopping</h1>
+<p style="margin: 4px 0 0; font-size: 15px; font-weight: 500; color: #6B6B70">Everyone's tax refunds</p>
+<div role="group" aria-label="Shopping view" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; margin-top: 14px; border-radius: 10px; background: #EEEEEB"><a href="#s-shoppingoverview" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: transparent; color: #6B6B70;"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Overview</a><a href="#s-shoppingperson" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: transparent; color: #6B6B70;"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>List</a><a href="#s-taxreceipts" aria-current="page" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; background: #FFFFFF; color: #1C1C1E; box-shadow: 0 1px 2px rgba(0,0,0,0.08);"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Receipts</a></div>
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 14px; padding: 8px 12px; border-radius: 10px; background: #EEEEEB; font-size: 13px; font-weight: 500"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;color: #2A3B8F"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span><b style="font-weight: 700">Admin view.</b> You can see everyone's receipts.</span></div>
+<section aria-label="Group refund summary" style="margin-top: 16px; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<div style="padding: 16px 16px 14px"><div style="font-size: 13px; font-weight: 500; color: #6B6B70">Group expected refund</div>
+<div style="display: flex; align-items: baseline; gap: 10px; margin-top: 4px"><span class="tnum" style="font-size: 32px; font-weight: 900; line-height: 1.1">¥8,771</span><span class="tnum" style="font-size: 16px; font-weight: 700; color: #6B6B70">≈ RM263.13</span></div>
+<div aria-hidden="true" style="display: flex; height: 8px; margin-top: 12px; border-radius: 4px; overflow: hidden; background: #E4E4E1"><span style="display: block; width: 31.7%; background: #2F7A49"></span><span style="display: block; width: 68.3%; background: #2A3B8F"></span></div></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid #E4E4E1">
+<div style="padding: 12px"><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #2F7A49"></span>Received</div><div class="tnum" style="font-size: 17px; font-weight: 900; margin-top: 2px">¥2,779 <span style="font-size: 13px; color: #6B6B70">RM83.37</span></div></div>
+<div style="padding: 12px; border-left: 1px solid #E4E4E1"><div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #6B6B70"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #2A3B8F"></span>Waiting</div><div class="tnum" style="font-size: 17px; font-weight: 900; margin-top: 2px">¥5,992 <span style="font-size: 13px; color: #6B6B70">RM179.76</span></div></div>
+</div>
+</section>
+<h2 style="margin: 26px 0 10px; font-size: 20px; font-weight: 900">By person</h2>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<a href="#s-taxreceipts" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 14px; text-decoration: none; color: #1C1C1E; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #2A3B8F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900">IR</span>
+<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700">Irfan (you)<span style="font-size: 12px; font-weight: 500; padding: 2px 6px; border-radius: 6px; border: 1px solid #E4E4E1; color: #6B6B70">Owner</span></span>
+<span class="tnum" style="display: block; margin-top: 4px; font-size: 13px; font-weight: 500; color: #6B6B70">6 receipts · 1 to confirm</span>
+<span aria-hidden="true" style="display: flex; height: 6px; margin-top: 8px; border-radius: 3px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 6px; width: 19.6%; background: #2F7A49"></span><span style="display: block; height: 6px; width: 80.4%; background: #2A3B8F"></span></span>
+<span class="tnum" style="display: block; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6B6B70">¥599 received · ¥2,464 waiting</span></span>
+<span style="text-align: right"><span class="tnum" style="display: block; font-size: 16px; font-weight: 900">¥3,063</span><span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">expected</span></span>
+</a>
+<a href="#s-taxreceipts" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 14px; text-decoration: none; color: #1C1C1E; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #6A3E9A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900">AM</span>
+<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700">Amira<span style="font-size: 12px; font-weight: 500; padding: 2px 6px; border-radius: 6px; border: 1px solid #E4E4E1; color: #6B6B70">Editor</span></span>
+<span class="tnum" style="display: block; margin-top: 4px; font-size: 13px; font-weight: 500; color: #6B6B70">4 receipts · all confirmed</span>
+<span aria-hidden="true" style="display: flex; height: 6px; margin-top: 8px; border-radius: 3px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 6px; width: 0.0%; background: #2F7A49"></span><span style="display: block; height: 6px; width: 100.0%; background: #2A3B8F"></span></span>
+<span class="tnum" style="display: block; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6B6B70">¥0 received · ¥1,420 waiting</span></span>
+<span style="text-align: right"><span class="tnum" style="display: block; font-size: 16px; font-weight: 900">¥1,420</span><span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">expected</span></span>
+</a>
+<a href="#s-taxreceipts" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 14px; text-decoration: none; color: #1C1C1E; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #00776F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900">HA</span>
+<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700">Haikal<span style="font-size: 12px; font-weight: 500; padding: 2px 6px; border-radius: 6px; border: 1px solid #E4E4E1; color: #6B6B70">Editor</span></span>
+<span class="tnum" style="display: block; margin-top: 4px; font-size: 13px; font-weight: 500; color: #6B6B70">7 receipts · 2 refunded</span>
+<span aria-hidden="true" style="display: flex; height: 6px; margin-top: 8px; border-radius: 3px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 6px; width: 50.8%; background: #2F7A49"></span><span style="display: block; height: 6px; width: 49.2%; background: #2A3B8F"></span></span>
+<span class="tnum" style="display: block; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6B6B70">¥2,180 received · ¥2,108 waiting</span></span>
+<span style="text-align: right"><span class="tnum" style="display: block; font-size: 16px; font-weight: 900">¥4,288</span><span style="display: block; font-size: 13px; font-weight: 500; color: #6B6B70">expected</span></span>
+</a>
+<a href="#s-taxreceipts" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 14px; text-decoration: none; color: #1C1C1E; background: #FFFFFF; border: 1px solid #E4E4E1; border-radius: 12px">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #1F5591; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900">AL</span>
+<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700">Amalina<span style="font-size: 12px; font-weight: 500; padding: 2px 6px; border-radius: 6px; border: 1px solid #E4E4E1; color: #6B6B70">Viewer</span></span>
+<span class="tnum" style="display: block; margin-top: 4px; font-size: 13px; font-weight: 500; color: #6B6B70">1 receipt · ¥1,000 short at Daiso</span>
+<span aria-hidden="true" style="display: flex; height: 6px; margin-top: 8px; border-radius: 3px; background: #E4E4E1; overflow: hidden"><span style="display: block; height: 6px; width: 0%; background: #2F7A49"></span><span style="display: block; height: 6px; width: 0%; background: #2A3B8F"></span></span>
+<span class="tnum" style="display: block; margin-top: 6px; font-size: 13px; font-weight: 500; color: #6B6B70">¥0 received · ¥0 waiting</span></span>
+<span style="text-align: right"><span style="display: block; font-size: 14px; font-weight: 700; color: #6B6B70">No refund yet</span></span>
+</a>
+</div>
+</main>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: auto; background: #FFFFFF; border-top: 1px solid #E4E4E1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px 8px 10px">
+<a href="#s-main" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M8 3v18"/><circle cx="8" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/><path d="M13 7h7M13 17h7"/></svg>Itinerary</a>
+<a href="#s-shopping" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #2A3B8F; font-size: 13px; font-weight: 700"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shopping</a>
+<a href="#s-ideas" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; text-decoration: none; color: #6B6B70; font-size: 13px; font-weight: 500"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Ideas</a>
+</nav>
+</div></template>
+<script type="text/plain" id="code-s-taxadmin">class Component extends DCLogic {
+  renderVals() { return {}; }
 }</script>
 </figure>
 <figure class="shot" id="s-logo">
