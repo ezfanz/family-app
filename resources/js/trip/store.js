@@ -26,6 +26,8 @@ export const UI = {
     shopSel: null,
     /** Shopping list filter by who an item is for: 'all', a name key, or '__none__'. */
     forWho: 'all',
+    /** Itinerary: 'all' or a city name; the day strip only shows that city's days. */
+    city: 'all',
     /** Shopping search & filter form: applies to the list in view and to "Everyone" results. */
     filter: { q: '', forWho: '', store: '', status: 'all' },
     /** Ideas: id whose ⋯ menu is open, and id armed for delete. */

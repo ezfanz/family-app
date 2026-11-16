@@ -562,3 +562,11 @@ fieldset.acct-pref .seg { clear: both; }
 .filter-bar .text-link { font-size: 14px; }
 #resultsCount { margin-bottom: 4px; }
 #filterBar, #shopResults { scroll-margin-top: 96px; }
+
+/* ---------- itinerary: city filter ---------- */
+.city-chips { margin: 0; padding: 12px 20px 2px; }
+.city-chip { padding: 0 8px 0 14px; }
+.city-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
+.city-chip[aria-pressed="true"] { background: var(--c, var(--ink)); border-color: var(--c, var(--ink)); color: #FFFFFF; }
+.city-chip[aria-pressed="true"] .city-dot { background: #FFFFFF; }
+.city-chip[aria-pressed="true"] .chip-count { background: rgba(255, 255, 255, .22); color: #FFFFFF; }

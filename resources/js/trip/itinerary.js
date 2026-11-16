@@ -63,8 +63,51 @@ export function renderHeader() {
     $('tripProgress').setAttribute('aria-valuetext', `${finished} of ${acts.length} stops done or skipped`);
 }
 
+/* ---------- City filter ---------- */
+
+const NO_CITY = '__none__';
+const cityKey = (day) => day.city || NO_CITY;
+
+/** Cities in trip order, with how many days each has. */
+function tripCities() {
+    const cities = new Map();
+    S.days.forEach((d) => cities.set(cityKey(d), (cities.get(cityKey(d)) || 0) + 1));
+    return [...cities].map(([key, count]) => ({ key, count }));
+}
+
+function visibleDays() {
+    return UI.city === 'all' ? S.days : S.days.filter((d) => cityKey(d) === UI.city);
+}
+
+function renderCityChips() {
+    const cities = tripCities();
+    const box = $('cityChips');
+    // A filter only helps when the trip covers more than one place.
+    box.classList.toggle('hidden', cities.length < 2);
+    if (cities.length < 2) {
+        UI.city = 'all';
+        return;
+    }
+    if (UI.city !== 'all' && !cities.some((c) => c.key === UI.city)) UI.city = 'all';
+    const chip = (key, label, count, colour) => `<button type="button" class="chip city-chip" data-city="${esc(key)}" aria-pressed="${UI.city === key}"${colour ? ` style="--c:${colour}"` : ''}>
+        ${colour ? '<span class="city-dot" aria-hidden="true"></span>' : ''}${esc(label)}<span class="chip-count tnum">${count}</span></button>`;
+    box.innerHTML = chip('all', 'All days', S.days.length, '')
+        + cities.map((c) => chip(c.key, c.key === NO_CITY ? 'No city' : c.key, c.count, cityColor(c.key === NO_CITY ? null : c.key))).join('');
+}
+
+/** Pick a city: keep the open day if it is there, else today's day there, else its first day. */
+function selectCity(key) {
+    UI.city = key;
+    const days = visibleDays();
+    if (!days.some((d) => d.id === UI.dayId)) {
+        const today = todayDay();
+        UI.dayId = (today && days.some((d) => d.id === today.id) ? today : days[0])?.id ?? UI.dayId;
+    }
+}
+
 function renderDays() {
-    $('days').innerHTML = S.days.map((d) => {
+    renderCityChips();
+    $('days').innerHTML = visibleDays().map((d) => {
         const acts = dayActs(d.id);
         const finished = acts.filter((a) => a.status !== 'pending').length;
         const pct = acts.length ? Math.round((finished / acts.length) * 100) : 0;
@@ -223,8 +266,17 @@ export function bindItinerary(rerender) {
         scrollDayIntoView();
     });
 
+    $('cityChips').addEventListener('click', (e) => {
+        const chip = e.target.closest('[data-city]');
+        if (!chip) return;
+        selectCity(chip.dataset.city);
+        renderPlan();
+        scrollDayIntoView();
+    });
+
     $('todayBtn').addEventListener('click', () => {
         UI.dayId = defaultDayId();
+        if (UI.city !== 'all' && !visibleDays().some((d) => d.id === UI.dayId)) UI.city = 'all';
         renderPlan();
         scrollDayIntoView();
         document.querySelector('.stop.is-now')?.scrollIntoView({ block: 'center' });

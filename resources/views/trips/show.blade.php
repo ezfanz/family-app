@@ -34,6 +34,7 @@
   <main>
     {{-- ---------- Itinerary ---------- --}}
     <section id="v-plan" aria-labelledby="dayTitle">
+      <nav class="chips city-chips hidden" id="cityChips" aria-label="Show days in one city"></nav>
       <div class="days-wrap">
         <button type="button" class="days-nav prev" id="daysPrev" aria-label="Scroll days left"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
         <nav class="days" id="days" aria-label="Days"></nav>
