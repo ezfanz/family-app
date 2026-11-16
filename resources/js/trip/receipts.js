@@ -5,11 +5,16 @@
  */
 
 import { S, UI, canManageShoppingOf } from './store.js';
-import { $, esc, yen, rm, fmtDate, weekday, toast } from './util.js';
+import { $, esc, yen, rm, fmtDate, weekday, toast, uuid } from './util.js';
 import { apiUrl } from './api.js';
 import { write } from './writer.js';
 import { rate, selectedShopper } from './shopping.js';
 import * as tax from './taxcalc.js';
+import { queuePhoto, flushPhotos, localPhotoUrl, waitingReceiptIds, onPhotosChanged, restoreLocalUrls } from './photo-queue.js';
+import { openCamera } from './camera.js';
+
+/** Receipts with a photo still on this phone, waiting to upload. */
+let waitingUpload = new Set();
 
 const FILTERS = [
     ['all', 'All'],
@@ -60,6 +65,10 @@ function receiptTitle(receipt) {
 }
 
 function thumbHtml(receipt) {
+    const local = localPhotoUrl(receipt.id, 1);
+    if (local) {
+        return `<img class="rc-thumb" src="${esc(local)}" alt="">`;
+    }
     if ((receipt.photo_parts || []).includes(1)) {
         return `<img class="rc-thumb" src="${esc(apiUrl(`/receipts/${receipt.id}/photos/1`))}" alt="" loading="lazy">`;
     }
@@ -82,7 +91,7 @@ function rowHtml(receipt, status, editable) {
         <div class="rc-main">
             <div class="rc-title">${esc(receiptTitle(receipt))}</div>
             <div class="rc-meta tnum">${esc(meta)}</div>
-            <span class="rc-pill ${status}">${STATUS_LABEL[status]}</span>
+            <span class="rc-pill ${status}">${STATUS_LABEL[status]}</span>${waitingUpload.has(receipt.id) ? '<span class="rc-wait">Photo saved on this phone · uploads when online</span>' : ''}
         </div>
         <div class="rc-side">
             <div class="rc-refund tnum ${status === 'refunded' ? 'got' : counts ? '' : 'none'}">${counts ? yen(refund) : '—'}</div>
@@ -204,7 +213,67 @@ function saveStage(receipt, changes) {
     });
 }
 
+/** Whose receipt a new snap belongs to: the person in view if I can manage theirs, else me. */
+function snapOwner() {
+    const sel = selectedShopper();
+    return sel !== 'all' && canManageShoppingOf(sel) ? Number(sel) : S.me;
+}
+
+/** Keep the server copy of a receipt after an upload or save, keeping any local edits pending. */
+function storeServerReceipt(data) {
+    if (data?.id && !S.pending.has(`receipt:${data.id}`)) S.receipts.set(data.id, data);
+}
+
+export function uploadWaitingPhotos() {
+    return flushPhotos((receipt) => { storeServerReceipt(receipt); renderReceipts(); });
+}
+
+/**
+ * Save a snapped receipt straight away (photo on this phone, receipt in the
+ * write queue), so it is never lost to a bad signal. The amount comes next.
+ *
+ * @param {Blob[]} blobs one or two parts
+ */
+async function saveSnapped(blobs) {
+    const receipt = {
+        id: uuid(),
+        user_id: snapOwner(),
+        store_name: null,
+        branch: null,
+        purchased_at: new Date().toISOString(),
+        pre_tax_yen: null,
+        tax_rate: 10,
+        is_estimated: false,
+        stage: 'captured',
+        photo_parts: [],
+        shopping_item_ids: [],
+    };
+    S.receipts.set(receipt.id, receipt);
+    for (const [index, blob] of blobs.entries()) {
+        await queuePhoto(receipt.id, index + 1, blob);
+    }
+    UI.receiptFilter = 'all';
+    renderReceipts();
+    write({
+        key: `receipt:${receipt.id}`,
+        method: 'POST',
+        path: '/receipts',
+        body: { id: receipt.id, trip_id: S.trip.id, user_id: receipt.user_id, purchased_at: receipt.purchased_at },
+        onSaved: (data) => { storeServerReceipt(data?.data); uploadWaitingPhotos(); },
+        revert: () => { S.receipts.delete(receipt.id); renderReceipts(); },
+    });
+    toast(navigator.onLine ? 'Photo saved. Add the amount next.' : 'Photo saved on this phone. It uploads when you’re back online.');
+    return receipt;
+}
+
 export function bindReceipts({ onSnap, onAirport } = {}) {
+    onPhotosChanged(async () => {
+        waitingUpload = await waitingReceiptIds();
+        if (UI.shopTab === 'receipts' && UI.view === 'shopping') renderReceipts();
+    });
+    restoreLocalUrls();
+    window.addEventListener('online', () => uploadWaitingPhotos());
+
     $('v-shopping').addEventListener('click', (e) => {
         const tab = e.target.closest('[data-shop-tab]');
         if (tab) {
@@ -225,7 +294,7 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
         }
     });
 
-    $('rcSnap').addEventListener('click', () => (onSnap ? onSnap() : toast('Camera comes in the next step.')));
+    $('rcSnap').addEventListener('click', () => (onSnap ? onSnap() : openCamera((blobs) => saveSnapped(blobs))));
     $('rcAirport').addEventListener('click', () => (onAirport ? onAirport() : toast('Airport checklist comes in a later step.')));
 
     $('refundForm').addEventListener('submit', (e) => {

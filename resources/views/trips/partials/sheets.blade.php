@@ -98,6 +98,33 @@
   </form>
 </dialog>
 
+{{-- ---------- Snap receipt (full-screen camera) ---------- --}}
+<dialog class="camera" id="camDlg" aria-labelledby="camTitle">
+  <div class="cam-top">
+    <button type="button" class="cam-icon" id="camClose" aria-label="Close camera">{!! $close !!}</button>
+    <span id="camTitle">Snap receipt</span>
+    <button type="button" class="cam-icon" id="camFlash" aria-label="Flash" aria-pressed="false" hidden><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></button>
+  </div>
+  <div class="cam-view" id="camView">
+    <video id="camVideo" playsinline muted autoplay></video>
+    <div class="cam-frame" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <span class="cam-status" id="camStatus" role="status" hidden></span>
+    <div class="cam-fallback">
+      <p id="camFallbackText">Opening the camera…</p>
+      <label class="btn primary cam-fallback-btn" for="camCapture">Take a photo</label>
+    </div>
+  </div>
+  <p class="cam-hint">Fit the whole receipt in the frame. Long receipt? Take it in two parts.</p>
+  <div class="cam-controls">
+    <button type="button" class="cam-side" id="camPhotos"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></svg>Photos</button>
+    <button type="button" class="cam-shutter" id="camShutter" aria-label="Take photo" autofocus><span></span></button>
+    <button type="button" class="cam-side" id="camTwo" aria-pressed="false"><span class="cam-two">2</span>Two parts</button>
+  </div>
+  <p class="cam-offline"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M8.5 8.6A5 5 0 0 0 6.5 18H17"/></svg>No signal? It saves on this phone and uploads later.</p>
+  <input type="file" id="camPick" accept="image/*" multiple hidden>
+  <input type="file" id="camCapture" accept="image/*" capture="environment" hidden>
+</dialog>
+
 {{-- ---------- Mark a tax refund as received ---------- --}}
 <dialog class="sheet" id="refundDlg" aria-labelledby="refundDlgTitle">
   <form id="refundForm" novalidate>

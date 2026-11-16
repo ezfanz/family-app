@@ -637,3 +637,41 @@ fieldset.acct-pref .seg { clear: both; }
 .yen-input { position: relative; }
 .yen-input > span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: var(--stone); }
 .yen-input .input { padding-left: 28px; }
+
+/* ---------- snap receipt (full-screen camera) ---------- */
+dialog.camera { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0 0 var(--safe-bottom); border: 0; background: #0E0E10; color: #FFFFFF; display: none; flex-direction: column; }
+dialog.camera[open] { display: flex; }
+dialog.camera::backdrop { background: #0E0E10; }
+.cam-top { display: flex; align-items: center; justify-content: space-between; padding: calc(var(--safe-top) + 12px) 8px 12px; font-size: 17px; font-weight: 700; }
+.cam-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: none; color: #FFFFFF; cursor: pointer; border-radius: 50%; }
+.cam-icon[hidden] { visibility: hidden; display: flex; }
+.cam-icon[aria-pressed="true"] { background: #FFFFFF; color: #0E0E10; }
+.cam-icon:focus-visible, .cam-side:focus-visible, .cam-shutter:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+.cam-view { flex: 1; position: relative; margin: 8px 24px; border-radius: 16px; background: #26262B; overflow: hidden; min-height: 0; }
+.cam-view video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cam-view.flash::after { content: ""; position: absolute; inset: 0; background: #FFFFFF; opacity: .6; }
+.cam-frame { position: absolute; inset: 28px 40px; pointer-events: none; }
+.cam-frame span { position: absolute; width: 34px; height: 34px; border: 0 solid #FFFFFF; }
+.cam-frame span:nth-child(1) { top: 0; left: 0; border-top-width: 4px; border-left-width: 4px; border-top-left-radius: 10px; }
+.cam-frame span:nth-child(2) { top: 0; right: 0; border-top-width: 4px; border-right-width: 4px; border-top-right-radius: 10px; }
+.cam-frame span:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 4px; border-left-width: 4px; border-bottom-left-radius: 10px; }
+.cam-frame span:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 4px; border-right-width: 4px; border-bottom-right-radius: 10px; }
+.cam-status { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, .7); font-size: 13px; font-weight: 700; text-align: center; }
+.cam-status.ok { background: rgba(47, 122, 73, .92); }
+.cam-status[hidden] { display: none; }
+.cam-fallback { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; text-align: center; }
+.cam-fallback p { margin: 0; font-size: 15px; line-height: 1.5; color: #C9C9CF; }
+.cam-fallback-btn { width: auto; cursor: pointer; }
+.cam-view.no-camera .cam-fallback { display: flex; }
+.cam-view.no-camera .cam-frame, .cam-view.no-camera video { display: none; }
+.cam-hint { margin: 14px 32px 0; text-align: center; font-size: 14px; line-height: 1.5; color: #C9C9CF; }
+.cam-controls { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 20px 28px 24px; }
+.cam-side { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; min-height: 56px; border: 0; background: none; color: #FFFFFF; font-size: 12px; font-weight: 500; cursor: pointer; border-radius: 10px; }
+#camPhotos { justify-self: start; } #camTwo { justify-self: end; }
+.cam-two { display: flex; align-items: center; justify-content: center; width: 28px; height: 24px; border: 1.5px solid #FFFFFF; border-radius: 6px; font-size: 13px; font-weight: 700; }
+#camTwo[aria-pressed="true"] .cam-two { background: #FFFFFF; color: #0E0E10; }
+.cam-shutter { width: 76px; height: 76px; border-radius: 50%; border: 4px solid #FFFFFF; background: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.cam-shutter span { width: 60px; height: 60px; border-radius: 50%; background: #FFFFFF; transition: transform .1s; }
+.cam-shutter:active span { transform: scale(.9); }
+.cam-offline { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0 16px 20px; font-size: 13px; color: #9A9AA2; text-align: center; }
+.rc-wait { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--amber-text); }

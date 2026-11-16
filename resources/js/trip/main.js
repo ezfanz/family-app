@@ -10,7 +10,8 @@ import { bindSheets, openActForm, openItemForm, openIdeaForm, planIdea } from '.
 import { bindDayStrip } from './daystrip.js';
 import { showLoader } from './loader.js';
 import { bindImport } from './importer.js';
-import { bindReceipts } from './receipts.js';
+import { bindReceipts, uploadWaitingPhotos } from './receipts.js';
+import { bindCamera } from './camera.js';
 import { loadFx } from './fx.js';
 import { setWriterHooks } from './writer.js';
 import { net, initSync, loadCache, saveCache, clearTripStorage, flushQueue, queueLength, startPolling } from './sync.js';
@@ -127,6 +128,7 @@ export function refreshTrip() {
             saveCache();
             syncStatus();
             safeRender();
+            uploadWaitingPhotos();
             return true;
         } catch (error) {
             if (error.status === 404) {
@@ -181,6 +183,7 @@ export async function bootTrip(root) {
     bindItinerary(render);
     bindShopping();
     bindReceipts();
+    bindCamera();
     bindIdeas();
     bindSheets(render);
     bindDayStrip();
