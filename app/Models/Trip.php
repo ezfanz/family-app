@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 #[Fillable(['name', 'start_date', 'end_date', 'timezone', 'exchange_rate_rm_per_100_yen', 'exchange_rate_auto', 'deposit_rm'])]
@@ -98,6 +99,7 @@ class Trip extends Model
             }
 
             $trip->addMember($owner, TripRole::Owner);
+            $trip->ensureTaxRefundStop();
 
             return $trip;
         });
@@ -118,7 +120,7 @@ class Trip extends Model
     {
         return $this->belongsToMany(User::class)
             ->using(TripMember::class)
-            ->withPivot('role', 'budget_rm')
+            ->withPivot('role', 'budget_rm', 'airport_checklist')
             ->withTimestamps();
     }
 
@@ -144,6 +146,49 @@ class Trip extends Model
     public function shoppingItems(): HasMany
     {
         return $this->hasMany(ShoppingItem::class)->orderBy('sort_order')->orderBy('created_at');
+    }
+
+    /**
+     * @return HasMany<Receipt, $this>
+     */
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(Receipt::class)->orderBy('purchased_at');
+    }
+
+    /**
+     * Add the "tax refund at customs" stop to the last day, once. If someone
+     * deletes it, it is not added back.
+     */
+    public function ensureTaxRefundStop(): void
+    {
+        $lastDay = $this->days()->reorder('day_number', 'desc')->first();
+        if ($lastDay === null || $this->activities()->withTrashed()->where('system_key', 'tax_refund')->exists()) {
+            return;
+        }
+
+        // Three hours before the flight if the last day has one; otherwise an hour
+        // after the day's last stop (people shop until they leave); else 09:00.
+        $stops = $lastDay->activities()->reorder('start_time')->get();
+        $flight = $stops->first(fn (Activity $activity): bool => (bool) preg_match('/\b(flight|fly|depart|departure|KIX|NRT|HND)\b/i', $activity->name));
+        $time = match (true) {
+            $flight !== null => Carbon::parse($flight->start_time)->subHours(3)->max(Carbon::parse('00:00'))->format('H:i:s'),
+            $stops->isNotEmpty() => Carbon::parse($stops->last()->start_time)->addHour()->min(Carbon::parse('23:00'))->format('H:i:s'),
+            default => '09:00:00',
+        };
+
+        $stop = new Activity([
+            'start_time' => $time,
+            'name' => 'Tax refund at customs, before check-in',
+            'transport' => '',
+            'notes' => 'Get to the airport 3 hours early. Customs comes first: passport and tax-free goods in hand luggage. Then check in.',
+            'places' => [],
+        ]);
+        $stop->system_key = 'tax_refund';
+        $stop->trip_id = $this->id;
+        $stop->day_id = $lastDay->id;
+        $stop->sort_order = $lastDay->activities()->count();
+        $stop->save();
     }
 
     /**

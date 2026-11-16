@@ -31,6 +31,7 @@ class TripMember extends Pivot
         return [
             'role' => TripRole::class,
             'budget_rm' => 'decimal:2',
+            'airport_checklist' => 'array',
         ];
     }
 }

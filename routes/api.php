@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\AirportController;
 use App\Http\Controllers\Api\ExchangeRateController;
 use App\Http\Controllers\Api\IdeaController;
+use App\Http\Controllers\Api\ReceiptController;
+use App\Http\Controllers\Api\ReceiptPhotoController;
 use App\Http\Controllers\Api\ShoppingBudgetController;
 use App\Http\Controllers\Api\ShoppingImportController;
 use App\Http\Controllers\Api\ShoppingItemController;
@@ -15,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::pattern('activity', '[0-9a-fA-F-]{36}');
 Route::pattern('shoppingItem', '[0-9a-fA-F-]{36}');
+Route::pattern('receipt', '[0-9a-fA-F-]{36}');
 Route::pattern('trip', '[0-9]+');
 Route::pattern('idea', '[0-9]+');
 Route::pattern('user', '[0-9]+');
@@ -57,6 +61,15 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::patch('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
     Route::patch('/ideas/{idea}/restore', [IdeaController::class, 'restore'])->name('ideas.restore')->withTrashed();
+
+    Route::get('/trips/{trip}/receipts', [ReceiptController::class, 'index'])->name('trips.receipts.index')->can('view', 'trip');
+    Route::post('/receipts', [ReceiptController::class, 'store'])->name('receipts.store');
+    Route::patch('/receipts/{receipt}', [ReceiptController::class, 'update'])->name('receipts.update');
+    Route::delete('/receipts/{receipt}', [ReceiptController::class, 'destroy'])->name('receipts.destroy');
+    Route::post('/receipts/{receipt}/photos', [ReceiptPhotoController::class, 'store'])->name('receipts.photos.store')->middleware('throttle:30,1');
+    Route::get('/receipts/{receipt}/photos/{part}', [ReceiptPhotoController::class, 'show'])->name('receipts.photos.show')->whereIn('part', ['1', '2']);
+    Route::put('/trips/{trip}/airport-checklist', [AirportController::class, 'checklist'])->name('trips.airport-checklist')->can('view', 'trip');
+    Route::post('/trips/{trip}/customs-done', [AirportController::class, 'customsDone'])->name('trips.customs-done')->can('view', 'trip');
 
     Route::patch('/trips/{trip}/budgets/{user}', ShoppingBudgetController::class)->name('trips.budgets.update');
     Route::post('/trips/{trip}/shopping-import', ShoppingImportController::class)->name('trips.shopping-import')->middleware('throttle:20,1');

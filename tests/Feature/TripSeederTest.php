@@ -26,7 +26,8 @@ class TripSeederTest extends TestCase
         $this->assertMatchesRegularExpression('/^[A-Z2-9]{8}$/', $trip->join_code);
 
         $this->assertSame(14, $trip->days()->count());
-        $this->assertSame(101, $trip->activities()->count());
+        $this->assertSame(102, $trip->activities()->count());
+        $this->assertSame('20:00', $trip->activities()->where('system_key', 'tax_refund')->sole()->timeLabel());
         $this->assertSame(18, $trip->shoppingItems()->count());
         $this->assertSame(29, $trip->ideas()->count());
         $this->assertSame(15, $trip->ideas()->where('region', 'Kansai')->count());

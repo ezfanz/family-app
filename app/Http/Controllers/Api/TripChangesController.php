@@ -8,6 +8,7 @@ use App\Http\Resources\ActivityNoteResource;
 use App\Http\Resources\ActivityResource;
 use App\Http\Resources\DayResource;
 use App\Http\Resources\IdeaResource;
+use App\Http\Resources\ReceiptResource;
 use App\Http\Resources\ShopperResource;
 use App\Http\Resources\ShoppingItemResource;
 use App\Http\Resources\TripResource;
@@ -38,6 +39,7 @@ class TripChangesController extends Controller
         $shoppingItems = $trip->shoppingItems()->withTrashed()->visibleTo($trip, $request->user())->where('updated_at', '>=', $since)->get();
         $ideas = $trip->ideas()->withTrashed()->where('updated_at', '>=', $since)->get();
         $days = $trip->days()->where('updated_at', '>=', $since)->get();
+        $receipts = $trip->receipts()->withTrashed()->visibleTo($trip, $request->user())->where('updated_at', '>=', $since)->with(['photos', 'shoppingItems'])->get();
 
         $myNotes = ActivityNote::query()
             ->whereBelongsTo($request->user())
@@ -53,6 +55,7 @@ class TripChangesController extends Controller
             'shopping_items' => ShoppingItemResource::collection($shoppingItems),
             'ideas' => IdeaResource::collection($ideas),
             'my_notes' => ActivityNoteResource::collection($myNotes),
+            'receipts' => ReceiptResource::collection($receipts),
             'server_time' => $serverTime->toIso8601String(),
         ]);
     }

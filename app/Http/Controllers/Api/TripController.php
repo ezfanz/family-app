@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateTripRequest;
 use App\Http\Resources\ActivityNoteResource;
 use App\Http\Resources\DayResource;
 use App\Http\Resources\IdeaResource;
+use App\Http\Resources\ReceiptResource;
 use App\Http\Resources\ShopperResource;
 use App\Http\Resources\ShoppingItemResource;
 use App\Http\Resources\TripResource;
@@ -63,6 +64,12 @@ class TripController extends Controller
             'shopping_items' => ShoppingItemResource::collection($trip->shoppingItems()->visibleTo($trip, $user)->get()),
             'ideas' => IdeaResource::collection($trip->ideas),
             'my_notes' => ActivityNoteResource::collection($myNotes),
+            'receipts' => ReceiptResource::collection($trip->receipts()->visibleTo($trip, $user)->with(['photos', 'shoppingItems'])->get()),
+            'my_airport_checklist' => $trip->members()->whereKey($user->id)->first()?->pivot->airport_checklist ?? [],
+            'tax_refund' => [
+                'min_pre_tax_yen' => (int) config('tax_refund.min_pre_tax_yen'),
+                'days_to_export' => (int) config('tax_refund.days_to_export'),
+            ],
             'server_time' => $serverTime->toIso8601String(),
         ]);
     }

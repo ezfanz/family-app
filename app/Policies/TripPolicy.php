@@ -49,6 +49,23 @@ class TripPolicy
     }
 
     /**
+     * Tax refund receipts are private: each member sees and manages only their
+     * own, and the owner (admin) can see everyone's. Editors get no extra access.
+     */
+    public function manageReceiptsOf(User $user, Trip $trip, int $receiptOwnerId): Response
+    {
+        $role = $trip->roleFor($user);
+
+        if ($role === null) {
+            return Response::denyAsNotFound();
+        }
+
+        return $role === TripRole::Owner || $user->getKey() === $receiptOwnerId
+            ? Response::allow()
+            : Response::denyAsNotFound();
+    }
+
+    /**
      * Owners and editors can change trip content and settings.
      */
     public function update(User $user, Trip $trip): Response

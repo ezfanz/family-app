@@ -273,6 +273,7 @@ class TripSeeder extends Seeder
             }
 
             DB::table('activities')->insert($activityRows);
+            $trip->ensureTaxRefundStop();
 
             $shoppingRows = [];
             foreach (self::SHOPPING as $index => [$name, $qty, $estimatedYen]) {
