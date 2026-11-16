@@ -15,8 +15,15 @@ const MAX_AGE_MS = 3 * 60 * 60 * 1000;
 let live = null; // { rm_per_100_yen, date, session, source, fetched_at }
 let lastEdited = 'yen';
 let setTripRate = () => {};
+let onLoaded = () => {};
+let isAuto = () => true;
 
 const tripRate = () => Number(S.trip?.exchange_rate_rm_per_100_yen) || 0;
+
+/** Today's Bank Negara rate if known (also from this device's saved copy), else 0. */
+export function liveRate() {
+    return live?.rm_per_100_yen || readCache()?.rm_per_100_yen || 0;
+}
 const activeRate = () => live?.rm_per_100_yen || tripRate();
 const parse = (value) => Number(String(value).replace(/[^0-9.]/g, '')) || 0;
 
@@ -75,10 +82,13 @@ export function renderFx() {
 
     const compare = $('fxCompare');
     const trip = tripRate();
-    const differs = live && Math.abs(trip - live.rm_per_100_yen) >= 0.005;
+    // Only relevant when the list uses a fixed rate; in automatic mode it already follows today's.
+    const differs = live && !isAuto() && Math.abs(trip - live.rm_per_100_yen) >= 0.005;
     compare.classList.toggle('hidden', !differs);
     if (differs) {
-        $('fxCompareText').textContent = `Your list uses ${rm(trip, 2)} per ¥100.`;
+        $('fxCompareText').textContent = trip > 0
+            ? `Your list uses ${rm(trip, 2)} per ¥100.`
+            : 'Your list has no rate set, so today’s rate is used.';
         $('fxUse').classList.toggle('hidden', !canEdit());
     }
     convert();
@@ -103,11 +113,14 @@ export async function loadFx(force = false) {
     } finally {
         $('fxRefresh').removeAttribute('aria-busy');
         renderFx();
+        onLoaded();
     }
 }
 
-export function bindFx({ onUseRate }) {
-    setTripRate = onUseRate;
+export function bindFx(hooks) {
+    setTripRate = hooks.onUseRate;
+    onLoaded = hooks.onLoaded ?? onLoaded;
+    isAuto = hooks.isAuto ?? isAuto;
     $('fxYen').addEventListener('input', () => { lastEdited = 'yen'; convert(); });
     $('fxRm').addEventListener('input', () => { lastEdited = 'rm'; convert(); });
     $('fxRefresh').addEventListener('click', () => loadFx(true));

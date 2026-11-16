@@ -97,6 +97,21 @@ class TripApiTest extends TestCase
         ])->assertUnprocessable()->assertJsonValidationErrors('end_date');
     }
 
+    public function test_trips_follow_todays_rate_by_default_and_editors_can_switch_to_a_fixed_rate(): void
+    {
+        ['trip' => $trip, 'editor' => $editor, 'viewer' => $viewer] = $this->tripFixture();
+
+        $this->actingAs($viewer)->getJson("/api/trips/{$trip->id}")->assertJsonPath('trip.exchange_rate_auto', true);
+
+        $this->actingAs($editor)->patchJson("/api/trips/{$trip->id}", ['exchange_rate_auto' => false, 'exchange_rate_rm_per_100_yen' => 2.5625])
+            ->assertOk()
+            ->assertJsonPath('data.exchange_rate_auto', false)
+            ->assertJsonPath('data.exchange_rate_rm_per_100_yen', 2.5625);
+
+        $this->actingAs($viewer)->patchJson("/api/trips/{$trip->id}", ['exchange_rate_auto' => true])->assertForbidden();
+        $this->assertFalse($trip->fresh()->exchange_rate_auto);
+    }
+
     public function test_editors_can_change_rate_and_deposit_but_viewers_cannot(): void
     {
         ['trip' => $trip, 'editor' => $editor, 'viewer' => $viewer] = $this->tripFixture();
@@ -108,6 +123,10 @@ class TripApiTest extends TestCase
 
         $this->actingAs($viewer)->patchJson("/api/trips/{$trip->id}", ['deposit_rm' => 1])->assertForbidden();
         $this->assertEquals(800, $trip->fresh()->deposit_rm);
+
+        $this->actingAs($editor)->patchJson("/api/trips/{$trip->id}", ['exchange_rate_rm_per_100_yen' => 0])
+            ->assertUnprocessable()->assertJsonValidationErrors('exchange_rate_rm_per_100_yen');
+        $this->assertEquals(3.15, (float) $trip->fresh()->exchange_rate_rm_per_100_yen);
     }
 
     public function test_owner_manages_members_through_the_api(): void

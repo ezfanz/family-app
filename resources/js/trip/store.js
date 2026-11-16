@@ -83,6 +83,7 @@ export function mergeChanges(payload) {
         S.trip = payload.trip;
         if (keepLocalSettings && previous) {
             S.trip.exchange_rate_rm_per_100_yen = previous.exchange_rate_rm_per_100_yen;
+            S.trip.exchange_rate_auto = previous.exchange_rate_auto;
             S.trip.deposit_rm = previous.deposit_rm;
         }
         S.role = payload.trip.my_role || S.role;

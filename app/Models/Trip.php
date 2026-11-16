@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
-#[Fillable(['name', 'start_date', 'end_date', 'timezone', 'exchange_rate_rm_per_100_yen', 'deposit_rm'])]
+#[Fillable(['name', 'start_date', 'end_date', 'timezone', 'exchange_rate_rm_per_100_yen', 'exchange_rate_auto', 'deposit_rm'])]
 class Trip extends Model
 {
     /** @use HasFactory<TripFactory> */
@@ -52,6 +52,7 @@ class Trip extends Model
             'start_date' => 'date',
             'end_date' => 'date',
             'exchange_rate_rm_per_100_yen' => 'decimal:4',
+            'exchange_rate_auto' => 'boolean',
             'deposit_rm' => 'decimal:2',
         ];
     }

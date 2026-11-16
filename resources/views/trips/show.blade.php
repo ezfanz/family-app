@@ -121,8 +121,9 @@
       <div id="shopAll" class="hidden">
         <div class="totals" id="allTotals" aria-live="polite"></div>
         <label class="rate-row" for="rateAll">Rate for everyone, RM per ¥100
-          <input id="rateAll" class="rate-input tnum" inputmode="decimal" type="number" step="0.01" min="0" data-rate>
+          <input id="rateAll" class="rate-input tnum" inputmode="decimal" type="number" step="0.0001" min="0" data-rate>
         </label>
+        @include('trips.partials.auto-rate', ['suffix' => 'All'])
         <h2 class="sec" style="margin:28px 0 10px">By person</h2>
         <div class="people" id="shopPeople"></div>
       </div>
@@ -132,8 +133,9 @@
         <div class="person-head" id="personHead"></div>
         <div class="grid2" style="margin-top:16px">
           <div><label class="lbl" for="budget">Budget (RM)</label><input id="budget" class="big-input tnum" inputmode="decimal" type="number" step="1" min="0" placeholder="0"></div>
-          <div><label class="lbl" for="rate">RM per ¥100</label><input id="rate" class="big-input tnum" inputmode="decimal" type="number" step="0.01" min="0" data-rate></div>
+          <div><label class="lbl" for="rate">RM per ¥100</label><input id="rate" class="big-input tnum" inputmode="decimal" type="number" step="0.0001" min="0" data-rate></div>
         </div>
+        @include('trips.partials.auto-rate', ['suffix' => 'Person'])
         <div class="totals" id="personTotals" aria-live="polite"></div>
         <p class="muted tnum" id="personLeft" style="margin:10px 2px 0"></p>
         <div class="row-between" style="margin-top:24px">

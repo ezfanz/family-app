@@ -7,7 +7,7 @@
 import { S, UI, canEdit, isOwner, canManageShoppingOf, shoppingList } from './store.js';
 import { $, esc, yen, rm, debounce, debounceKeyed } from './util.js';
 import { write } from './writer.js';
-import { renderFx, bindFx } from './fx.js';
+import { renderFx, bindFx, liveRate } from './fx.js';
 
 const AVATAR_COLOURS = ['#2A3B8F', '#6A3E9A', '#00776F', '#1F5591', '#B7791F', '#C2255C', '#4A8410', '#8A5A00'];
 const ROLE_LABEL = { owner: 'Owner', editor: 'Editor', viewer: 'Viewer' };
@@ -17,7 +17,11 @@ export function setItemFormOpener(fn) {
     openItemForm = fn;
 }
 
-const rate = () => Number(S.trip.exchange_rate_rm_per_100_yen) || 0;
+/** Shopping follows today's Bank Negara rate unless an owner/editor switched to a fixed rate. */
+export const autoRate = () => S.trip?.exchange_rate_auto !== false;
+
+/** RM per ¥100 used for totals: today's rate when automatic (or as a fallback), else the trip's own. */
+const rate = () => (autoRate() && liveRate()) || Number(S.trip.exchange_rate_rm_per_100_yen) || liveRate() || 0;
 const toRm = (yenValue) => (yenValue * rate()) / 100;
 
 export const initials = (name) => String(name || '?').trim().slice(0, 2).toUpperCase();
@@ -192,9 +196,20 @@ export function renderShop() {
         $('shopViewing').textContent = sel === 'all' ? 'Showing everyone' : `Showing ${showing ? displayName(showing) : 'your list'}`;
     }
 
+    const auto = autoRate();
     document.querySelectorAll('[data-rate]').forEach((input) => {
         if (document.activeElement !== input) input.value = rate();
-        input.readOnly = !canEdit();
+        input.readOnly = !canEdit() || auto;
+        input.title = auto ? 'Following today’s rate. Turn off “Today’s rate automatically” to type your own.' : '';
+    });
+    document.querySelectorAll('[data-rate-auto]').forEach((toggle) => {
+        toggle.checked = auto;
+        toggle.disabled = !canEdit();
+    });
+    document.querySelectorAll('[data-auto-rate-note]').forEach((note) => {
+        note.textContent = auto
+            ? (liveRate() ? `Using ${rm(rate(), 4)} per ¥100 from Bank Negara Malaysia` : 'Bank Negara Malaysia, updated daily')
+            : 'Off: everyone uses the rate typed above';
     });
 
     const person = S.shoppers.find((p) => p.user_id === sel);
@@ -255,7 +270,7 @@ const savePaid = debounceKeyed((id) => {
 }, 700);
 
 export function bindShopping() {
-    bindFx({ onUseRate: setTripRate });
+    bindFx({ onUseRate: setTripRate, onLoaded: () => { if (S.trip) renderShop(); }, isAuto: autoRate });
 
     $('v-shopping').addEventListener('click', (e) => {
         const pick = e.target.closest('[data-shopper]');
@@ -302,10 +317,48 @@ export function bindShopping() {
     document.querySelectorAll('[data-rate]').forEach((input) => {
         input.addEventListener('input', () => {
             if (!canEdit()) return;
-            S.trip.exchange_rate_rm_per_100_yen = Math.max(0, Number(input.value) || 0);
+            if (autoRate()) return;
+            const typed = Number(input.value);
+            // Half-typed or cleared ("" / "0" / "2."): keep the current rate until a real one is entered.
+            if (!(typed > 0)) return;
+            S.trip.exchange_rate_rm_per_100_yen = typed;
             document.querySelectorAll('[data-rate]').forEach((other) => { if (other !== input) other.value = input.value; });
             renderNumbersOnly();
+            renderFx();
             saveRate();
+        });
+        // Leaving the box empty or at 0 puts the rate in use back.
+        input.addEventListener('blur', () => {
+            if (!(Number(input.value) > 0)) input.value = rate();
+        });
+    });
+
+    document.querySelectorAll('[data-rate-auto]').forEach((toggle) => {
+        toggle.addEventListener('change', () => {
+            if (!canEdit()) {
+                toggle.checked = autoRate();
+                return;
+            }
+            // Switching to a fixed rate starts from the rate in use now (today's), so nothing jumps.
+            const current = rate();
+            const before = { auto: S.trip.exchange_rate_auto, rate: S.trip.exchange_rate_rm_per_100_yen };
+            S.trip.exchange_rate_auto = toggle.checked;
+            if (!toggle.checked && current > 0) S.trip.exchange_rate_rm_per_100_yen = current;
+            renderShop();
+            write({
+                key: 'trip:settings',
+                method: 'PATCH',
+                path: `/trips/${S.trip.id}`,
+                body: {
+                    exchange_rate_auto: S.trip.exchange_rate_auto,
+                    ...(S.trip.exchange_rate_rm_per_100_yen > 0 ? { exchange_rate_rm_per_100_yen: Number(S.trip.exchange_rate_rm_per_100_yen) } : {}),
+                },
+                revert: () => {
+                    S.trip.exchange_rate_auto = before.auto;
+                    S.trip.exchange_rate_rm_per_100_yen = before.rate;
+                    renderShop();
+                },
+            });
         });
     });
 

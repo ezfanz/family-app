@@ -28,6 +28,7 @@ class TripResource extends JsonResource
             'end_date' => $this->end_date->toDateString(),
             'timezone' => $this->timezone,
             'exchange_rate_rm_per_100_yen' => (float) $this->exchange_rate_rm_per_100_yen,
+            'exchange_rate_auto' => $this->exchange_rate_auto ?? true,
             'deposit_rm' => (float) $this->deposit_rm,
             'join_code' => $this->when($role === TripRole::Owner, $this->join_code),
             'my_role' => $role?->value,
