@@ -45,4 +45,11 @@ return [
         'cache_minutes' => (int) env('EXCHANGE_RATE_CACHE_MINUTES', 180),
     ],
 
+    /*
+    | Claude API, used to read receipt photos (config/tax_refund.php).
+    */
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+    ],
+
 ];

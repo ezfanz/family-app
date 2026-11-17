@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ExchangeRateController;
 use App\Http\Controllers\Api\IdeaController;
 use App\Http\Controllers\Api\ReceiptController;
 use App\Http\Controllers\Api\ReceiptPhotoController;
+use App\Http\Controllers\Api\ReceiptReadController;
 use App\Http\Controllers\Api\ShoppingBudgetController;
 use App\Http\Controllers\Api\ShoppingImportController;
 use App\Http\Controllers\Api\ShoppingItemController;
@@ -75,6 +76,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::patch('/receipts/{receipt}', [ReceiptController::class, 'update'])->name('receipts.update');
     Route::delete('/receipts/{receipt}', [ReceiptController::class, 'destroy'])->name('receipts.destroy');
     Route::post('/receipts/{receipt}/photos', [ReceiptPhotoController::class, 'store'])->name('receipts.photos.store')->middleware('throttle:30,1');
+    Route::post('/receipts/{receipt}/read', ReceiptReadController::class)->name('receipts.read')->middleware('throttle:20,1');
     Route::get('/receipts/{receipt}/photos/{part}', [ReceiptPhotoController::class, 'show'])->name('receipts.photos.show')->whereIn('part', ['1', '2']);
     Route::put('/trips/{trip}/airport-checklist', [AirportController::class, 'checklist'])->name('trips.airport-checklist')->can('view', 'trip');
     Route::post('/trips/{trip}/customs-done', [AirportController::class, 'customsDone'])->name('trips.customs-done')->can('view', 'trip');

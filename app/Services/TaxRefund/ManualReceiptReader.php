@@ -3,15 +3,17 @@
 namespace App\Services\TaxRefund;
 
 /**
- * Phase 1 reader: reads nothing, so the person types the store and amount.
+ * Reads nothing, so the person types the store and amount. Used when no
+ * Claude API key is set.
  */
 class ManualReceiptReader implements ReceiptReader
 {
     /**
-     * @return array{fields: array{}, confidence: array{}}
+     * @param  list<array{data: string, mime: string}>  $images
+     * @return array{fields: array{}, confidence: array{}, model: null}
      */
-    public function read(string $photoPath): array
+    public function read(array $images): array
     {
-        return ['fields' => [], 'confidence' => []];
+        return ['fields' => [], 'confidence' => [], 'model' => null];
     }
 }

@@ -3,17 +3,20 @@
 namespace App\Services\TaxRefund;
 
 /**
- * Reads fields off a receipt photo (Phase 2). Implementations could be an
- * on-device OCR result passed up from the app, or a cloud vision model.
+ * Reads the fields off a receipt photo so the person only has to check them.
  *
- * Privacy: tax-free receipts can print passport details. Photos must be
- * cropped or blurred on the phone before upload (see photo-queue.js) and
- * before any implementation sends them to a third party.
+ * Privacy: tax-free receipts can print passport details. Readers must only
+ * return the fields below, never names or document numbers.
  */
 interface ReceiptReader
 {
     /**
-     * @return array{fields: array{store_name?: string, branch?: string, purchased_at?: string, pre_tax_yen?: int, tax_rate?: int, total_paid_yen?: int, tax_free_mark?: bool}, confidence: array<string, float>}
+     * @param  list<array{data: string, mime: string}>  $images  the receipt's photo parts, top first
+     * @return array{
+     *     fields: array{store_name?: string, branch?: string, date?: string, time?: string, amount_yen?: int, amount_kind?: 'pre_tax'|'total', tax_rate?: int},
+     *     confidence: array<string, float>,
+     *     model: string|null
+     * }
      */
-    public function read(string $photoPath): array;
+    public function read(array $images): array;
 }

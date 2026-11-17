@@ -31,4 +31,23 @@ return [
     */
     'disk' => env('RECEIPTS_DISK', 'receipts'),
 
+    /*
+    | Automatic receipt reading. "claude" sends the scan to the Claude API
+    | (needs ANTHROPIC_API_KEY); "manual" reads nothing and the person types.
+    | The quick model reads first; the careful model takes a second look only
+    | when the quick one is unsure about the store, date or amount.
+    */
+    'reader' => env('RECEIPT_READER', 'claude'),
+
+    'reader_models' => [
+        'quick' => env('RECEIPT_READER_QUICK_MODEL', 'claude-haiku-5-5'),
+        'careful' => env('RECEIPT_READER_CAREFUL_MODEL', 'claude-sonnet-5-5'),
+    ],
+
+    /*
+    | Below this confidence (0 to 1) a field is flagged "Check this" and,
+    | for the store, date or amount, the careful model reads it again.
+    */
+    'reader_min_confidence' => (float) env('RECEIPT_READER_MIN_CONFIDENCE', 0.75),
+
 ];

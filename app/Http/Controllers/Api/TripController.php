@@ -16,6 +16,7 @@ use App\Http\Resources\ShoppingItemResource;
 use App\Http\Resources\TripResource;
 use App\Models\ActivityNote;
 use App\Models\Trip;
+use App\Services\TaxRefund\ClaudeReceiptReader;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -69,6 +70,7 @@ class TripController extends Controller
             'tax_refund' => [
                 'min_pre_tax_yen' => (int) config('tax_refund.min_pre_tax_yen'),
                 'days_to_export' => (int) config('tax_refund.days_to_export'),
+                'auto_read' => ClaudeReceiptReader::isConfigured(),
             ],
             'server_time' => $serverTime->toIso8601String(),
         ]);
