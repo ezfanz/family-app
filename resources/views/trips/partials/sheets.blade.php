@@ -298,3 +298,15 @@
     <button type="button" class="btn primary" id="importConfirm" autofocus>Import</button>
   </div>
 </dialog>
+
+{{-- Are-you-sure popup, filled in by confirmAction() in util.js. --}}
+<dialog class="sheet confirm-sheet" id="confirmDlg" aria-labelledby="confirmTitle" aria-describedby="confirmText">
+  <div class="grab" aria-hidden="true"></div>
+  <div class="confirm-body">
+    <span class="confirm-icon" aria-hidden="true"><svg class="i" width="20" height="20" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></span>
+    <h2 id="confirmTitle"></h2>
+    <p id="confirmText"></p>
+    <button type="button" class="btn danger-solid" id="confirmOk"></button>
+    <button type="button" class="btn" data-close autofocus>Cancel</button>
+  </div>
+</dialog>

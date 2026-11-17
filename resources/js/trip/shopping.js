@@ -5,7 +5,8 @@
  */
 
 import { S, UI, canEdit, isOwner, canManageShoppingOf, shoppingList } from './store.js';
-import { $, esc, yen, rm, debounce, debounceKeyed } from './util.js';
+import { $, esc, yen, rm, debounce, debounceKeyed, toast, confirmAction } from './util.js';
+import { api } from './api.js';
 import { write } from './writer.js';
 import { renderFx, bindFx, liveRate } from './fx.js';
 import { renderShopTab } from './receipts.js';
@@ -133,6 +134,32 @@ export function googleUrl(item, images = false) {
 }
 
 const SEARCH_ICON = '<svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>';
+const BIN_ICON = '<svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>';
+
+/** Delete an item straight away, with Undo in the toast. */
+export function deleteItemWithUndo(item, after = renderShop) {
+    S.items.delete(item.id);
+    after();
+    write({
+        key: `item:${item.id}`, method: 'DELETE', path: `/shopping-items/${item.id}`,
+        revert: () => { S.items.set(item.id, item); after(); },
+    });
+    toast(`Deleted “${item.name}”.`, {
+        action: 'Undo',
+        onAction: async () => {
+            S.items.set(item.id, item);
+            after();
+            try {
+                const res = await api('PATCH', `/shopping-items/${item.id}/restore`);
+                if (res?.data) S.items.set(res.data.id, res.data);
+            } catch {
+                toast('Couldn’t bring it back. Try again when you’re online.');
+                S.items.delete(item.id);
+                after();
+            }
+        },
+    });
+}
 
 function metaText(item) {
     const parts = [item.store, item.details].filter(Boolean);
@@ -244,6 +271,7 @@ function itemRowHtml(item, editable) {
             </button>
             ${qtyHtml(item, editable)}
             <a class="search-btn" href="${esc(googleUrl(item))}" target="_blank" rel="noopener" aria-label="Search Google for ${esc(item.name)}" title="Search on Google">${SEARCH_ICON}</a>
+            ${editable ? `<button type="button" class="del-btn" data-act="delete-item" aria-label="Delete ${esc(item.name)}" title="Delete">${BIN_ICON}</button>` : ''}
             <div class="paid"><span aria-hidden="true">¥ each</span><input class="tnum" inputmode="numeric" pattern="[0-9]*" placeholder="0" data-paid="${item.id}" value="${paidEach(item)}" aria-label="Price paid for one ${esc(item.name)}, in yen" ${editable ? '' : 'readonly'}></div>
         </div></li>`;
 }
@@ -511,6 +539,17 @@ export function bindShopping() {
         if (step) {
             const item = S.items.get(step.closest('li').dataset.id);
             if (item && canManageShoppingOf(item.user_id)) stepQty(item, Number(step.dataset.step));
+            return;
+        }
+        const del = e.target.closest('[data-act="delete-item"]');
+        if (del) {
+            const item = S.items.get(del.closest('li').dataset.id);
+            if (!item || !canManageShoppingOf(item.user_id)) return;
+            confirmAction({
+                title: `Delete “${item.name}”?`,
+                text: 'It comes off your shopping list. You can undo right after.',
+                ok: 'Delete item',
+            }).then((sure) => { if (sure && S.items.has(item.id)) deleteItemWithUndo(item); });
             return;
         }
         const edit = e.target.closest('[data-act="edit-item"]');

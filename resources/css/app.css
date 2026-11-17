@@ -249,6 +249,11 @@ fieldset.plain legend { padding: 0; }
 .shop-row .item-main { grid-column: 2; grid-row: 1; }
 .shop-row .qty-step { grid-column: 2; grid-row: 2; justify-self: start; margin-top: 6px; }
 .shop-row .search-btn { grid-column: 3; grid-row: 1 / span 2; }
+.shop-row:has(.del-btn) .search-btn { grid-row: 1; }
+.del-btn { grid-column: 3; grid-row: 2; width: 40px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: none; color: var(--stone); cursor: pointer; padding: 0; }
+.del-btn:active { background: var(--soft); color: var(--now-text); }
+@media (hover: hover) { .del-btn:hover { background: var(--soft); color: var(--now-text); } }
+@media (max-width: 480px) { .del-btn { width: 36px; } }
 .shop-row .paid { grid-column: 4; grid-row: 1 / span 2; }
 .qty-step { display: inline-flex; align-items: center; border: 1px solid var(--hair); border-radius: 999px; background: var(--surface); overflow: hidden; }
 .qty-step button { width: 40px; height: 34px; border: 0; background: none; color: var(--action); font-size: 20px; font-weight: 700; line-height: 1; display: flex; align-items: center; justify-content: center; }

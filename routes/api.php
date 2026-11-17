@@ -62,6 +62,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::post('/shopping-items', [ShoppingItemController::class, 'store'])->name('shopping-items.store');
     Route::patch('/shopping-items/{shoppingItem}', [ShoppingItemController::class, 'update'])->name('shopping-items.update');
     Route::delete('/shopping-items/{shoppingItem}', [ShoppingItemController::class, 'destroy'])->name('shopping-items.destroy');
+    Route::patch('/shopping-items/{shoppingItem}/restore', [ShoppingItemController::class, 'restore'])->name('shopping-items.restore')->withTrashed();
 
     Route::post('/trips/{trip}/ideas', [IdeaController::class, 'store'])->name('ideas.store');
     Route::patch('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');

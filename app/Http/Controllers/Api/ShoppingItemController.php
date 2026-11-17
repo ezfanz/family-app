@@ -70,6 +70,18 @@ class ShoppingItemController extends Controller
     }
 
     /**
+     * Bring back a deleted item (the Undo after delete).
+     */
+    public function restore(ShoppingItem $shoppingItem): ShoppingItemResource
+    {
+        Gate::authorize('manageShoppingOf', [$shoppingItem->trip, (int) $shoppingItem->user_id]);
+
+        $shoppingItem->restore();
+
+        return ShoppingItemResource::make($shoppingItem);
+    }
+
+    /**
      * @param  array<string, mixed>  $input
      * @return array<string, mixed>
      */

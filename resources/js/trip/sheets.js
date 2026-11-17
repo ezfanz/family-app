@@ -4,7 +4,7 @@ import { S, UI, canEdit, canManageShoppingOf, shoppingList } from './store.js';
 import { $, esc, fmtDate, weekday, rm, uuid, toast } from './util.js';
 import { write } from './writer.js';
 import { regions, saveIdea, deleteIdeaWithUndo } from './ideas.js';
-import { googleUrl, activeForWhoLabel, forWhoNames } from './shopping.js';
+import { googleUrl, activeForWhoLabel, forWhoNames, deleteItemWithUndo } from './shopping.js';
 import { api, apiUrl } from './api.js';
 import { preparePhoto } from './photo-queue.js';
 
@@ -336,14 +336,8 @@ function submitItem(e) {
 function deleteItem() {
     const item = S.items.get(editingItem);
     if (!item) return;
-    S.items.delete(item.id);
-    write({
-        key: `item:${item.id}`, method: 'DELETE', path: `/shopping-items/${item.id}`,
-        revert: () => { S.items.set(item.id, item); rerender(); },
-    });
     itemDlg().close();
-    rerender();
-    toast('Item deleted.');
+    deleteItemWithUndo(item, rerender);
 }
 
 /* ---------------- ideas ---------------- */

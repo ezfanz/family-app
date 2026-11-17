@@ -101,6 +101,33 @@ let toastTimer;
  * @param {string} message
  * @param {{ action?: string, onAction?: () => void, duration?: number }} [options]
  */
+/**
+ * Ask "are you sure?" in the bottom popup. Resolves true only when the red button is tapped;
+ * Cancel, Escape and tapping outside resolve false.
+ */
+export function confirmAction({ title, text = '', ok = 'Delete' }) {
+    const dlg = $('confirmDlg');
+    if (!dlg || typeof dlg.showModal !== 'function') {
+        return Promise.resolve(window.confirm(title));
+    }
+    $('confirmTitle').textContent = title;
+    $('confirmText').textContent = text;
+    $('confirmText').hidden = !text;
+    const okBtn = $('confirmOk');
+    okBtn.textContent = ok;
+    dlg.returnValue = '';
+
+    return new Promise((resolve) => {
+        const onOk = () => dlg.close('ok');
+        okBtn.addEventListener('click', onOk);
+        dlg.addEventListener('close', () => {
+            okBtn.removeEventListener('click', onOk);
+            resolve(dlg.returnValue === 'ok');
+        }, { once: true });
+        dlg.showModal();
+    });
+}
+
 export function toast(message, options = {}) {
     const el = $('toast');
     if (!el) {

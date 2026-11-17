@@ -77,6 +77,22 @@ class ShoppingAndIdeasApiTest extends TestCase
         $this->assertFalse(ShoppingItem::find($editorsItem->id)->is_bought);
     }
 
+    public function test_a_deleted_item_can_be_restored_only_by_who_manages_that_list(): void
+    {
+        ['editor' => $editor, 'viewer' => $viewer, 'item' => $item] = $this->tripFixture();
+
+        $this->actingAs($editor)->deleteJson("/api/shopping-items/{$item->id}")->assertNoContent();
+
+        $this->actingAs($viewer)->patchJson("/api/shopping-items/{$item->id}/restore")->assertForbidden();
+        $this->assertSoftDeleted('shopping_items', ['id' => $item->id]);
+
+        $this->actingAs($editor)->patchJson("/api/shopping-items/{$item->id}/restore")
+            ->assertOk()
+            ->assertJsonPath('data.id', $item->id)
+            ->assertJsonPath('data.name', $item->name);
+        $this->assertNotSoftDeleted('shopping_items', ['id' => $item->id]);
+    }
+
     public function test_owner_sees_and_manages_everyones_shopping(): void
     {
         ['owner' => $owner, 'editor' => $editor, 'trip' => $trip, 'item' => $editorsItem] = $this->tripFixture();
