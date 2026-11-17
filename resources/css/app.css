@@ -579,6 +579,14 @@ fieldset.acct-pref .seg { clear: both; }
 
 /* ---------- shopping: filter and sections by "for who" ---------- */
 .for-chips { margin-top: 10px; margin-bottom: 4px; }
+/* For-who chips with a round + (add an item) at the end of the row. */
+.for-row { display: flex; align-items: center; gap: 10px; }
+.for-row .for-chips { flex: 1; min-width: 0; margin-right: 0; padding-right: 4px; }
+.for-row .for-chips.hidden + .add-fab { margin-left: auto; }
+.add-fab { flex: none; width: 44px; height: 44px; margin-top: 6px; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--action); color: var(--on-action); box-shadow: 0 3px 10px color-mix(in srgb, var(--action) 35%, transparent); cursor: pointer; transition: transform .12s; }
+.add-fab:active { transform: scale(.92); }
+.add-fab:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.add-fab.hidden { display: none; }
 .for-chip { padding: 0 8px 0 14px; gap: 8px; }
 .for-chip.none { color: var(--stone); }
 .chip-count { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 24px; padding: 0 7px; border-radius: 999px; background: var(--soft); color: var(--stone); font-size: 13px; font-weight: 700; }

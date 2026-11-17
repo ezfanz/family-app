@@ -197,7 +197,10 @@
           <span class="muted tnum" id="shopCount"></span>
         </div>
         <div class="filter-bar hidden" id="filterBar"><span class="tnum" id="filterBarText"></span><button type="button" class="text-link" data-filter-clear>Reset</button></div>
-        <nav class="chips for-chips hidden" id="forChips" aria-label="Filter by who it is for"></nav>
+        <div class="for-row">
+          <nav class="chips for-chips hidden" id="forChips" aria-label="Filter by who it is for"></nav>
+          <button type="button" class="add-fab" id="addItemTop" aria-label="Add an item" title="Add an item"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
         <ul class="list" id="shopList"></ul>
         <button type="button" class="add-row" id="addItem"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add an item</button>
       </div>

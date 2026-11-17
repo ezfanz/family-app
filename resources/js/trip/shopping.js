@@ -433,6 +433,7 @@ function renderPerson(person) {
     if (document.activeElement !== budgetInput) budgetInput.value = Number(person.budget_rm) || '';
     budgetInput.readOnly = !editable;
     $('addItem').classList.toggle('hidden', !editable);
+    $('addItemTop').classList.toggle('hidden', !editable);
     renderPersonTotals(person);
     renderPersonList(person);
 }
@@ -669,6 +670,7 @@ export function bindShopping() {
     });
 
     $('addItem').addEventListener('click', () => openItemForm(null, selectedShopper()));
+    $('addItemTop').addEventListener('click', () => openItemForm(null, selectedShopper()));
 
     bindFilter();
 }
