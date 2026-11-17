@@ -2,12 +2,13 @@
  * E-Itinerary service worker: lets the app open with no signal.
  *
  * - App files (Vite build, icons, font) are cached on install and served cache-first.
+ *   Lazy chunks (the 10 MB receipt scanner) are cached the first time they are used.
  * - Pages (/, /trips, /trips/{id}, ...) are network-first with a short timeout and
  *   fall back to the last copy, so a trip you opened before opens offline.
  * - /api is never cached here; the app keeps trip data in localStorage itself.
  */
 
-const VERSION = 'v3';
+const VERSION = 'v4';
 const STATIC_CACHE = `tabi-static-${VERSION}`;
 const PAGE_CACHE = `tabi-pages-${VERSION}`;
 const FONT_CACHE = `tabi-fonts-${VERSION}`;
@@ -26,6 +27,7 @@ async function buildAssets() {
         const manifest = await response.json();
         const files = new Set();
         Object.values(manifest).forEach((entry) => {
+            if (entry.isDynamicEntry) return; // lazy chunk: cached on first use instead
             if (entry.file) files.add(`/build/${entry.file}`);
             (entry.css || []).forEach((css) => files.add(`/build/${css}`));
         });

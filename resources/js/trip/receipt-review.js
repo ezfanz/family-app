@@ -9,11 +9,12 @@
 
 import { S, isOwner, canManageShoppingOf } from './store.js';
 import { $, esc, yen, rm, fmtDate, toast } from './util.js';
-import { apiUrl } from './api.js';
+import { api, apiUrl } from './api.js';
 import { write } from './writer.js';
 import { rate } from './shopping.js';
 import * as tax from './taxcalc.js';
 import { openCamera } from './camera.js';
+import { scanPhotos, warmScanner } from './scanner.js';
 import { queuePhoto, localPhotoUrl } from './photo-queue.js';
 
 let editingId = null;
@@ -161,13 +162,22 @@ export function openReview(receiptId) {
     $('rvDelete').textContent = 'Delete this receipt';
     $('rvPick').open = false;
     markLowConfidence([]);
+    touched = new Set();
+    readStatus('', '');
     renderOwners(receipt);
     renderPhoto(receipt);
     renderLinks();
     fillStoreSuggestions();
     renderLive();
     $('rvDlg').showModal();
-    if (!receipt.store_name) setTimeout(() => $('rvStore').focus(), 50);
+    const willRead = S.taxRules?.auto_read && isBlank(receipt);
+    if (willRead && !hasServerPhoto(receipt)) {
+        if (navigator.onLine) readStatus('busy', 'Uploading the photo to read it…');
+        else readStatus('warn', 'Reading starts when you’re back online.');
+    }
+    autoRead(receiptId);
+    // Typing straight away is only useful when nothing will be read for them.
+    if (!receipt.store_name && !willRead) setTimeout(() => $('rvStore').focus(), 50);
 }
 
 function save() {
@@ -244,11 +254,105 @@ function remove() {
 function retake(part) {
     const id = editingId;
     $('rvDlg').close();
+    warmScanner();
     openCamera(async ([blob]) => {
-        if (blob) await queuePhoto(id, part, blob);
+        if (blob) {
+            const [scan] = await scanPhotos([blob]);
+            await queuePhoto(id, part, scan);
+        }
         onChange();
         openReview(id);
     });
+}
+
+/* ---------- Automatic reading ---------- */
+
+const READ_ICON = {
+    busy: '<svg class="i" width="18" height="18" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/></svg>',
+    done: '<svg class="i" width="18" height="18" viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>',
+    warn: '<svg class="i" width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>',
+};
+
+/** Form fields the person has typed in since opening; a reading never overwrites them. */
+let touched = new Set();
+const reading = new Set();
+
+function readStatus(tone, text) {
+    $('rvRead').hidden = !text;
+    $('rvRead').className = `rv-read ${tone}`;
+    $('rvReadIcon').innerHTML = READ_ICON[tone] || '';
+    $('rvReadText').textContent = text;
+}
+
+const hasServerPhoto = (receipt) => (receipt?.photo_parts || []).includes(1);
+const isBlank = (receipt) => receipt && !receipt.store_name && receipt.pre_tax_yen == null;
+
+/** Fill what the reader found into fields the person hasn't typed in. */
+function applyReading({ fields = {}, confidence = {} }) {
+    const set = (name, input, value) => {
+        if (value == null || value === '' || touched.has(name)) return false;
+        input.value = value;
+        return true;
+    };
+    let filled = 0;
+    filled += set('store_name', $('rvStore'), fields.store_name);
+    filled += set('branch', $('rvBranch'), fields.branch);
+    filled += set('date', $('rvDate'), fields.date);
+    filled += set('time', $('rvTime'), fields.time);
+    if (fields.amount_yen && !touched.has('pre_tax_yen')) {
+        $('rvAmount').value = fields.amount_yen;
+        const kind = form().querySelector(`input[name="amount_kind"][value="${fields.amount_kind === 'total' ? 'total' : 'pre'}"]`);
+        if (kind) kind.checked = true;
+        filled++;
+    }
+    if (fields.tax_rate && !touched.has('tax_rate')) {
+        const rateInput = form().querySelector(`input[name="tax_rate"][value="${fields.tax_rate}"]`);
+        if (rateInput) rateInput.checked = true;
+    }
+
+    const min = Number(S.taxRules?.reader_min_confidence) || 0.75;
+    const unsure = Object.entries({ store_name: 'store_name', branch: 'branch', date: 'date', time: 'time', amount_yen: 'pre_tax_yen' })
+        .filter(([key, field]) => fields[key] != null && (confidence[key] ?? 0) < min && !touched.has(field))
+        .map(([, field]) => field);
+    const missing = ['store_name', 'amount_yen'].filter((key) => fields[key] == null).map((key) => (key === 'amount_yen' ? 'pre_tax_yen' : key));
+    markLowConfidence([...unsure, ...missing.filter((f) => !touched.has(f))]);
+    renderLive();
+    return filled;
+}
+
+/**
+ * Ask the server to read the receipt photo, then fill the open form.
+ * Only for new receipts (no store or amount saved yet) with an uploaded photo.
+ */
+async function autoRead(receiptId) {
+    const receipt = S.receipts.get(receiptId);
+    if (!S.taxRules?.auto_read || !hasServerPhoto(receipt) || !isBlank(receipt) || reading.has(receiptId)) return;
+    if (!navigator.onLine) {
+        readStatus('warn', 'Reading starts when you’re back online.');
+        return;
+    }
+    reading.add(receiptId);
+    readStatus('busy', 'Reading the receipt…');
+    try {
+        const res = await api('POST', `/receipts/${receiptId}/read`);
+        if (editingId !== receiptId || !$('rvDlg').open) return;
+        const filled = applyReading(res?.data || {});
+        if (filled) {
+            readStatus('done', 'Filled in from the photo. Check the highlighted fields.');
+        } else {
+            readStatus('warn', 'Couldn’t read it clearly. Type the details in.');
+        }
+    } catch (error) {
+        if (editingId !== receiptId) return;
+        readStatus('warn', error?.status === 0 ? 'Reading starts when you’re back online.' : (error?.body?.message || 'Couldn’t read it. Type the details in.'));
+    } finally {
+        reading.delete(receiptId);
+    }
+}
+
+/** After a photo uploads: read it if its Check receipt is the one on screen. */
+export function readIfOpen(receiptId) {
+    if (receiptId && receiptId === editingId && $('rvDlg').open) autoRead(receiptId);
 }
 
 /**
@@ -256,6 +360,12 @@ function retake(part) {
  */
 export function bindReview(hooks) {
     onChange = hooks.onChange;
+    const FIELD_OF = { amount: 'pre_tax_yen', amount_kind: 'pre_tax_yen' };
+    const noteTyped = (e) => {
+        if (e.isTrusted && e.target.name) touched.add(FIELD_OF[e.target.name] || e.target.name);
+    };
+    form().addEventListener('input', noteTyped);
+    form().addEventListener('change', noteTyped);
     form().addEventListener('input', renderLive);
     form().addEventListener('change', (e) => {
         if (e.target.name === 'owner') {

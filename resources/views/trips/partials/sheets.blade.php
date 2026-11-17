@@ -147,6 +147,35 @@
   <input type="file" id="camCapture" accept="image/*" capture="environment" hidden>
 </dialog>
 
+{{-- ---------- Adjust scan (after a snap): drag the corners, then flatten and clean ---------- --}}
+<dialog class="camera scan" id="scanDlg" aria-labelledby="scanTitle">
+  <div class="cam-top">
+    <button type="button" class="cam-icon" id="scanClose" aria-label="Keep the photo as it is">{!! $close !!}</button>
+    <span id="scanTitle">Adjust scan</span>
+    <span class="scan-part" id="scanPart" hidden></span>
+  </div>
+  <div class="scan-stage" id="scanStage">
+    <div class="scan-frame" id="scanFrame">
+      <img id="scanImg" alt="Receipt photo">
+      <svg class="scan-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path id="scanShade" fill-rule="evenodd"/>
+        <polygon id="scanEdge"/>
+      </svg>
+      @foreach (['top left', 'top right', 'bottom right', 'bottom left'] as $corner)
+        <button type="button" class="scan-handle" aria-label="Move {{ $corner }} corner (arrow keys)"><span></span></button>
+      @endforeach
+    </div>
+    <span class="cam-status" id="scanStatus" role="status" hidden></span>
+  </div>
+  <p class="cam-hint">Drag the corners to the edges of the receipt.</p>
+  <div class="scan-actions">
+    <button type="button" class="btn scan-secondary" id="scanOriginal">Use original</button>
+    <button type="button" class="btn primary" id="scanDone">
+      <svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Use scan
+    </button>
+  </div>
+</dialog>
+
 {{-- ---------- Check receipt (after a snap, or tap a receipt) ---------- --}}
 <dialog class="sheet tall" id="rvDlg" aria-labelledby="rvTitle">
   <form id="rvForm" novalidate>
@@ -167,6 +196,8 @@
           </div>
         </div>
       </div>
+
+      <p class="rv-read" id="rvRead" role="status" hidden><span class="rv-read-icon" id="rvReadIcon" aria-hidden="true"></span><span id="rvReadText"></span></p>
 
       <div class="rv-banner" id="rvBanner" aria-live="polite">
         <span class="rv-banner-icon" id="rvBannerIcon" aria-hidden="true"></span>

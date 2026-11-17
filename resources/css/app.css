@@ -693,6 +693,35 @@ dialog.camera::backdrop { background: #0E0E10; }
 .cam-shutter { width: 76px; height: 76px; border-radius: 50%; border: 4px solid #FFFFFF; background: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .cam-shutter span { width: 60px; height: 60px; border-radius: 50%; background: #FFFFFF; transition: transform .1s; }
 .cam-shutter:active span { transform: scale(.9); }
+/* Adjust scan: the photo with a draggable four-corner outline. */
+.scan-part { min-width: 44px; padding: 0 8px; font-size: 13px; font-weight: 700; color: #C9C9CF; text-align: right; }
+.scan-part[hidden] { visibility: hidden; display: block; }
+.scan-stage { flex: 1; min-height: 0; position: relative; display: flex; align-items: center; justify-content: center; margin: 8px 28px 0; }
+.scan-frame { position: relative; touch-action: none; }
+.scan-frame img { display: block; width: 100%; height: 100%; border-radius: 4px; user-select: none; -webkit-user-drag: none; }
+.scan-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+#scanShade { fill: rgba(0, 0, 0, .5); }
+#scanEdge { fill: rgba(157, 174, 255, .14); stroke: #9DAEFF; stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.scan-handle { position: absolute; width: 48px; height: 48px; margin: -24px 0 0 -24px; padding: 0; border: 0; background: none; display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none; border-radius: 50%; }
+.scan-handle span { width: 24px; height: 24px; border-radius: 50%; background: #FFFFFF; border: 3px solid #2A3B8F; box-shadow: 0 1px 6px rgba(0, 0, 0, .5); transition: transform .12s; }
+.scan-handle.dragging { cursor: grabbing; }
+.scan-handle.dragging span, .scan-handle:active span { transform: scale(1.35); }
+.scan-handle:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 0; }
+.scan-stage .cam-status { top: 12px; }
+.scan-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; padding: 16px 20px calc(20px + var(--safe-bottom)); }
+.scan-actions .btn.primary { background: #FFFFFF; border-color: #FFFFFF; color: #0E0E10; }
+.scan-actions .btn.primary:disabled { opacity: .5; }
+.scan-secondary { background: none; border-color: #4A4A52; color: #FFFFFF; }
+
+/* Check receipt: "Reading the receipt…" line under the photo. */
+.rv-read { display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 600; line-height: 1.4; background: color-mix(in srgb, var(--action) 9%, transparent); color: var(--ink); }
+.rv-read[hidden] { display: none; }
+.rv-read-icon { flex: none; display: flex; color: var(--action); }
+.rv-read.busy .rv-read-icon .i { animation: fx-spin 1s linear infinite; }
+.rv-read.warn { background: var(--soft); color: var(--stone); }
+.rv-read.warn .rv-read-icon { color: var(--amber-text); }
+@media (prefers-reduced-motion: reduce) { .rv-read.busy .rv-read-icon .i { animation: none; } }
+
 .cam-offline { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0 16px 20px; font-size: 13px; color: #9A9AA2; text-align: center; }
 .rc-wait { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--amber-text); }
 .rc-row.openable { cursor: pointer; }

@@ -12,7 +12,8 @@ import { rate, selectedShopper, avatar, displayName, ROLE_LABEL, renderShop } fr
 import * as tax from './taxcalc.js';
 import { queuePhoto, flushPhotos, localPhotoUrl, waitingReceiptIds, onPhotosChanged, restoreLocalUrls } from './photo-queue.js';
 import { openCamera } from './camera.js';
-import { openReview, bindReview } from './receipt-review.js';
+import { openReview, bindReview, readIfOpen } from './receipt-review.js';
+import { scanPhotos, bindScanner, warmScanner } from './scanner.js';
 import { openAirport, bindDeparture } from './departure.js';
 import { renderOverview, bindOverview } from './overview.js';
 
@@ -297,7 +298,7 @@ function storeServerReceipt(data) {
 }
 
 export function uploadWaitingPhotos() {
-    return flushPhotos((receipt) => { storeServerReceipt(receipt); renderReceipts(); });
+    return flushPhotos((receipt) => { storeServerReceipt(receipt); renderReceipts(); readIfOpen(receipt?.id); });
 }
 
 /**
@@ -345,6 +346,7 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
         if (UI.shopTab === 'receipts' && UI.view === 'shopping') renderReceipts();
     });
     restoreLocalUrls();
+    bindScanner();
     bindReview({ onChange: () => { renderReceipts(); uploadWaitingPhotos(); } });
     bindDeparture({ onChange: () => { if (UI.view === 'shopping') renderReceipts(); } });
     // Overview tiles open List or Receipts for the person being shown.
@@ -388,7 +390,14 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
         }
     });
 
-    $('rcSnap').addEventListener('click', () => (onSnap ? onSnap() : openCamera((blobs) => saveSnapped(blobs))));
+    $('rcSnap').addEventListener('click', () => {
+        if (onSnap) {
+            onSnap();
+            return;
+        }
+        warmScanner(); // loads while the receipt is being framed
+        openCamera(async (blobs) => saveSnapped(await scanPhotos(blobs)));
+    });
     $('rcAirport').addEventListener('click', () => (onAirport ? onAirport() : openAirport()));
 
     $('refundForm').addEventListener('submit', (e) => {
