@@ -113,6 +113,9 @@
         </div>
       </details>
 
+      {{-- Whose list + Search & filter. One block, moved by shopping.js to sit right above the list
+           (one person) or above Results / By person (Everyone), so it is next to what it changes. --}}
+      <div class="list-tools list-only" id="listTools">
       {{-- Owner only: whose list to show (collapsed by default) --}}
       <details class="fold admin-fold hidden" id="shopAdminNote">
         <summary class="fold-sum">
@@ -153,6 +156,7 @@
           </div>
         </form>
       </details>
+      </div>
 
       @include('trips.partials.overview')
       @include('trips.partials.receipts')
@@ -164,6 +168,7 @@
           <input id="rateAll" class="rate-input tnum" inputmode="decimal" type="number" step="0.0001" min="0" data-rate>
         </label>
         @include('trips.partials.auto-rate', ['suffix' => 'All'])
+        <div class="tools-slot" id="toolsSlotAll"></div>
         <div id="shopResults" class="hidden">
           <div class="row-between" style="margin-top:28px">
             <h2 class="sec" style="margin:0">Results</h2>
@@ -190,6 +195,7 @@
           <h2 class="sec" style="margin:0">List</h2>
           <span class="muted tnum" id="shopCount"></span>
         </div>
+        <div class="tools-slot" id="toolsSlotPerson"></div>
         <div class="filter-bar hidden" id="filterBar"><span class="tnum" id="filterBarText"></span><button type="button" class="text-link" data-filter-clear>Reset</button></div>
         <nav class="chips for-chips hidden" id="forChips" aria-label="Filter by who it is for"></nav>
         <ul class="list" id="shopList"></ul>

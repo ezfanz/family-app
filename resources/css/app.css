@@ -333,6 +333,12 @@ fieldset.plain legend { padding: 0; }
 /* collapsible panels (converter, admin view) */
 .fold { margin-top: 12px; background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; }
 .fold.admin-fold { background: var(--soft); border-color: transparent; }
+/* Whose list + Search & filter, placed right above the list they change. */
+.list-tools { margin-bottom: 12px; }
+.list-tools .fold:first-child, .list-tools .fold.hidden + .fold { margin-top: 0; }
+.list-tools .fold + .fold { margin-top: 10px; }
+#toolsSlotPerson { margin-top: 12px; }
+#toolsSlotAll { margin-top: 20px; }
 .fold-sum { list-style: none; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 14px; cursor: pointer; border-radius: 14px; user-select: none; }
 .fold-sum::-webkit-details-marker { display: none; }
 .fold-sum::marker { content: ""; }

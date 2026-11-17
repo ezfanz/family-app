@@ -446,6 +446,9 @@ export function renderShop() {
     const person = S.shoppers.find((p) => p.user_id === sel);
     $('shopAll').classList.toggle('hidden', sel !== 'all');
     $('shopPerson').classList.toggle('hidden', !person);
+    // Whose list + Search & filter sit right above the list they change.
+    const slot = sel === 'all' ? $('toolsSlotAll') : $('toolsSlotPerson');
+    if ($('listTools').parentElement !== slot) slot.appendChild($('listTools'));
     if (sel === 'all') renderAll();
     else if (person) renderPerson(person);
     renderFilterSummary();
