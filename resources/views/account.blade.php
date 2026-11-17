@@ -12,6 +12,25 @@
     <span class="avatar solid" aria-hidden="true">{{ Str::upper(Str::substr($user->name, 0, 2)) }}</span>
     <span class="acct-who"><strong>{{ $user->name }}</strong><span>{{ $user->email }}</span></span>
   </div>
+  {{-- Change the name everyone in the trip sees. Opens again with the message if the name is not valid. --}}
+  <details class="acct-edit" id="nameEdit" @if ($errors->has('name')) open @endif>
+    <summary class="acct-row link action">
+      <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>
+      <span>Edit name</span>
+    </summary>
+    <form method="POST" action="{{ route('account.name') }}" class="acct-edit-form" data-loading="Saving">
+      @csrf
+      @method('PATCH')
+      <label class="lbl" for="accName">Your name<span class="hint">Shown to everyone in your trips</span></label>
+      <input id="accName" name="name" type="text" class="input" maxlength="80" autocomplete="name" required value="{{ old('name', $user->name) }}"
+        @error('name') aria-invalid="true" aria-describedby="accName-error" @enderror>
+      @error('name')<span class="field-error" id="accName-error">{{ $message }}</span>@enderror
+      <div class="acct-edit-actions">
+        <button type="button" class="btn secondary" data-close-edit>Cancel</button>
+        <button type="submit" class="btn primary">Save name</button>
+      </div>
+    </form>
+  </details>
 </div>
 
 <h2 class="acct-h">Trips</h2>

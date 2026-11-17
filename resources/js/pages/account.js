@@ -19,6 +19,23 @@ export function bindAccountPage() {
 
     bindTripAutoRate();
 
+    // Edit name: focus the box when it opens; Cancel closes and restores the saved name.
+    const nameEdit = document.getElementById('nameEdit');
+    if (nameEdit) {
+        const input = document.getElementById('accName');
+        const saved = input.defaultValue;
+        nameEdit.addEventListener('toggle', () => {
+            if (nameEdit.open) {
+                input.focus();
+                input.select();
+            }
+        });
+        nameEdit.querySelector('[data-close-edit]').addEventListener('click', () => {
+            input.value = saved;
+            nameEdit.open = false;
+        });
+    }
+
     const offline = document.getElementById('offlineCopy');
     if (offline) {
         offline.checked = offlineCopyEnabled();

@@ -53,6 +53,45 @@ class AccountTest extends TestCase
             ->assertDontSee('data-trip-auto-rate', false);
     }
 
+    public function test_people_can_change_the_name_others_see(): void
+    {
+        ['trip' => $trip, 'owner' => $owner] = $this->tripFixture();
+
+        $this->actingAs($owner)->from(route('account'))
+            ->patch(route('account.name'), ['name' => '  Irfan  '])
+            ->assertRedirect(route('account'))
+            ->assertSessionHas('status', 'Name saved. Everyone in your trips now sees “Irfan”.');
+        $this->assertSame('Irfan', $owner->fresh()->name);
+
+        // Others see the new name on the trip.
+        $this->actingAs($owner)->getJson("/api/trips/{$trip->id}")
+            ->assertJsonFragment(['name' => 'Irfan']);
+
+        $this->actingAs($owner)->from(route('account'))
+            ->patch(route('account.name'), ['name' => ' '])
+            ->assertSessionHasErrors('name');
+        $this->actingAs($owner)->from(route('account'))
+            ->patch(route('account.name'), ['name' => str_repeat('a', 81)])
+            ->assertSessionHasErrors('name');
+        $this->assertSame('Irfan', $owner->fresh()->name);
+    }
+
+    public function test_after_saving_the_name_the_link_still_goes_back_to_the_trip(): void
+    {
+        ['trip' => $trip, 'owner' => $owner] = $this->tripFixture();
+
+        $this->actingAs($owner)->from(route('trips.show', $trip))->get(route('account'))->assertOk();
+        $this->actingAs($owner)->from(route('account'))->patch(route('account.name'), ['name' => 'Irfan']);
+
+        $this->actingAs($owner)->from(route('account'))->get(route('account'))
+            ->assertSee('<a class="back-link" href="'.route('trips.show', $trip).'">', false);
+    }
+
+    public function test_guests_cannot_change_a_name(): void
+    {
+        $this->patch(route('account.name'), ['name' => 'Someone'])->assertRedirect(route('login'));
+    }
+
     public function test_the_theme_cookie_is_applied_when_the_page_is_rendered(): void
     {
         $user = User::factory()->create();

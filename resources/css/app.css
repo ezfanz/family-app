@@ -468,6 +468,16 @@ html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *
 .acct-row + .acct-row { border-top: 1px solid var(--hair); }
 .acct-row.link:active { background: var(--soft); }
 .acct-row.action { color: var(--action); font-weight: 700; font-size: 15px; gap: 8px; }
+/* Account: edit name in place under the profile row. */
+.acct-edit { border-top: 1px solid var(--hair); }
+.acct-edit > summary { list-style: none; cursor: pointer; }
+.acct-edit > summary::-webkit-details-marker { display: none; }
+.acct-edit[open] > summary { display: none; }
+.acct-edit-form { display: grid; gap: 6px; padding: 14px 16px 16px; animation: rise .2s ease-out; }
+.acct-edit-form .lbl .hint { display: inline; margin-left: 6px; font-weight: 500; color: var(--stone); }
+.acct-edit-form .input { margin-top: 2px; }
+.acct-edit-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { .acct-edit-form { animation: none; } }
 .acct-who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .acct-who strong { font-size: 16px; font-weight: 700; overflow-wrap: anywhere; }
 .acct-who > span { font-size: 13px; font-weight: 500; color: var(--stone); overflow-wrap: anywhere; }

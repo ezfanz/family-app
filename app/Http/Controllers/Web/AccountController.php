@@ -15,7 +15,10 @@ class AccountController extends Controller
     {
         $previous = url()->previous();
         $cameFromApp = $previous !== $request->url() && str_starts_with($previous, url('/'));
-        $back = $cameFromApp ? $previous : route('home');
+        // Back from the page Account was opened from; after saving the name (Account
+        // reloads itself) keep going back there rather than to Home.
+        $back = $cameFromApp ? $previous : $request->session()->get('account.back', route('home'));
+        $request->session()->put('account.back', $back);
 
         $currentTripId = null;
         if (preg_match('#/trips/(\d+)#', $back, $match) === 1
