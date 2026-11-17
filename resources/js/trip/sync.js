@@ -14,7 +14,13 @@ import { S, snapshot, restore } from './store.js';
 import { markPending, clearPending, setWriterHooks } from './writer.js';
 import { toast, debounce } from './util.js';
 
+/** Format of the offline queue of unsent changes. */
 const VERSION = 1;
+/**
+ * Format of the saved trip. Raise it to make every phone load the whole trip
+ * once (2: people made owner before role changes reloaded the trip).
+ */
+const CACHE_VERSION = 2;
 const POLL_MS = 20000;
 
 export const net = { online: navigator.onLine, flushing: false };
@@ -44,8 +50,16 @@ function writeJson(key, value) {
 const persistQueue = () => writeJson(queueKey, queue);
 
 export function initSync({ tripId, userId, onStatus }) {
-    cacheKey = `tabi:v${VERSION}:trip:${tripId}:u${userId}`;
+    cacheKey = `tabi:v${CACHE_VERSION}:trip:${tripId}:u${userId}`;
     queueKey = `tabi:v${VERSION}:queue:${tripId}:u${userId}`;
+    // Saved trips from older versions are dropped (the queue is kept, it holds unsent changes).
+    for (let old = 1; old < CACHE_VERSION; old++) {
+        try {
+            localStorage.removeItem(`tabi:v${old}:trip:${tripId}:u${userId}`);
+        } catch {
+            /* storage blocked */
+        }
+    }
     statusChanged = onStatus;
     queue = readJson(queueKey) || [];
     queue.forEach((op) => markPending(op.key));
