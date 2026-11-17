@@ -1,6 +1,7 @@
 /* Itinerary: header progress, day strip, now/next banner and the rail timeline. */
 
-import { S, UI, canEdit, dayActs, allActs, dayById } from './store.js';
+import { S, UI, canEdit, isOwner, dayActs, allActs, dayById, othersNotesOn } from './store.js';
+import { avatar } from './shopping.js';
 import { $, esc, fmtDate, weekday, zonedNow, toMins, daysBetween, cityColor, cityLetter, mapUrl, ICON, debounceKeyed } from './util.js';
 import { write } from './writer.js';
 import { isQueued } from './sync.js';
@@ -164,6 +165,48 @@ function photoHtml(a) {
     return `<figure class="stop-photo"><img src="${esc(url)}"${srcset} alt="${esc(`Photo of ${a.name}`)}" loading="lazy" decoding="async" referrerpolicy="no-referrer">${caption}</figure>`;
 }
 
+/** "just now", "5m ago", "3h ago", "2d ago", else the date. */
+function ago(iso) {
+    const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    if (!(mins >= 0) || mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    if (mins < 60 * 24) return `${Math.round(mins / 60)}h ago`;
+    if (mins < 60 * 24 * 7) return `${Math.round(mins / (60 * 24))}d ago`;
+    return fmtDate(String(iso).slice(0, 10));
+}
+
+const personOf = (userId) => S.shoppers.find((p) => Number(p.user_id) === Number(userId));
+
+/**
+ * Comments: other members' notes on the stop (owners see them), then your
+ * own, which you type straight into (saved as you go). One per person.
+ */
+function notesHtml(a, note) {
+    const others = othersNotesOn(a.id).map((n) => {
+        const person = personOf(n.user_id) || { user_id: n.user_id, name: 'Member' };
+        return `<li class="cm">
+            ${avatar(person, 'cm-ava')}
+            <div class="cm-body">
+                <div class="cm-head"><strong>${esc(person.name)}</strong><time datetime="${esc(n.updated_at || '')}">${esc(ago(n.updated_at))}</time></div>
+                <p>${esc(n.note)}</p>
+            </div>
+        </li>`;
+    }).join('');
+    const me = personOf(S.me) || { user_id: S.me, name: 'You' };
+    const who = isOwner() ? 'Seen by trip owners' : 'Seen by you and trip owners';
+    return `<section class="cm-thread" aria-label="Comments">
+        <span class="k">Comments${others ? ` <span class="cm-count">${othersNotesOn(a.id).length + (note.trim() ? 1 : 0)}</span>` : ''}</span>
+        ${others ? `<ul class="cm-list">${others}</ul>` : ''}
+        <div class="cm cm-mine">
+            ${avatar(me, 'cm-ava')}
+            <div class="cm-body">
+                <label class="cm-head" for="note-${a.id}"><strong>You</strong><span>${esc(who)}</span></label>
+                <textarea id="note-${a.id}" class="note-input" data-note="${a.id}" rows="2" maxlength="1000" placeholder="Add a comment for this stop…">${esc(note)}</textarea>
+            </div>
+        </div>
+    </section>`;
+}
+
 function stopHtml(a, day, nn) {
     const status = a.status || 'pending';
     const isToday = nn.day && nn.day.id === day.id;
@@ -176,7 +219,8 @@ function stopHtml(a, day, nn) {
     if (a.meal) tags.push(`<span class="tag">${esc(a.meal)}</span>`);
     if (a.is_halal) tags.push('<span class="tag halal">Halal</span>');
     if (a.ticket) tags.push(`<span class="tag ticket">${esc(a.ticket)}</span>`);
-    if (note.trim()) tags.push('<span class="tag note">Has note</span>');
+    const noteCount = (note.trim() ? 1 : 0) + othersNotesOn(a.id).length;
+    if (noteCount) tags.push(`<span class="tag note">${noteCount === 1 ? '1 comment' : `${noteCount} comments`}</span>`);
     if (a.system_key === 'tax_refund') tags.push('<span class="tag ticket">Tax refund</span>');
     if (isQueued(`act:${a.id}`) || isQueued(`status:${a.id}`) || isQueued(`note:${a.id}`)) tags.push('<span class="tag sync">Waiting to sync</span>');
 
@@ -191,7 +235,7 @@ function stopHtml(a, day, nn) {
             ${places ? `<div><span class="k">Places</span><div class="places">${places}</div></div>` : ''}
             ${a.system_key === 'tax_refund' ? '<button type="button" class="btn primary compact" data-act="airport">Open airport checklist</button>' : ''}
             <fieldset class="plain"><legend class="k">Status</legend><div class="seg">${segs}</div></fieldset>
-            <div><label class="k" for="note-${a.id}">My note</label><textarea id="note-${a.id}" class="note-input" data-note="${a.id}" rows="2" maxlength="1000" placeholder="Only you can see this">${esc(note)}</textarea></div>
+            ${notesHtml(a, note)}
             ${canEdit() ? '<button type="button" class="text-link" data-act="edit">Edit or delete this stop</button>' : ''}
         </div>`;
     }

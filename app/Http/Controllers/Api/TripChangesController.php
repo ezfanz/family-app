@@ -56,6 +56,8 @@ class TripChangesController extends Controller
             'shopping_items' => ShoppingItemResource::collection($shoppingItems),
             'ideas' => IdeaResource::collection($ideas),
             'my_notes' => ActivityNoteResource::collection($myNotes),
+            // Cleared notes come through as "" so phones drop them.
+            'others_notes' => ActivityNoteResource::collection(ActivityNote::othersVisibleTo($trip, $request->user())->where('updated_at', '>=', $since)->get()),
             'receipts' => ReceiptResource::collection($receipts),
             'tax_refund' => TaxRefundRules::forApp(),
             'server_time' => $serverTime->toIso8601String(),

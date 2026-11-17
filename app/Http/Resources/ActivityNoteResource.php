@@ -20,6 +20,7 @@ class ActivityNoteResource extends JsonResource
     {
         return [
             'activity_id' => $this->activity_id,
+            'user_id' => $this->user_id,
             'note' => $this->note,
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

@@ -18,9 +18,10 @@ import { toast, debounce } from './util.js';
 const VERSION = 1;
 /**
  * Format of the saved trip. Raise it to make every phone load the whole trip
- * once (2: people made owner before role changes reloaded the trip).
+ * once (2: people made owner before role changes reloaded the trip;
+ * 3: owners now also keep other members' notes).
  */
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 const POLL_MS = 20000;
 
 export const net = { online: navigator.onLine, flushing: false };

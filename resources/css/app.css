@@ -192,6 +192,19 @@ a { color: var(--action); }
 fieldset.plain { border: 0; margin: 0; padding: 0; min-width: 0; }
 fieldset.plain legend { padding: 0; }
 .note-input { display: block; width: 100%; margin-top: 6px; padding: 10px 12px; border-radius: 10px; font-size: 16px; line-height: 1.45; resize: vertical; border: 1px solid var(--hair); background: var(--paper); color: var(--ink); min-height: 64px; }
+/* Stop notes as a comment thread: others' notes (owners see them), then yours. */
+.cm-thread { display: grid; gap: 10px; }
+.cm-count { display: inline-flex; min-width: 20px; height: 20px; padding: 0 6px; margin-left: 4px; border-radius: 10px; align-items: center; justify-content: center; background: var(--soft); color: var(--ink); font-size: 12px; font-weight: 700; vertical-align: 1px; }
+.cm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cm { display: flex; gap: 10px; align-items: flex-start; }
+.avatar.cm-ava { width: 32px; height: 32px; font-size: 12px; margin-top: 2px; }
+.cm-body { flex: 1; min-width: 0; }
+.cm-list .cm-body { padding: 8px 12px 10px; border-radius: 4px 14px 14px 14px; background: var(--soft); }
+.cm-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; font-size: 13px; }
+.cm-head strong { font-size: 14px; font-weight: 700; color: var(--ink); }
+.cm-head time, .cm-head span { color: var(--stone); font-size: 12px; }
+.cm-body p { margin: 2px 0 0; font-size: 15px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm-mine .note-input { margin-top: 4px; }
 .text-link { display: flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 700; text-decoration: none; color: var(--action); background: none; border: 0; padding: 0; }
 .add-dashed-wrap { padding: 4px 20px 24px 120px; }
 .add-dashed { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 48px; border: 1.5px dashed var(--hair); border-radius: 12px; color: var(--action); background: none; text-decoration: none; font-size: 15px; font-weight: 700; }

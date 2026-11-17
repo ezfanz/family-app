@@ -1,5 +1,13 @@
 /* Client-side copy of the trip. Records are kept in Maps keyed by id. */
 
+/** Key for another member's note on a stop. */
+export const noteKey = (n) => `${n.activity_id}:${n.user_id}`;
+
+/** Other members' notes on a stop, oldest first (owners only). */
+export const othersNotesOn = (activityId) => [...S.othersNotes.values()]
+    .filter((n) => String(n.activity_id) === String(activityId) && n.note)
+    .sort((a, b) => String(a.updated_at).localeCompare(String(b.updated_at)));
+
 export const S = {
     trip: null,
     role: 'viewer',
@@ -12,6 +20,8 @@ export const S = {
     items: new Map(),
     ideas: new Map(),
     notes: new Map(),
+    /** Other members' notes, owners only. key = "<activityId>:<userId>" */
+    othersNotes: new Map(),
     /** Tax refund receipts I can see: mine, or everyone's for the owner. */
     receipts: new Map(),
     /** Airport checklist items I have ticked. */
@@ -91,6 +101,7 @@ export function loadFull(payload) {
     S.items = new Map(payload.shopping_items.map((i) => [i.id, i]));
     S.ideas = new Map(payload.ideas.map((i) => [i.id, i]));
     S.notes = new Map(payload.my_notes.map((n) => [n.activity_id, n.note]));
+    S.othersNotes = new Map((payload.others_notes || []).map((n) => [noteKey(n), n]));
     S.receipts = new Map((payload.receipts || []).map((r) => [r.id, r]));
     S.checklist = payload.my_airport_checklist || [];
     S.taxRules = payload.tax_refund || S.taxRules;
@@ -136,6 +147,11 @@ export function mergeChanges(payload) {
             S.notes.set(note.activity_id, note.note);
         }
     }
+    // Other members' notes (owners only); a cleared note arrives as "".
+    for (const note of payload.others_notes || []) {
+        if (note.note) S.othersNotes.set(noteKey(note), note);
+        else S.othersNotes.delete(noteKey(note));
+    }
     // Settings can change on the server (e.g. receipt reading switched on).
     S.taxRules = payload.tax_refund || S.taxRules;
     S.serverTime = payload.server_time || S.serverTime;
@@ -153,6 +169,7 @@ export function snapshot() {
         items: [...S.items.values()],
         ideas: [...S.ideas.values()],
         notes: [...S.notes.entries()],
+        othersNotes: [...S.othersNotes.values()],
         receipts: [...S.receipts.values()],
         checklist: S.checklist,
         taxRules: S.taxRules,
@@ -169,6 +186,7 @@ export function restore(saved) {
     S.items = new Map(saved.items.map((i) => [i.id, i]));
     S.ideas = new Map(saved.ideas.map((i) => [i.id, i]));
     S.notes = new Map(saved.notes);
+    S.othersNotes = new Map((saved.othersNotes || []).map((n) => [noteKey(n), n]));
     S.receipts = new Map((saved.receipts || []).map((r) => [r.id, r]));
     S.checklist = saved.checklist || [];
     S.taxRules = saved.taxRules || S.taxRules;

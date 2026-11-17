@@ -65,6 +65,7 @@ class TripController extends Controller
             'shopping_items' => ShoppingItemResource::collection($trip->shoppingItems()->visibleTo($trip, $user)->get()),
             'ideas' => IdeaResource::collection($trip->ideas),
             'my_notes' => ActivityNoteResource::collection($myNotes),
+            'others_notes' => ActivityNoteResource::collection(ActivityNote::othersVisibleTo($trip, $user)->where('note', '!=', '')->get()),
             'receipts' => ReceiptResource::collection($trip->receipts()->visibleTo($trip, $user)->with(['photos', 'shoppingItems'])->get()),
             'my_airport_checklist' => $trip->members()->whereKey($user->id)->first()?->pivot->airport_checklist ?? [],
             'tax_refund' => TaxRefundRules::forApp(),
