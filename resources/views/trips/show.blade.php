@@ -202,17 +202,17 @@
         <button type="button" class="add-row" id="addItem"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add an item</button>
       </div>
 
-      {{-- Import an Excel shopping list (E-Itinerary template) --}}
-      <section class="import-card list-only" aria-labelledby="importTitle">
-        <div class="ic-head">
-          <span class="ic-icon" aria-hidden="true">
-            <svg class="i" width="24" height="24" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 12l6 6M15 12l-6 6"/></svg>
+      {{-- Import an Excel shopping list (E-Itinerary template): folded away until needed --}}
+      <details class="fold import-fold list-only" id="importFold">
+        <summary class="fold-sum">
+          <span class="ic-icon ic-icon-sm" aria-hidden="true">
+            <svg class="i" width="20" height="20" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 12l6 6M15 12l-6 6"/></svg>
           </span>
-          <div>
-            <h2 id="importTitle">Import from Excel</h2>
-            <p>Fill in the E-Itinerary template, then upload it. New rows are added and matching rows are updated. Nothing is deleted.</p>
-          </div>
-        </div>
+          <span class="fold-title"><strong id="importTitle">Import from Excel</strong><span class="muted">Add many items at once</span></span>
+          <svg class="i fold-chev" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="fold-body import-card">
+        <p class="muted ic-lede">Fill in the E-Itinerary template, then upload it. New rows are added and matching rows are updated. Nothing is deleted.</p>
         <label class="btn primary file-btn" for="importFile">
           <svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
           Choose Excel file
@@ -223,7 +223,8 @@
           Download template
         </a>
         <p class="muted ic-foot">Excel .xlsx only · up to 2 MB and 500 items · needs internet</p>
-      </section>
+        </div>
+      </details>
     </section>
 
     {{-- ---------- Ideas (shared with everyone in the trip) ---------- --}}

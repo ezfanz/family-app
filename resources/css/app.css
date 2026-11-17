@@ -369,7 +369,10 @@ fieldset.plain legend { padding: 0; }
 @media (max-width: 360px) { .fx-row input { font-size: 26px; } }
 
 /* ---------- shopping: Excel import ---------- */
-.import-card { position: relative; margin-top: 32px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--surface); border: 1.5px dashed var(--hair); border-radius: 14px; }
+.import-fold { margin-top: 28px; border-style: dashed; }
+.import-card { position: relative; display: flex; flex-direction: column; gap: 10px; }
+.ic-icon-sm { width: 36px; height: 36px; border-radius: 10px; }
+.ic-lede { margin: 0; font-size: 14px; line-height: 1.5; }
 .ic-head { display: flex; gap: 12px; align-items: flex-start; }
 .ic-icon { width: 44px; height: 44px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, #1D7A45 14%, transparent); color: #1D7A45; }
 .ic-head h2 { margin: 0; font-size: 17px; font-weight: 900; }
