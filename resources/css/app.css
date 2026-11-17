@@ -412,6 +412,12 @@ fieldset.plain legend { padding: 0; }
 .input { display: block; width: 100%; margin-top: 8px; min-height: 48px; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 10px; background: var(--paper); color: var(--ink); font-size: 16px; line-height: 1.45; }
 textarea.input { resize: vertical; }
 select.input { appearance: auto; }
+/* iOS gives date/time inputs a built-in min width and centred text; make them fit their column like other inputs. */
+.input[type="date"], .input[type="time"] { -webkit-appearance: none; appearance: none; min-width: 0; max-width: 100%; text-align: left; }
+.input[type="date"]::-webkit-date-and-time-value, .input[type="time"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+/* Side-by-side fields: hint on the label line so both boxes line up. */
+.grid2 > .field { min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; }
+.grid2 > .field .hint { display: inline; margin: 0 0 0 6px; }
 .input[aria-invalid="true"] { border-color: var(--now); }
 .field-error { display: block; margin-top: 6px; font-size: 13px; font-weight: 500; color: var(--now-text); }
 .split { display: grid; grid-template-columns: minmax(0, 1fr) 120px; gap: 12px; }
