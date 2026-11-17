@@ -2,7 +2,7 @@
 <div class="receipts-only" id="receiptsPane">
   {{-- Owner on "Everyone": the group's refunds and one card per person --}}
   <div id="rcAdmin" class="hidden">
-    <p class="rc-admin-note"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/></svg><span><b>Admin view.</b> You can see everyone’s receipts.</span></p>
+    <p class="rc-admin-note"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/></svg><span><b>Others’ receipts.</b> As an owner you can see everyone’s receipts.</span></p>
     <section class="rc-summary" aria-label="Group refund summary">
       <div class="rc-sum-top">
         <div class="rc-label">Group expected refund</div>

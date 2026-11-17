@@ -124,7 +124,9 @@ export function refreshTrip() {
                 throw new Error('offline');
             }
             if (S.serverTime && !flushed.rejected) {
-                mergeChanges(await api('GET', `/trips/${tripId}/changes?since=${encodeURIComponent(S.serverTime)}`));
+                const roleChanged = mergeChanges(await api('GET', `/trips/${tripId}/changes?since=${encodeURIComponent(S.serverTime)}`));
+                // A new role can see more (or less): fetch everything once.
+                if (roleChanged) loadFull(await api('GET', `/trips/${tripId}`));
             } else {
                 loadFull(await api('GET', `/trips/${tripId}`));
             }

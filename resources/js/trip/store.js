@@ -98,7 +98,13 @@ export function loadFull(payload) {
 }
 
 /** Merge a delta from GET /trips/{id}/changes. Records with local pending writes are skipped. */
+/**
+ * Merge a delta. Returns true when the person's role changed: what they may
+ * see changed too (an owner sees everyone's shopping), so the caller should
+ * load the whole trip once rather than rely on "changed since".
+ */
 export function mergeChanges(payload) {
+    const roleBefore = S.role;
     if (payload.trip) {
         const keepLocalSettings = S.pending.has('trip:settings');
         const previous = S.trip;
@@ -133,6 +139,7 @@ export function mergeChanges(payload) {
     // Settings can change on the server (e.g. receipt reading switched on).
     S.taxRules = payload.tax_refund || S.taxRules;
     S.serverTime = payload.server_time || S.serverTime;
+    return Boolean(roleBefore) && S.role !== roleBefore;
 }
 
 /** Plain object for the offline cache. */

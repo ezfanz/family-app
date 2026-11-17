@@ -120,11 +120,11 @@
       <details class="fold admin-fold hidden" id="shopAdminNote">
         <summary class="fold-sum">
           <svg class="i fold-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-          <span class="fold-title"><strong>Admin view</strong><span class="muted" id="shopViewing">Showing your list</span></span>
+          <span class="fold-title"><strong>Others’ lists</strong><span class="muted" id="shopViewing">Showing your list</span></span>
           <svg class="i fold-chev" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="fold-body">
-          <p class="muted" style="margin:0">You can see everyone’s spending. Pick whose list to show.</p>
+          <p class="muted" style="margin:0">As an owner you can see everyone’s shopping. Pick whose list to show.</p>
           <nav class="chips" id="shopChips" aria-label="Whose shopping"></nav>
         </div>
       </details>
