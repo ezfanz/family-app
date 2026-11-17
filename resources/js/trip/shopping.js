@@ -107,6 +107,12 @@ function renderChips(sel) {
     }).join('');
 }
 
+function renderOwnerPick(sel) {
+    renderChips(sel);
+    const showing = S.shoppers.find((p) => p.user_id === sel);
+    $('shopViewing').textContent = sel === 'all' ? 'Everyone' : (showing ? displayName(showing) : 'Your list');
+}
+
 function renderAll() {
     let budget = 0;
     S.shoppers.forEach((p) => { budget += Number(p.budget_rm) || 0; });
@@ -309,13 +315,16 @@ function filterDescription() {
 }
 
 /** Items whose names and stores feed the form's suggestions. */
-function filterScopeItems() {
-    const sel = selectedShopper();
+function filterScopeItems(sel = selectedShopper()) {
     return sel === 'all' ? shoppingList() : itemsOf(sel);
 }
 
-function fillFilterSuggestions() {
-    const items = filterScopeItems();
+/** Whose list is picked in the open drawer; applied only on Apply. */
+let draftShopper = null;
+const drawerOpen = () => $('filterDrawer').open;
+
+function fillFilterSuggestions(sel = selectedShopper()) {
+    const items = filterScopeItems(sel);
     const names = [...new Set(items.map((i) => forWhoLabel(i.for_whom)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     const stores = [...new Set(items.map((i) => String(i.store || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     // Keep a filter that is on even if no item uses that name any more.
@@ -326,10 +335,19 @@ function fillFilterSuggestions() {
     $('fStoreList').innerHTML = stores.map((v) => `<option value="${esc(v)}"></option>`).join('');
 }
 
+/** How many filters are on: search, for who, store, status (shown on the tab). */
+function activeFilterCount() {
+    const f = UI.filter;
+    return [f.q, f.forWho, f.store, f.status !== 'all'].filter(Boolean).length;
+}
+
 function renderFilterSummary() {
     $('filterSummary').textContent = filterActive() ? filterDescription() : 'All items';
-    $('filterFold').classList.toggle('active', filterActive());
-    $('filterResetMini').hidden = !filterActive();
+    const count = activeFilterCount();
+    $('filterTab').classList.toggle('active', count > 0);
+    $('filterTabBadge').hidden = count === 0;
+    $('filterTabBadge').textContent = String(count);
+    $('filterTab').setAttribute('aria-label', count ? `Filter, ${count} on: ${filterDescription()}` : 'Filter and whose list');
 }
 
 /** Owner on "Everyone": matching items from every member's list, grouped by person. */
@@ -421,11 +439,8 @@ export function renderShop() {
     const sel = selectedShopper();
     const owner = isOwner();
     $('shopAdminNote').classList.toggle('hidden', !owner);
-    if (owner) {
-        renderChips(sel);
-        const showing = S.shoppers.find((p) => p.user_id === sel);
-        $('shopViewing').textContent = sel === 'all' ? 'Showing everyone' : `Showing ${showing ? displayName(showing) : 'your list'}`;
-    }
+    // While the drawer is open, keep showing the person picked there (not yet applied).
+    if (owner) renderOwnerPick(drawerOpen() && draftShopper !== null ? draftShopper : sel);
 
     const auto = autoRate();
     document.querySelectorAll('[data-rate]').forEach((input) => {
@@ -433,22 +448,10 @@ export function renderShop() {
         input.readOnly = !canEdit() || auto;
         input.title = auto ? 'Following today’s rate. To type your own, turn off “Today’s exchange rate” in Account.' : '';
     });
-    document.querySelectorAll('[data-rate-auto]').forEach((toggle) => {
-        toggle.checked = auto;
-        toggle.disabled = !canEdit();
-    });
-    document.querySelectorAll('[data-auto-rate-note]').forEach((note) => {
-        note.textContent = auto
-            ? (liveRate() ? `Using ${rm(rate(), 4)} per ¥100 from Bank Negara Malaysia` : 'Bank Negara Malaysia, updated daily')
-            : 'Off: everyone uses the rate typed above';
-    });
 
     const person = S.shoppers.find((p) => p.user_id === sel);
     $('shopAll').classList.toggle('hidden', sel !== 'all');
     $('shopPerson').classList.toggle('hidden', !person);
-    // Whose list + Search & filter sit right above the list they change.
-    const slot = sel === 'all' ? $('toolsSlotAll') : $('toolsSlotPerson');
-    if ($('listTools').parentElement !== slot) slot.appendChild($('listTools'));
     if (sel === 'all') renderAll();
     else if (person) renderPerson(person);
     renderFilterSummary();
@@ -530,6 +533,13 @@ export function bindShopping() {
 
     $('v-shopping').addEventListener('click', (e) => {
         const pick = e.target.closest('[data-shopper]');
+        if (pick && isOwner() && pick.closest('#filterDrawer')) {
+            // In the drawer: only a draft until Apply.
+            draftShopper = pick.dataset.shopper === 'all' ? 'all' : Number(pick.dataset.shopper);
+            renderOwnerPick(draftShopper);
+            fillFilterSuggestions(draftShopper);
+            return;
+        }
         if (pick && isOwner()) {
             UI.shopSel = pick.dataset.shopper === 'all' ? 'all' : Number(pick.dataset.shopper);
             UI.forWho = 'all';
@@ -661,11 +671,43 @@ export function bindShopping() {
     bindFilter();
 }
 
+/** Put what is applied now into the drawer's fields, so closing without Apply loses nothing. */
+function fillDrawerFromApplied() {
+    const form = $('filterForm');
+    const f = UI.filter;
+    draftShopper = selectedShopper();
+    if (isOwner()) renderOwnerPick(draftShopper);
+    fillFilterSuggestions(draftShopper);
+    form.elements.q.value = f.q;
+    form.elements.store.value = f.store;
+    form.querySelector(`input[name="status"][value="${f.status}"]`).checked = true;
+}
+
+/** Scroll so the list's top (or the Everyone results) is in view after a change. */
+function showListTop() {
+    const target = selectedShopper() === 'all' ? (filterActive() ? $('shopResults') : $('shopAll')) : $('shopList').previousElementSibling;
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function bindFilter() {
     const form = $('filterForm');
-    const fold = $('filterFold');
+    const drawer = $('filterDrawer');
 
-    fold.addEventListener('toggle', () => { if (fold.open) fillFilterSuggestions(); });
+    $('filterTab').addEventListener('click', () => {
+        fillDrawerFromApplied();
+        drawer.showModal();
+        $('filterDrawerTitle').focus();
+    });
+
+    // Close without applying: ✕, Back/Esc, or a tap on the dimmed page.
+    const discard = () => {
+        if (drawer.open) drawer.close();
+        draftShopper = null;
+        renderFilterSummary();
+    };
+    $('filterClose').addEventListener('click', discard);
+    drawer.addEventListener('cancel', (e) => { e.preventDefault(); discard(); });
+    drawer.addEventListener('click', (e) => { if (e.target === drawer) discard(); });
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -676,28 +718,28 @@ function bindFilter() {
             store: String(data.get('store') || '').trim(),
             status: String(data.get('status') || 'all'),
         };
+        if (isOwner() && draftShopper !== null) UI.shopSel = draftShopper;
         UI.forWho = 'all';
+        drawer.close();
+        draftShopper = null;
         renderShop();
-        fold.open = false;
-        const target = selectedShopper() === 'all' ? $('shopResults') : $('filterBar');
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showListTop();
     });
 
-    const clear = () => {
+    const reset = () => {
         form.reset();
         UI.filter = { q: '', forWho: '', store: '', status: 'all' };
+        UI.forWho = 'all';
+        if (drawer.open) drawer.close();
+        draftShopper = null;
         renderShop();
     };
-    $('filterClear').addEventListener('click', clear);
-    // On the folded header: reset without opening the form.
-    $('filterResetMini').addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        clear();
+    $('filterClear').addEventListener('click', () => {
+        reset();
         toast('Filter reset. Showing all items.');
     });
     $('v-shopping').addEventListener('click', (e) => {
-        if (e.target.closest('[data-filter-clear]')) clear();
+        if (e.target.closest('[data-filter-clear]')) reset();
     });
 }
 

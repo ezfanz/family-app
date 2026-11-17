@@ -113,50 +113,51 @@
         </div>
       </details>
 
-      {{-- Whose list + Search & filter. One block, moved by shopping.js to sit right above the list
-           (one person) or above Results / By person (Everyone), so it is next to what it changes. --}}
-      <div class="list-tools list-only" id="listTools">
-      {{-- Owner only: whose list to show (collapsed by default) --}}
-      <details class="fold admin-fold hidden" id="shopAdminNote">
-        <summary class="fold-sum">
-          <svg class="i fold-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-          <span class="fold-title"><strong>Others’ lists</strong><span class="muted" id="shopViewing">Showing your list</span></span>
-          <svg class="i fold-chev" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-        </summary>
-        <div class="fold-body">
-          <p class="muted" style="margin:0">As an owner you can see everyone’s shopping. Pick whose list to show.</p>
-          <nav class="chips" id="shopChips" aria-label="Whose shopping"></nav>
-        </div>
-      </details>
+      {{-- Filter: a slim tab on the left edge opens a drawer (whose list + search & filter).
+           Nothing changes until Apply; the page behind is dimmed and can't be tapped. --}}
+      <button type="button" class="filter-tab list-only" id="filterTab" aria-haspopup="dialog" aria-controls="filterDrawer">
+        <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4 2v-8.5z"/></svg>
+        <span class="filter-tab-text">Filter</span>
+        <span class="filter-tab-badge tnum" id="filterTabBadge" hidden></span>
+      </button>
 
-      {{-- Search & filter (everyone; the owner on "Everyone" searches all lists) --}}
-      <details class="fold filter-fold list-only" id="filterFold">
-        <summary class="fold-sum">
-          <svg class="i fold-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4 2v-8.5z"/></svg>
-          <span class="fold-title"><strong>Search &amp; filter</strong><span class="muted" id="filterSummary">All items</span></span>
-          <button type="button" class="filter-reset-mini" id="filterResetMini" hidden><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset</button>
-          <svg class="i fold-chev" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-        </summary>
-        <form class="fold-body form filter-form" id="filterForm" role="search" novalidate data-no-loader>
-          <div class="field"><label for="fQ">Search</label><input id="fQ" name="q" type="search" class="input" maxlength="80" placeholder="Item, store or details" autocomplete="off"></div>
-          <div class="grid2">
+      <dialog class="drawer" id="filterDrawer" aria-labelledby="filterDrawerTitle">
+        <form class="drawer-form form" id="filterForm" role="search" novalidate data-no-loader>
+          <header class="drawer-head">
+            <div>
+              <h2 id="filterDrawerTitle" tabindex="-1">Filter</h2>
+              <p class="muted" id="filterSummary">All items</p>
+            </div>
+            <button type="button" class="icon-btn" id="filterClose" aria-label="Close without changing">
+              <svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </header>
+
+          <div class="drawer-body">
+            {{-- Owners: whose list to show --}}
+            <section class="field drawer-owner hidden" id="shopAdminNote" aria-labelledby="ownerPickTitle">
+              <div class="drawer-label" id="ownerPickTitle">Whose list<span class="hint" id="shopViewing">Showing your list</span></div>
+              <nav class="chips chips-wrap" id="shopChips" aria-label="Whose shopping"></nav>
+            </section>
+
+            <div class="field"><label for="fQ">Search</label><input id="fQ" name="q" type="search" class="input" maxlength="80" placeholder="Item, store or details" autocomplete="off"></div>
             <div class="field"><label for="fFor">For who</label><select id="fFor" name="for_who" class="input"><option value="">Anyone</option></select></div>
             <div class="field"><label for="fStore">Store</label><input id="fStore" name="store" type="text" class="input" maxlength="60" list="fStoreList" placeholder="e.g. MUJI" autocomplete="off"><datalist id="fStoreList"></datalist></div>
+            <fieldset class="plain field"><legend>Status</legend>
+              <div class="pills">
+                <label class="pill"><input type="radio" name="status" value="all" checked><span>All</span></label>
+                <label class="pill"><input type="radio" name="status" value="to_buy"><span>To buy</span></label>
+                <label class="pill"><input type="radio" name="status" value="bought"><span>Bought</span></label>
+              </div>
+            </fieldset>
           </div>
-          <fieldset class="plain field"><legend>Status</legend>
-            <div class="pills">
-              <label class="pill"><input type="radio" name="status" value="all" checked><span>All</span></label>
-              <label class="pill"><input type="radio" name="status" value="to_buy"><span>To buy</span></label>
-              <label class="pill"><input type="radio" name="status" value="bought"><span>Bought</span></label>
-            </div>
-          </fieldset>
-          <div class="filter-actions">
-            <button type="button" class="btn secondary compact" id="filterClear"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset</button>
-            <button type="submit" class="btn primary compact">Show results</button>
-          </div>
+
+          <footer class="drawer-foot">
+            <button type="button" class="btn secondary" id="filterClear"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset</button>
+            <button type="submit" class="btn primary">Apply</button>
+          </footer>
         </form>
-      </details>
-      </div>
+      </dialog>
 
       @include('trips.partials.overview')
       @include('trips.partials.receipts')
@@ -167,7 +168,6 @@
         <label class="rate-row" for="rateAll">Rate for everyone, RM per ¥100
           <input id="rateAll" class="rate-input tnum" inputmode="decimal" type="number" step="0.0001" min="0" data-rate>
         </label>
-        <div class="tools-slot" id="toolsSlotAll"></div>
         <div id="shopResults" class="hidden">
           <div class="row-between" style="margin-top:28px">
             <h2 class="sec" style="margin:0">Results</h2>
@@ -193,7 +193,6 @@
           <h2 class="sec" style="margin:0">List</h2>
           <span class="muted tnum" id="shopCount"></span>
         </div>
-        <div class="tools-slot" id="toolsSlotPerson"></div>
         <div class="filter-bar hidden" id="filterBar"><span class="tnum" id="filterBarText"></span><button type="button" class="text-link" data-filter-clear>Reset</button></div>
         <nav class="chips for-chips hidden" id="forChips" aria-label="Filter by who it is for"></nav>
         <ul class="list" id="shopList"></ul>
