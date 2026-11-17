@@ -318,13 +318,18 @@ function fillFilterSuggestions() {
     const items = filterScopeItems();
     const names = [...new Set(items.map((i) => forWhoLabel(i.for_whom)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     const stores = [...new Set(items.map((i) => String(i.store || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
-    $('fForList').innerHTML = names.map((v) => `<option value="${esc(v)}"></option>`).join('');
+    // Keep a filter that is on even if no item uses that name any more.
+    const current = UI.filter.forWho ? forWhoLabel(UI.filter.forWho) : '';
+    if (current && !names.some((n) => forWhoKey(n) === forWhoKey(current))) names.unshift(current);
+    $('fFor').innerHTML = '<option value="">Anyone</option>'
+        + names.map((v) => `<option value="${esc(v)}"${forWhoKey(v) === forWhoKey(current) && current ? ' selected' : ''}>For ${esc(v)}</option>`).join('');
     $('fStoreList').innerHTML = stores.map((v) => `<option value="${esc(v)}"></option>`).join('');
 }
 
 function renderFilterSummary() {
     $('filterSummary').textContent = filterActive() ? filterDescription() : 'All items';
     $('filterFold').classList.toggle('active', filterActive());
+    $('filterResetMini').hidden = !filterActive();
 }
 
 /** Owner on "Everyone": matching items from every member's list, grouped by person. */
@@ -681,6 +686,13 @@ function bindFilter() {
         renderShop();
     };
     $('filterClear').addEventListener('click', clear);
+    // On the folded header: reset without opening the form.
+    $('filterResetMini').addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        clear();
+        toast('Filter reset. Showing all items.');
+    });
     $('v-shopping').addEventListener('click', (e) => {
         if (e.target.closest('[data-filter-clear]')) clear();
     });

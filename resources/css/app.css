@@ -576,6 +576,9 @@ fieldset.acct-pref .seg { clear: both; }
 /* ---------- shopping: search & filter form ---------- */
 .filter-form { display: grid; gap: 14px; }
 .filter-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-top: 4px; }
+.filter-reset-mini { flex: none; display: inline-flex; align-items: center; gap: 4px; min-height: 36px; padding: 0 12px; border: 1px solid var(--hair); border-radius: 999px; background: var(--surface); color: var(--action); font-size: 13px; font-weight: 700; cursor: pointer; }
+.filter-reset-mini[hidden] { display: none; }
+.filter-reset-mini:active { background: var(--soft); }
 .filter-fold.active { border-color: var(--action); }
 .filter-fold.active .fold-title .muted { color: var(--action); font-weight: 700; }
 .filter-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 8px 0 0; padding: 4px 12px; border-radius: 10px; background: var(--soft); color: var(--stone); font-size: 13px; font-weight: 500; }

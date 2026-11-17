@@ -131,12 +131,13 @@
         <summary class="fold-sum">
           <svg class="i fold-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4 2v-8.5z"/></svg>
           <span class="fold-title"><strong>Search &amp; filter</strong><span class="muted" id="filterSummary">All items</span></span>
+          <button type="button" class="filter-reset-mini" id="filterResetMini" hidden><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset</button>
           <svg class="i fold-chev" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <form class="fold-body form filter-form" id="filterForm" role="search" novalidate data-no-loader>
           <div class="field"><label for="fQ">Search</label><input id="fQ" name="q" type="search" class="input" maxlength="80" placeholder="Item, store or details" autocomplete="off"></div>
           <div class="grid2">
-            <div class="field"><label for="fFor">For who</label><input id="fFor" name="for_who" type="text" class="input" maxlength="80" list="fForList" placeholder="e.g. Mak" autocomplete="off"><datalist id="fForList"></datalist></div>
+            <div class="field"><label for="fFor">For who</label><select id="fFor" name="for_who" class="input"><option value="">Anyone</option></select></div>
             <div class="field"><label for="fStore">Store</label><input id="fStore" name="store" type="text" class="input" maxlength="60" list="fStoreList" placeholder="e.g. MUJI" autocomplete="off"><datalist id="fStoreList"></datalist></div>
           </div>
           <fieldset class="plain field"><legend>Status</legend>
@@ -147,7 +148,7 @@
             </div>
           </fieldset>
           <div class="filter-actions">
-            <button type="button" class="btn secondary compact" id="filterClear">Clear</button>
+            <button type="button" class="btn secondary compact" id="filterClear"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset</button>
             <button type="submit" class="btn primary compact">Show results</button>
           </div>
         </form>
@@ -166,7 +167,7 @@
         <div id="shopResults" class="hidden">
           <div class="row-between" style="margin-top:28px">
             <h2 class="sec" style="margin:0">Results</h2>
-            <button type="button" class="text-link" data-filter-clear>Clear filter</button>
+            <button type="button" class="text-link" data-filter-clear>Reset filter</button>
           </div>
           <p class="filter-bar tnum" id="resultsCount"></p>
           <ul class="list" id="resultsList"></ul>
@@ -189,7 +190,7 @@
           <h2 class="sec" style="margin:0">List</h2>
           <span class="muted tnum" id="shopCount"></span>
         </div>
-        <div class="filter-bar hidden" id="filterBar"><span class="tnum" id="filterBarText"></span><button type="button" class="text-link" data-filter-clear>Clear</button></div>
+        <div class="filter-bar hidden" id="filterBar"><span class="tnum" id="filterBarText"></span><button type="button" class="text-link" data-filter-clear>Reset</button></div>
         <nav class="chips for-chips hidden" id="forChips" aria-label="Filter by who it is for"></nav>
         <ul class="list" id="shopList"></ul>
         <button type="button" class="add-row" id="addItem"><svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add an item</button>
