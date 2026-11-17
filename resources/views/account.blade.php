@@ -33,6 +33,26 @@
   </a>
 </div>
 
+@php($editable = $trips->filter(fn ($trip) => $trip->pivot->role->canEdit()))
+@if ($editable->isNotEmpty())
+  <h2 class="acct-h">Trip settings</h2>
+  <div class="acct-card">
+    @foreach ($editable as $trip)
+      <label class="acct-pref switch-row" for="autoRate{{ $trip->id }}">
+        <span class="acct-who">
+          <strong>Today’s exchange rate</strong>
+          <span>{{ $trip->name }} · <span data-auto-rate-note>{{ $trip->exchange_rate_auto ? 'Bank Negara Malaysia, updated daily' : 'Off: everyone uses the rate typed on Shopping' }}</span></span>
+        </span>
+        <span class="switch">
+          <input type="checkbox" id="autoRate{{ $trip->id }}" role="switch" data-trip-auto-rate="{{ $trip->id }}" @checked($trip->exchange_rate_auto)>
+          <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+        </span>
+      </label>
+    @endforeach
+    <p class="sr-only" id="tripSettingsStatus" role="status" aria-live="polite"></p>
+  </div>
+@endif
+
 <h2 class="acct-h">Preferences</h2>
 <div class="acct-card">
   <fieldset class="plain acct-pref">

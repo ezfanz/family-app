@@ -431,7 +431,7 @@ export function renderShop() {
     document.querySelectorAll('[data-rate]').forEach((input) => {
         if (document.activeElement !== input) input.value = rate();
         input.readOnly = !canEdit() || auto;
-        input.title = auto ? 'Following today’s rate. Turn off “Today’s rate automatically” to type your own.' : '';
+        input.title = auto ? 'Following today’s rate. To type your own, turn off “Today’s exchange rate” in Account.' : '';
     });
     document.querySelectorAll('[data-rate-auto]').forEach((toggle) => {
         toggle.checked = auto;

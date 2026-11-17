@@ -34,6 +34,25 @@ class AccountTest extends TestCase
             ->assertSee('Log out of E-Itinerary?');
     }
 
+    public function test_editors_get_the_todays_rate_switch_for_their_trip(): void
+    {
+        ['trip' => $trip, 'editor' => $editor, 'viewer' => $viewer] = $this->tripFixture();
+        $trip->update(['exchange_rate_auto' => false]);
+
+        $this->actingAs($editor)->get(route('account'))
+            ->assertOk()
+            ->assertSee('Today’s exchange rate', false)
+            ->assertSee('data-trip-auto-rate="'.$trip->id.'"', false)
+            ->assertDontSee('data-trip-auto-rate="'.$trip->id.'" checked', false);
+
+        $trip->update(['exchange_rate_auto' => true]);
+        $this->actingAs($editor)->get(route('account'))
+            ->assertSee('data-trip-auto-rate="'.$trip->id.'" checked', false);
+
+        $this->actingAs($viewer)->get(route('account'))
+            ->assertDontSee('data-trip-auto-rate', false);
+    }
+
     public function test_the_theme_cookie_is_applied_when_the_page_is_rendered(): void
     {
         $user = User::factory()->create();

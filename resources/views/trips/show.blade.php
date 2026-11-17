@@ -167,7 +167,6 @@
         <label class="rate-row" for="rateAll">Rate for everyone, RM per ¥100
           <input id="rateAll" class="rate-input tnum" inputmode="decimal" type="number" step="0.0001" min="0" data-rate>
         </label>
-        @include('trips.partials.auto-rate', ['suffix' => 'All'])
         <div class="tools-slot" id="toolsSlotAll"></div>
         <div id="shopResults" class="hidden">
           <div class="row-between" style="margin-top:28px">
@@ -188,7 +187,6 @@
           <div><label class="lbl" for="budget">Budget (RM)</label><input id="budget" class="big-input tnum" inputmode="decimal" type="number" step="1" min="0" placeholder="0"></div>
           <div><label class="lbl" for="rate">RM per ¥100</label><input id="rate" class="big-input tnum" inputmode="decimal" type="number" step="0.0001" min="0" data-rate></div>
         </div>
-        @include('trips.partials.auto-rate', ['suffix' => 'Person'])
         <div class="totals" id="personTotals" aria-live="polite"></div>
         <p class="muted tnum" id="personLeft" style="margin:10px 2px 0"></p>
         <div class="row-between" style="margin-top:24px">
