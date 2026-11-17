@@ -127,9 +127,57 @@ async function onConfirm() {
     }
 }
 
+/* ---------- Template download ---------- */
+
+const TEMPLATE_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+let templateFile = null;
+
+/** Installed app (home screen icon), where a plain download would leave the app with no way back. */
+const isInstalledApp = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+async function loadTemplate(link) {
+    if (templateFile) return templateFile;
+    const res = await fetch(link.href, { credentials: 'same-origin' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    templateFile = new File([await res.blob()], link.getAttribute('download'), { type: TEMPLATE_TYPE });
+    return templateFile;
+}
+
+/** Share sheet in the installed app (Save to Files, Sheets, WhatsApp…), so the app stays open. */
+async function onTemplateClick(e) {
+    const link = e.currentTarget;
+    if (!isInstalledApp() || typeof navigator.share !== 'function') return; // normal download
+    e.preventDefault();
+    try {
+        const file = await loadTemplate(link);
+        if (navigator.canShare && !navigator.canShare({ files: [file] })) throw new Error('cannot share files');
+        await navigator.share({ files: [file], title: 'E-Itinerary shopping template' });
+    } catch (err) {
+        if (err?.name === 'AbortError') return; // closed the share sheet
+        if (err?.name === 'NotAllowedError' && templateFile) {
+            toast('Template ready. Tap Download template again.');
+            return;
+        }
+        toast('Couldn’t open the template here. Try again when you’re online.');
+    }
+}
+
+function bindTemplate() {
+    const link = $('templateLink');
+    if (!link) return;
+    link.addEventListener('click', onTemplateClick);
+    // Fetch ahead so the share sheet opens straight from the tap (iOS needs that).
+    if (isInstalledApp()) {
+        const prefetch = () => loadTemplate(link).catch(() => {});
+        setTimeout(prefetch, 4000);
+        link.addEventListener('pointerdown', prefetch);
+    }
+}
+
 export function bindImport({ base, onImported }) {
     apiBase = base.replace(/\/$/, '');
     afterImport = onImported;
     $('importFile').addEventListener('change', onFileChosen);
     $('importConfirm').addEventListener('click', onConfirm);
+    bindTemplate();
 }

@@ -211,7 +211,7 @@
           Choose Excel file
         </label>
         <input type="file" id="importFile" class="file-input" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-        <a class="btn" href="/templates/e-itinerary-shopping-list.xlsx" download="e-itinerary-shopping-list.xlsx" data-no-loader>
+        <a class="btn" id="templateLink" href="/templates/e-itinerary-shopping-list.xlsx" download="e-itinerary-shopping-list.xlsx" data-no-loader>
           <svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
           Download template
         </a>
