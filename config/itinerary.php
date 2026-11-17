@@ -29,4 +29,18 @@ return [
     */
     'user_agent' => 'E-Itinerary/1.0 (Laravel trip planner)',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Trip members added by the TripMembersSeeder
+    |--------------------------------------------------------------------------
+    |
+    | "Name:email" pairs, comma separated, and their first password. Kept in
+    | .env (never in git); each person can change the password afterwards.
+    |
+    */
+
+    'seed_members' => env('TRIP_MEMBERS', ''),
+
+    'seed_member_password' => env('TRIP_MEMBER_PASSWORD'),
+
 ];
