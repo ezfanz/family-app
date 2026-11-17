@@ -111,11 +111,30 @@
         <input id="d-region-new" name="region_new" type="text" class="input hidden" maxlength="32" placeholder="New section name, e.g. Hokkaido" aria-label="New section name">
       </fieldset>
       <div class="field"><label for="d-area">Area<span class="hint">Optional, e.g. Fushimi</span></label><input id="d-area" name="area" type="text" class="input" maxlength="80"></div>
+
+      {{-- Editors: save and put it on a day of the itinerary in one go. --}}
+      <section class="idea-plan" id="ideaPlan" hidden>
+        <label class="switch-row idea-plan-toggle" for="d-plan">
+          <span class="acct-who">
+            <strong>Add to the itinerary</strong>
+            <span id="ideaPlanNote">Pick a day and time; it shows up as a stop</span>
+          </span>
+          <span class="switch">
+            <input type="checkbox" id="d-plan" name="plan" role="switch">
+            <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+          </span>
+        </label>
+        <div class="grid2 idea-plan-fields" id="ideaPlanFields" hidden>
+          <div class="field"><label for="d-day">Day</label><select id="d-day" name="plan_day" class="input"></select></div>
+          <div class="field"><label for="d-time">Time<span class="hint">Japan time</span></label><input id="d-time" name="plan_time" type="time" class="input tnum" value="10:00"></div>
+        </div>
+      </section>
+
       <div class="danger-row"><button type="button" class="btn danger compact" id="ideaDel">Delete this idea</button></div>
     </div>
     <div class="sheet-foot">
       <button type="button" class="btn secondary" data-close>Cancel</button>
-      <button type="submit" class="btn primary">Save idea</button>
+      <button type="submit" class="btn primary" id="ideaSave">Save idea</button>
     </div>
   </form>
 </dialog>

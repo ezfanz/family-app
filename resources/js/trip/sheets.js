@@ -364,11 +364,57 @@ function toggleNewSection() {
     if (isNew && document.activeElement?.name === 'region') $('d-region-new').focus();
 }
 
+const dayLabel = (d) => `Day ${d.day_number} · ${weekday(d.date, true)} ${fmtDate(d.date)}${d.city ? ` · ${d.city}` : ''}`;
+
+/** The "Add to the itinerary" part of the idea sheet: editors only. */
+function renderIdeaPlan(idea) {
+    const show = canEdit() && S.days.length > 0;
+    $('ideaPlan').hidden = !show;
+    $('d-plan').checked = false;
+    $('ideaPlanFields').hidden = true;
+    if (!show) {
+        syncIdeaSave();
+        return;
+    }
+    // Default day: where it is already planned, else the first day in its city, else the day in view.
+    const planned = idea.planned_day_id ? S.days.find((d) => d.id === idea.planned_day_id) : null;
+    const inCity = idea.city ? S.days.find((d) => (d.city || '').toLowerCase() === idea.city.toLowerCase()) : null;
+    const pick = planned || inCity || S.days.find((d) => d.id === UI.dayId) || S.days[0];
+    $('d-day').innerHTML = S.days.map((d) => `<option value="${d.id}"${d.id === pick.id ? ' selected' : ''}>${esc(dayLabel(d))}</option>`).join('');
+    $('d-time').value = '10:00';
+    $('ideaPlanNote').textContent = planned
+        ? `Already on ${dayLabel(planned)}. Turn on to add it again.`
+        : 'Pick a day and time; it shows up as a stop';
+    syncIdeaSave();
+}
+
+function syncIdeaSave() {
+    const on = !$('ideaPlan').hidden && $('d-plan').checked;
+    $('ideaPlanFields').hidden = !on;
+    const day = on ? S.days.find((d) => d.id === Number($('d-day').value)) : null;
+    $('ideaSave').textContent = day ? `Add to Day ${day.day_number}` : 'Save idea';
+}
+
+/** Put the idea on a day as a new stop (same as adding a stop by hand). */
+function addIdeaStop(name, dayId, time) {
+    const id = uuid();
+    const data = { day_id: dayId, time, name: name.slice(0, 160), transport: '', meal: '', ticket: '', notes: '', places: [name.slice(0, 160)], is_halal: false };
+    S.acts.set(id, { id, ...data, status: 'pending', sort_order: 9999 });
+    UI.open.add(id);
+    write({
+        key: `act:${id}`, method: 'POST', path: '/activities', body: { id, ...data },
+        revert: () => { S.acts.delete(id); rerender(); },
+        onSaved: (res) => { S.acts.set(res.data.id, res.data); },
+    });
+    UI.dayId = dayId;
+}
+
 export function openIdeaForm(id) {
     const f = $('ideaForm').elements;
     const idea = id ? S.ideas.get(id) : { name: '', region: regions()[0] || '', city: '', area: '' };
     if (!idea) return;
     editingIdea = id;
+    renderIdeaPlan(idea);
     f.name.value = idea.name;
     f.city.value = idea.city || '';
     f.area.value = idea.area || '';
@@ -392,23 +438,39 @@ async function submitIdea(e) {
     if (!region) return invalid($('d-region-new'), 'Name the new section, e.g. Hokkaido.');
     const data = { name, region, city: f.city.value || null, area: f.area.value.trim().slice(0, 80) || null };
 
+    const plan = !$('ideaPlan').hidden && $('d-plan').checked;
+    const planDay = plan ? S.days.find((d) => d.id === Number($('d-day').value)) : null;
+    const planTime = $('d-time').value.slice(0, 5);
+    if (plan && !planTime) return invalid($('d-time'), 'Pick a time.');
+    if (planDay) data.planned_day_id = planDay.id;
+    const planned = () => {
+        addIdeaStop(name, planDay.id, planTime);
+        toast(`Added to Day ${planDay.day_number} at ${planTime}.`);
+        window.location.hash = '#plan';
+    };
+
     if (editingIdea) {
         const idea = S.ideas.get(editingIdea);
         const before = { ...idea };
         Object.assign(idea, data);
         saveIdea(idea, data, () => { S.ideas.set(before.id, before); rerender(); });
         ideaDlg().close();
+        if (planDay) {
+            planned();
+        } else {
+            toast('Idea updated.');
+        }
         rerender();
-        toast('Idea updated.');
         return;
     }
 
     ideaDlg().close();
+    if (planDay) planned();
     const res = await write({ key: 'idea:new', method: 'POST', path: `/trips/${S.trip.id}/ideas`, body: data });
     if (res?.data) {
         S.ideas.set(res.data.id, res.data);
         rerender();
-        toast('Idea added.');
+        if (!planDay) toast('Idea added.');
     }
 }
 
@@ -444,6 +506,11 @@ export function bindSheets(render) {
     ['name', 'store', 'details'].forEach((field) => $('itemForm').elements[field].addEventListener('input', updateItemWebLinks));
     $('itemDel').addEventListener('click', (e) => armDelete(e.currentTarget, 'Delete this item', deleteItem));
     $('ideaForm').addEventListener('submit', submitIdea);
+    $('d-plan').addEventListener('change', () => {
+        syncIdeaSave();
+        if ($('d-plan').checked) $('ideaPlanFields').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
+    $('d-day').addEventListener('change', syncIdeaSave);
     $('regionPills').addEventListener('change', toggleNewSection);
     $('ideaForm').elements.city.addEventListener('change', (e) => {
         const section = CITY_SECTION[e.target.value];
