@@ -163,7 +163,7 @@ export function openReview(receiptId) {
     $('rvPick').open = false;
     markLowConfidence([]);
     touched = new Set();
-    readStatus('', '');
+    aiCard('');
     renderOwners(receipt);
     renderPhoto(receipt);
     renderLinks();
@@ -171,9 +171,12 @@ export function openReview(receiptId) {
     renderLive();
     $('rvDlg').showModal();
     const willRead = S.taxRules?.auto_read && isBlank(receipt);
-    if (willRead && !hasServerPhoto(receipt)) {
-        if (navigator.onLine) readStatus('busy', 'Uploading the photo to read it…');
-        else readStatus('warn', 'Reading starts when you’re back online.');
+    if (receipt.reading?.items?.length || receipt.reading?.summary) {
+        // Read before: show the summary again (no new reading, no cost).
+        doneCard({ ...receipt.reading, fields: { store_name: receipt.store_name, branch: receipt.branch } });
+    } else if (willRead && !hasServerPhoto(receipt)) {
+        if (navigator.onLine) aiCard('busy', { title: 'Uploading the photo…', sub: 'Then Claude reads it and translates it to English' });
+        else aiCard('warn', { title: 'Reading starts when you’re back online', sub: 'The photo is saved on this phone.' });
     }
     autoRead(receiptId);
     // Typing straight away is only useful when nothing will be read for them.
@@ -277,11 +280,54 @@ const READ_ICON = {
 let touched = new Set();
 const reading = new Set();
 
-function readStatus(tone, text) {
-    $('rvRead').hidden = !text;
-    $('rvRead').className = `rv-read ${tone}`;
-    $('rvReadIcon').innerHTML = READ_ICON[tone] || '';
-    $('rvReadText').textContent = text;
+const SHOW_ITEMS = 4;
+let shownReading = null;
+let showAllItems = false;
+
+/** The receipt summary card: busy (reading), done (summary and items) or warn (a short message). */
+function aiCard(state, { title = '', sub = '', result = null } = {}) {
+    const card = $('rvAi');
+    card.hidden = !state;
+    if (!state) return;
+    card.className = `rv-ai ${state}`;
+    $('rvAiIcon').innerHTML = READ_ICON[state] || '';
+    $('rvAiTitle').textContent = title;
+    $('rvAiSub').textContent = sub;
+    $('rvAiSub').hidden = !sub;
+    $('rvAiSkel').hidden = state !== 'busy';
+    shownReading = result;
+    showAllItems = false;
+    $('rvAiSummary').textContent = result?.summary || '';
+    $('rvAiSummary').hidden = !result?.summary;
+    renderAiItems();
+}
+
+function renderAiItems() {
+    const items = shownReading?.items || [];
+    const visible = showAllItems ? items : items.slice(0, SHOW_ITEMS);
+    $('rvAiItems').innerHTML = visible.map((item) => {
+        const english = item.name_en || item.name_ja;
+        const japanese = item.name_en && item.name_ja ? `<small lang="ja">${esc(item.name_ja)}</small>` : '';
+        const qty = item.qty > 1 ? `<span class="rv-ai-qty">×${item.qty}</span>` : '';
+        const reduced = item.reduced_rate ? '<span class="rv-ai-tag" title="8% food and drink">8%</span>' : '';
+        return `<li><div class="rv-ai-name"><strong>${esc(english)}</strong>${japanese}</div><div class="rv-ai-price tnum">${reduced}${qty}<span>${yen(item.price_yen)}</span></div></li>`;
+    }).join('');
+    $('rvAiItems').hidden = !items.length;
+    const more = $('rvAiMore');
+    more.hidden = items.length <= SHOW_ITEMS;
+    more.textContent = showAllItems ? 'Show fewer' : `Show all ${items.length} items`;
+    more.setAttribute('aria-expanded', String(showAllItems));
+}
+
+const itemCount = (n) => `${n} item${n === 1 ? '' : 's'}`;
+
+/** Title and subtitle for a finished reading. */
+function doneCard(result, flagged = 0) {
+    const fields = result?.fields || {};
+    const store = [fields.store_name || $('rvStore').value, fields.branch || $('rvBranch').value].filter(Boolean).join(' · ');
+    const parts = [result?.items?.length ? `${itemCount(result.items.length)}, translated from Japanese` : 'Read from the photo'];
+    if (flagged) parts.push(`check ${flagged === 1 ? 'the highlighted field' : `${flagged} highlighted fields`}`);
+    aiCard('done', { title: store || 'Receipt summary', sub: parts.join(' · '), result });
 }
 
 const hasServerPhoto = (receipt) => (receipt?.photo_parts || []).includes(1);
@@ -315,9 +361,10 @@ function applyReading({ fields = {}, confidence = {} }) {
         .filter(([key, field]) => fields[key] != null && (confidence[key] ?? 0) < min && !touched.has(field))
         .map(([, field]) => field);
     const missing = ['store_name', 'amount_yen'].filter((key) => fields[key] == null).map((key) => (key === 'amount_yen' ? 'pre_tax_yen' : key));
-    markLowConfidence([...unsure, ...missing.filter((f) => !touched.has(f))]);
+    const flagged = [...unsure, ...missing.filter((f) => !touched.has(f))];
+    markLowConfidence(flagged);
     renderLive();
-    return filled;
+    return { filled, flagged: flagged.length };
 }
 
 /**
@@ -328,23 +375,30 @@ async function autoRead(receiptId) {
     const receipt = S.receipts.get(receiptId);
     if (!S.taxRules?.auto_read || !hasServerPhoto(receipt) || !isBlank(receipt) || reading.has(receiptId)) return;
     if (!navigator.onLine) {
-        readStatus('warn', 'Reading starts when you’re back online.');
+        aiCard('warn', { title: 'Reading starts when you’re back online', sub: 'The photo is saved on this phone.' });
         return;
     }
     reading.add(receiptId);
-    readStatus('busy', 'Reading the receipt…');
+    aiCard('busy', { title: 'Reading the receipt…', sub: 'Translating it to English and filling in the form' });
     try {
         const res = await api('POST', `/receipts/${receiptId}/read`);
+        const result = res?.data || {};
+        const stored = S.receipts.get(receiptId);
+        if (stored && (result.items?.length || result.summary)) {
+            stored.reading = { summary: result.summary || '', items: result.items || [], model: result.model || null };
+        }
         if (editingId !== receiptId || !$('rvDlg').open) return;
-        const filled = applyReading(res?.data || {});
-        if (filled) {
-            readStatus('done', 'Filled in from the photo. Check the highlighted fields.');
+        const { filled, flagged } = applyReading(result);
+        if (filled || result.items?.length) {
+            doneCard(result, flagged);
         } else {
-            readStatus('warn', 'Couldn’t read it clearly. Type the details in.');
+            aiCard('warn', { title: 'Couldn’t read this receipt clearly', sub: 'Type the store and amount below, or retake the photo in better light.' });
         }
     } catch (error) {
         if (editingId !== receiptId) return;
-        readStatus('warn', error?.status === 0 ? 'Reading starts when you’re back online.' : (error?.body?.message || 'Couldn’t read it. Type the details in.'));
+        aiCard('warn', error?.status === 0
+            ? { title: 'Reading starts when you’re back online', sub: 'The photo is saved on this phone.' }
+            : { title: 'Couldn’t read it this time', sub: 'Type the details in below.' });
     } finally {
         reading.delete(receiptId);
     }
@@ -392,4 +446,8 @@ export function bindReview(hooks) {
     $('rvDelete').addEventListener('click', remove);
     $('rvRetake').addEventListener('click', () => retake(1));
     $('rvPart2').addEventListener('click', () => retake(2));
+    $('rvAiMore').addEventListener('click', () => {
+        showAllItems = !showAllItems;
+        renderAiItems();
+    });
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Receipt;
 use App\Services\TaxRefund\ReceiptReader;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -31,6 +32,8 @@ class ReceiptReadController extends Controller
         $cacheKey = 'receipt-read:'.sha1($photos->pluck('path')->implode('|'));
         $cached = Cache::get($cacheKey);
         if (is_array($cached)) {
+            $this->keepSummary($receipt, $cached);
+
             return response()->json(['data' => $cached]);
         }
 
@@ -49,7 +52,30 @@ class ReceiptReadController extends Controller
         }
 
         Cache::put($cacheKey, $result, now()->addDays(30));
+        $this->keepSummary($receipt, $result);
 
         return response()->json(['data' => $result]);
+    }
+
+    /**
+     * Keep the English summary and items on the receipt (the fields stay the
+     * person's to confirm), so the summary shows whenever it is opened.
+     *
+     * @param  array<string, mixed>  $result
+     */
+    private function keepSummary(Receipt $receipt, array $result): void
+    {
+        if (($result['items'] ?? []) === [] && ($result['summary'] ?? '') === '') {
+            return;
+        }
+        $reading = [
+            'summary' => $result['summary'] ?? '',
+            'items' => $result['items'] ?? [],
+            'model' => $result['model'] ?? null,
+        ];
+        if (Arr::except($receipt->reading ?? [], 'read_at') === $reading) {
+            return;
+        }
+        $receipt->forceFill(['reading' => $reading + ['read_at' => now()->toIso8601String()]])->save();
     }
 }

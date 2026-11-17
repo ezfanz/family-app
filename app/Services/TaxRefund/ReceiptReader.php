@@ -15,6 +15,8 @@ interface ReceiptReader
      * @return array{
      *     fields: array{store_name?: string, branch?: string, date?: string, time?: string, amount_yen?: int, amount_kind?: 'pre_tax'|'total', tax_rate?: int},
      *     confidence: array<string, float>,
+     *     items?: list<array{name_en: string, name_ja: string, qty: int, price_yen: int, reduced_rate: bool}>,
+     *     summary?: string,
      *     model: string|null
      * }
      */

@@ -54,6 +54,7 @@ class Receipt extends Model
             'customs_confirmed_at' => 'datetime',
             'refund_received_yen' => 'integer',
             'refunded_at' => 'datetime',
+            'reading' => 'array',
         ];
     }
 

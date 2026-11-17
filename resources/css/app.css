@@ -713,14 +713,36 @@ dialog.camera::backdrop { background: #0E0E10; }
 .scan-actions .btn.primary:disabled { opacity: .5; }
 .scan-secondary { background: none; border-color: #4A4A52; color: #FFFFFF; }
 
-/* Check receipt: "Reading the receipt…" line under the photo. */
-.rv-read { display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 600; line-height: 1.4; background: color-mix(in srgb, var(--action) 9%, transparent); color: var(--ink); }
-.rv-read[hidden] { display: none; }
-.rv-read-icon { flex: none; display: flex; color: var(--action); }
-.rv-read.busy .rv-read-icon .i { animation: fx-spin 1s linear infinite; }
-.rv-read.warn { background: var(--soft); color: var(--stone); }
-.rv-read.warn .rv-read-icon { color: var(--amber-text); }
-@media (prefers-reduced-motion: reduce) { .rv-read.busy .rv-read-icon .i { animation: none; } }
+/* Check receipt: the summary card Claude fills (English summary + translated items). */
+.rv-ai { padding: 14px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--action) 22%, var(--hair)); background: color-mix(in srgb, var(--action) 6%, var(--surface)); }
+.rv-ai[hidden] { display: none; }
+.rv-ai.warn { border-color: var(--hair); background: var(--soft); }
+.rv-ai-head { display: flex; gap: 10px; align-items: flex-start; }
+.rv-ai-icon { flex: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--action) 14%, transparent); color: var(--action); }
+.rv-ai.warn .rv-ai-icon { background: color-mix(in srgb, var(--amber-line) 22%, transparent); color: var(--amber-text); }
+.rv-ai.busy .rv-ai-icon .i { animation: fx-spin 1s linear infinite; }
+.rv-ai-head-text { min-width: 0; flex: 1; }
+.rv-ai-title { margin: 0; font-size: 16px; font-weight: 900; line-height: 1.3; overflow-wrap: anywhere; }
+.rv-ai-sub { margin: 2px 0 0; font-size: 13px; line-height: 1.4; color: var(--stone); }
+.rv-ai-sub[hidden] { display: none; }
+.rv-ai-skel { display: grid; gap: 8px; margin-top: 12px; }
+.rv-ai-skel[hidden] { display: none; }
+.rv-ai-skel span { height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--soft) 25%, color-mix(in srgb, var(--action) 10%, var(--soft)) 50%, var(--soft) 75%); background-size: 200% 100%; animation: rv-shimmer 1.2s linear infinite; }
+.rv-ai-skel span:nth-child(2) { width: 80%; }
+.rv-ai-skel span:nth-child(3) { width: 55%; }
+@keyframes rv-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.rv-ai-summary { margin: 12px 0 0; font-size: 15px; line-height: 1.5; }
+.rv-ai-summary[hidden], .rv-ai-items[hidden], .rv-ai-more[hidden] { display: none; }
+.rv-ai-items { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid var(--hair); }
+.rv-ai-items li { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--hair); }
+.rv-ai-name { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rv-ai-name strong { font-size: 15px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+.rv-ai-name small { font-size: 12px; line-height: 1.4; color: var(--stone); overflow-wrap: anywhere; }
+.rv-ai-price { flex: none; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; white-space: nowrap; }
+.rv-ai-qty { font-size: 13px; font-weight: 600; color: var(--stone); }
+.rv-ai-tag { padding: 1px 6px; border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--halal-text); border: 1px solid var(--halal-line); }
+.rv-ai-more { margin-top: 6px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--action); font-size: 15px; font-weight: 700; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .rv-ai.busy .rv-ai-icon .i, .rv-ai-skel span { animation: none; } }
 
 .cam-offline { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0 16px 20px; font-size: 13px; color: #9A9AA2; text-align: center; }
 .rc-wait { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--amber-text); }

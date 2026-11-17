@@ -35,6 +35,7 @@ class ReceiptResource extends JsonResource
             'customs_confirmed_at' => $this->customs_confirmed_at?->toIso8601String(),
             'refund_received_yen' => $this->refund_received_yen,
             'refunded_at' => $this->refunded_at?->toIso8601String(),
+            'reading' => $this->reading,
             'photo_parts' => $this->whenLoaded('photos', fn (): array => $this->photos->map(fn (ReceiptPhoto $photo): int => $photo->part)->values()->all(), []),
             'shopping_item_ids' => $this->whenLoaded('shoppingItems', fn (): array => $this->shoppingItems->modelKeys(), []),
             'updated_at' => $this->updated_at?->toIso8601String(),

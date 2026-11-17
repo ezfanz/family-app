@@ -29,10 +29,12 @@ class ClaudeReceiptReader implements ReceiptReader
         - time: purchase time as HH:MM, 24-hour. Empty if not printed.
         - amount_yen and amount_kind: on a tax-free (免税) receipt, prefer the before-tax total of the tax-free goods (免税対象額, 税抜合計, 免税合計) with amount_kind "pre_tax". If only the total including tax is printed (合計, 税込), give that with amount_kind "total". Use 0 and "none" if you can't find a total. Whole yen only.
         - tax_rate: 10, or 8 for food and drink (軽減税率 / ※ marks). If both rates appear, compare the 8%対象 and 10%対象 amounts and give the rate with the larger amount, with confidence at most 0.6 so the traveller checks it.
+        - items: every purchased line, top to bottom (at most 40). name_en is a short plain-English name a Malaysian traveller would recognise: translate, and add what it is when the brand alone says little (e.g. "KitKat Matcha", "Tokyo Banana sponge cakes, 8 pcs", "Shiseido face cream"). name_ja is the line as printed. qty is 1 unless a quantity is printed. price_yen is the line amount as printed. reduced_rate is true for 8% items (※ or 軽 marks). Leave out subtotals, tax, discounts summary, points and payment lines.
+        - summary: one short English sentence for the traveller about what this receipt is, e.g. "Tax-free shopping at Don Quijote Dotonbori: snacks, a face cream and a plush toy." Empty if it isn't a receipt.
         - is_receipt: false if the photo isn't a shop receipt.
         - confidence: for each field, from 0 (guess) to 1 (clearly printed). Use below 0.6 for anything blurred, cut off, folded or inferred.
 
-        Never return names, passport numbers or card numbers, even if they are printed.
+        Never return names, passport numbers or card numbers, even if they are printed, and never put them in the items or summary.
         TEXT;
 
     public function __construct(
@@ -54,12 +56,42 @@ class ClaudeReceiptReader implements ReceiptReader
      */
     public function read(array $images): array
     {
-        $quick = $this->ask($this->quickModel, $images);
+        $quick = self::rateFromItems($this->ask($this->quickModel, $images));
         if (! $this->needsSecondLook($quick)) {
             return $quick;
         }
 
-        return self::merge($quick, $this->ask($this->carefulModel, $images));
+        return self::rateFromItems(self::merge($quick, $this->ask($this->carefulModel, $images)));
+    }
+
+    /**
+     * Work the tax rate out from the items rather than trust a guess: the rate
+     * covering more yen wins. A receipt with both rates stays flagged (0.6),
+     * since one rate can only approximate it; a single-rate one is clear (0.9).
+     *
+     * @param  array{fields: array<string, mixed>, confidence: array<string, float>, items?: list<array<string, mixed>>, model: string|null}  $result
+     * @return array{fields: array<string, mixed>, confidence: array<string, float>, items?: list<array<string, mixed>>, model: string|null}
+     */
+    public static function rateFromItems(array $result): array
+    {
+        $reduced = 0;
+        $standard = 0;
+        foreach ($result['items'] ?? [] as $item) {
+            if ($item['reduced_rate'] ?? false) {
+                $reduced += (int) ($item['price_yen'] ?? 0);
+            } else {
+                $standard += (int) ($item['price_yen'] ?? 0);
+            }
+        }
+        if ($reduced + $standard === 0) {
+            return $result;
+        }
+
+        $result['fields']['tax_rate'] = $reduced > $standard ? 8 : 10;
+        $result['confidence']['tax_rate'] = $reduced > 0 && $standard > 0 ? 0.6 : max(0.9, $result['confidence']['tax_rate'] ?? 0.0);
+        $result['rate_from_items'] = true;
+
+        return $result;
     }
 
     /**
@@ -70,6 +102,10 @@ class ClaudeReceiptReader implements ReceiptReader
     public function needsSecondLook(array $result): bool
     {
         foreach (self::KEY_FIELDS as $field) {
+            // A rate worked out from the items can't be improved by reading again.
+            if ($field === 'tax_rate' && ($result['rate_from_items'] ?? false)) {
+                continue;
+            }
             if (! array_key_exists($field, $result['fields']) || ($result['confidence'][$field] ?? 0.0) < $this->minConfidence) {
                 return true;
             }
@@ -99,6 +135,9 @@ class ClaudeReceiptReader implements ReceiptReader
             $source = ($second['fields']['amount_yen'] ?? null) === $result['fields']['amount_yen'] ? $second : $first;
             $result['fields']['amount_kind'] = $source['fields']['amount_kind'] ?? 'total';
         }
+        // The careful model's item list and summary, unless it found none.
+        $result['items'] = ($second['items'] ?? []) !== [] ? $second['items'] : ($first['items'] ?? []);
+        $result['summary'] = ($second['summary'] ?? '') !== '' ? $second['summary'] : ($first['summary'] ?? '');
 
         return $result;
     }
@@ -111,7 +150,7 @@ class ClaudeReceiptReader implements ReceiptReader
      */
     public static function normalize(array $raw, ?string $model = null): array
     {
-        $empty = ['fields' => [], 'confidence' => [], 'model' => $model];
+        $empty = ['fields' => [], 'confidence' => [], 'items' => [], 'summary' => '', 'model' => $model];
         if (($raw['is_receipt'] ?? true) === false) {
             return $empty;
         }
@@ -151,7 +190,38 @@ class ClaudeReceiptReader implements ReceiptReader
             }
         }
 
-        return ['fields' => $fields, 'confidence' => $confidence, 'model' => $model];
+        return [
+            'fields' => $fields,
+            'confidence' => $confidence,
+            'items' => self::cleanItems($raw['items'] ?? []),
+            'summary' => mb_substr(trim((string) ($raw['summary'] ?? '')), 0, 200),
+            'model' => $model,
+        ];
+    }
+
+    /**
+     * @param  mixed  $items
+     * @return list<array{name_en: string, name_ja: string, qty: int, price_yen: int, reduced_rate: bool}>
+     */
+    private static function cleanItems($items): array
+    {
+        if (! is_array($items)) {
+            return [];
+        }
+
+        return collect($items)
+            ->filter(fn ($item): bool => is_array($item))
+            ->map(fn (array $item): array => [
+                'name_en' => mb_substr(trim((string) ($item['name_en'] ?? '')), 0, 80),
+                'name_ja' => mb_substr(trim((string) ($item['name_ja'] ?? '')), 0, 80),
+                'qty' => max(1, min(999, (int) ($item['qty'] ?? 1))),
+                'price_yen' => max(0, min(10_000_000, (int) ($item['price_yen'] ?? 0))),
+                'reduced_rate' => (bool) ($item['reduced_rate'] ?? false),
+            ])
+            ->filter(fn (array $item): bool => $item['name_en'] !== '' || $item['name_ja'] !== '')
+            ->take(40)
+            ->values()
+            ->all();
     }
 
     /** A receipt from the last two years and not in the future (Japan time). */
@@ -180,7 +250,7 @@ class ClaudeReceiptReader implements ReceiptReader
 
         $message = $this->client->messages->create(
             model: $model,
-            maxTokens: 2048,
+            maxTokens: 4096,
             system: self::INSTRUCTIONS,
             messages: [['role' => 'user', 'content' => $content]],
             outputConfig: ['effort' => 'low', 'format' => ['type' => 'json_schema', 'schema' => self::schema()]],
@@ -218,6 +288,22 @@ class ClaudeReceiptReader implements ReceiptReader
                 'amount_yen' => ['type' => 'integer'],
                 'amount_kind' => ['type' => 'string', 'enum' => ['pre_tax', 'total', 'none']],
                 'tax_rate' => ['type' => 'integer', 'enum' => [10, 8]],
+                'items' => [
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'name_en' => ['type' => 'string'],
+                            'name_ja' => ['type' => 'string'],
+                            'qty' => ['type' => 'integer'],
+                            'price_yen' => ['type' => 'integer'],
+                            'reduced_rate' => ['type' => 'boolean'],
+                        ],
+                        'required' => ['name_en', 'name_ja', 'qty', 'price_yen', 'reduced_rate'],
+                        'additionalProperties' => false,
+                    ],
+                ],
+                'summary' => ['type' => 'string'],
                 'confidence' => [
                     'type' => 'object',
                     'properties' => array_fill_keys(self::FIELDS, $number),
@@ -225,7 +311,7 @@ class ClaudeReceiptReader implements ReceiptReader
                     'additionalProperties' => false,
                 ],
             ],
-            'required' => ['is_receipt', 'store_name', 'branch', 'date', 'time', 'amount_yen', 'amount_kind', 'tax_rate', 'confidence'],
+            'required' => ['is_receipt', 'store_name', 'branch', 'date', 'time', 'amount_yen', 'amount_kind', 'tax_rate', 'items', 'summary', 'confidence'],
             'additionalProperties' => false,
         ];
     }

@@ -197,7 +197,17 @@
         </div>
       </div>
 
-      <p class="rv-read" id="rvRead" role="status" hidden><span class="rv-read-icon" id="rvReadIcon" aria-hidden="true"></span><span id="rvReadText"></span></p>
+      {{-- What Claude read: English summary and items, translated (filled by receipt-review.js). --}}
+      <section class="rv-ai" id="rvAi" aria-live="polite" aria-labelledby="rvAiTitle" hidden>
+        <div class="rv-ai-head">
+          <span class="rv-ai-icon" id="rvAiIcon" aria-hidden="true"></span>
+          <div class="rv-ai-head-text"><h3 class="rv-ai-title" id="rvAiTitle"></h3><p class="rv-ai-sub" id="rvAiSub"></p></div>
+        </div>
+        <div class="rv-ai-skel" id="rvAiSkel" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="rv-ai-summary" id="rvAiSummary" hidden></p>
+        <ul class="rv-ai-items" id="rvAiItems" hidden></ul>
+        <button type="button" class="rv-ai-more" id="rvAiMore" aria-controls="rvAiItems" aria-expanded="false" hidden></button>
+      </section>
 
       <div class="rv-banner" id="rvBanner" aria-live="polite">
         <span class="rv-banner-icon" id="rvBannerIcon" aria-hidden="true"></span>

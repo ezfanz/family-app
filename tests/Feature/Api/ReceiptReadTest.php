@@ -37,6 +37,8 @@ class ReceiptReadTest extends TestCase
                 return $this->read ? ($this->read)() : [
                     'fields' => ['store_name' => 'Don Quijote', 'branch' => 'Dotonbori', 'date' => '2026-11-22', 'time' => '19:42', 'amount_yen' => 8240, 'amount_kind' => 'pre_tax', 'tax_rate' => 10],
                     'confidence' => ['store_name' => 0.98, 'branch' => 0.9, 'date' => 0.95, 'time' => 0.9, 'amount_yen' => 0.62, 'tax_rate' => 0.9],
+                    'items' => [['name_en' => 'KitKat Matcha', 'name_ja' => '※キットカット抹茶', 'qty' => 1, 'price_yen' => 1280, 'reduced_rate' => true]],
+                    'summary' => 'Tax-free shopping at Don Quijote Dotonbori.',
                     'model' => 'claude-haiku-5-5',
                 ];
             }
@@ -81,6 +83,22 @@ class ReceiptReadTest extends TestCase
 
         $this->actingAs($viewer)->postJson("/api/receipts/{$receipt->id}/read")->assertOk();
         $this->assertSame(1, $reader->calls);
+    }
+
+    public function test_the_english_summary_and_items_are_kept_on_the_receipt_but_the_fields_are_not(): void
+    {
+        $this->fakeReader();
+        ['receipt' => $receipt, 'viewer' => $viewer] = $this->receiptWithPhotos();
+
+        $this->actingAs($viewer)->postJson("/api/receipts/{$receipt->id}/read")->assertOk();
+
+        $fresh = $receipt->fresh();
+        $this->assertSame($receipt->store_name, $fresh->store_name, 'the person confirms the fields');
+        $this->assertSame('Tax-free shopping at Don Quijote Dotonbori.', $fresh->reading['summary']);
+        $this->assertSame('KitKat Matcha', $fresh->reading['items'][0]['name_en']);
+
+        $this->actingAs($viewer)->getJson("/api/trips/{$receipt->trip_id}/receipts")
+            ->assertJsonPath('data.0.reading.items.0.name_ja', '※キットカット抹茶');
     }
 
     public function test_a_new_photo_is_read_again(): void
