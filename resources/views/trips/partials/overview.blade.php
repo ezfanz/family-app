@@ -1,7 +1,5 @@
 {{-- Shopping → Overview: spending dashboard. Computed on the phone from the trip data (overviewcalc.js). --}}
 <div class="overview-only" id="overviewPane">
-  <nav class="ov-chips hidden" id="ovChips" aria-label="Show spending for"></nav>
-
   <section class="ov-card ov-hero" aria-label="Spending">
     <div class="ov-label" id="ovHeroLabel">Spent</div>
     <div class="ov-big tnum" id="ovSpent">RM0.00</div>

@@ -50,14 +50,15 @@ function pick(userId) {
     renderOverview();
 }
 
-function renderChips() {
-    const nav = $('ovChips');
-    const show = isOwner() && S.shoppers.length > 1;
-    nav.classList.toggle('hidden', !show);
-    if (!show) return;
-    const all = UI.ovWho === 'all';
-    nav.innerHTML = `<button type="button" class="chip ov-chip" data-ov-who="all" aria-pressed="${all}"><span class="chip-ava all" aria-hidden="true">All</span>Everyone</button>`
-        + S.shoppers.map((p) => `<button type="button" class="chip ov-chip" data-ov-who="${p.user_id}" aria-pressed="${Number(UI.ovWho) === Number(p.user_id)}">${avatar(p, 'chip-ava')}${esc(displayName(p))}</button>`).join('');
+/** Whose overview the owner is looking at: 'all' or a user id (picked in the Filter drawer). */
+export function overviewWho() {
+    const userId = who();
+    return userId === null ? 'all' : userId;
+}
+
+/** Show someone's overview (or 'all'), from the Filter drawer's Apply. */
+export function showOverviewOf(userId) {
+    pick(userId);
 }
 
 function renderHero(view, person) {
@@ -164,7 +165,6 @@ export function renderOverview() {
     $('shopLede').textContent = `${name || 'Group'} overview · as of ${shortDate(todayIso)}${todayDay ? `, Day ${todayDay.day_number}` : (todayIso < S.trip.start_date ? ', before the trip' : '')}`;
 
     const unit = person ? `RM, ${person.is_me ? 'you' : person.name}` : 'RM, group';
-    renderChips();
     renderHero(view, person);
     renderTiles(view);
     renderDays(view, unit);
@@ -178,11 +178,6 @@ export function renderOverview() {
 export function bindOverview(hooks) {
     onGo = hooks.onGo;
     $('overviewPane').addEventListener('click', (e) => {
-        const chip = e.target.closest('[data-ov-who]');
-        if (chip) {
-            pick(chip.dataset.ovWho === 'all' ? 'all' : Number(chip.dataset.ovWho));
-            return;
-        }
         const person = e.target.closest('[data-ov-person]');
         if (person) {
             const id = Number(person.dataset.ovPerson);

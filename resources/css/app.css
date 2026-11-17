@@ -598,6 +598,13 @@ fieldset.acct-pref .seg { clear: both; }
 .filter-tab.active { animation: tab-pulse 2s ease-in-out infinite; }
 .filter-tab:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 @keyframes tab-pulse { 0%, 100% { box-shadow: 0 4px 14px rgba(0, 0, 0, .18), 0 0 0 0 color-mix(in srgb, var(--action) 45%, transparent); } 50% { box-shadow: 0 4px 14px rgba(0, 0, 0, .18), 0 0 0 7px transparent; } }
+/* Overview: only owners pick whose spending; no list badge there. Receipts: no tab. */
+#v-shopping[data-tab="receipts"] .filter-tab, #v-shopping[data-tab="overview"] .filter-tab:not([data-owner]) { display: none; }
+#v-shopping[data-tab="overview"] .filter-tab-badge { display: none; }
+#v-shopping[data-tab="overview"] .filter-tab.active { animation: none; }
+.drawer-list-fields { display: grid; gap: 16px; }
+.drawer-list-fields[hidden] { display: none; }
+.drawer-owner:has(+ .drawer-list-fields[hidden]) { padding-bottom: 0; border-bottom: 0; }
 /* Wide screens: sit just left of the page column instead of the window edge. */
 @media (min-width: 760px) { .filter-tab { left: max(0px, calc(50% - var(--col) / 2 - 26px)); } }
 
@@ -885,11 +892,8 @@ dialog.sheet.tall { height: calc(100dvh - var(--safe-top) - 24px); }
 .view-seg { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 #v-shopping:not([data-tab="list"]) .list-only { display: none !important; }
 #v-shopping:not([data-tab="overview"]) .overview-only { display: none !important; }
-#v-shopping[data-tab="overview"] #shopAdminNote { display: none !important; }
 
 /* ---------- shopping overview (dashboard) ---------- */
-.ov-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-.ov-chip { padding: 0 14px 0 6px; }
 .ov-card { display: block; background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; color: var(--ink); }
 button.ov-card { width: 100%; text-align: left; font: inherit; cursor: pointer; }
 button.ov-card:hover { border-color: var(--stone); }

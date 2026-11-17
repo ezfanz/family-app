@@ -115,7 +115,7 @@
 
       {{-- Filter: a slim tab on the left edge opens a drawer (whose list + search & filter).
            Nothing changes until Apply; the page behind is dimmed and can't be tapped. --}}
-      <button type="button" class="filter-tab list-only" id="filterTab" aria-haspopup="dialog" aria-controls="filterDrawer">
+      <button type="button" class="filter-tab" id="filterTab" aria-haspopup="dialog" aria-controls="filterDrawer">
         <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4 2v-8.5z"/></svg>
         <span class="filter-tab-text">Filter</span>
         <span class="filter-tab-badge tnum" id="filterTabBadge" hidden></span>
@@ -136,10 +136,12 @@
           <div class="drawer-body">
             {{-- Owners: whose list to show --}}
             <section class="field drawer-owner hidden" id="shopAdminNote" aria-labelledby="ownerPickTitle">
-              <div class="drawer-label" id="ownerPickTitle">Whose list<span class="hint" id="shopViewing">Showing your list</span></div>
+              <div class="drawer-label"><span id="ownerPickTitle">Whose list</span><span class="hint" id="shopViewing">Showing your list</span></div>
               <nav class="chips chips-wrap" id="shopChips" aria-label="Whose shopping"></nav>
             </section>
 
+            {{-- List only (hidden on Overview) --}}
+            <div class="drawer-list-fields" id="drawerListFields">
             <div class="field"><label for="fQ">Search</label><input id="fQ" name="q" type="search" class="input" maxlength="80" placeholder="Item, store or details" autocomplete="off"></div>
             <div class="field"><label for="fFor">For who</label><select id="fFor" name="for_who" class="input"><option value="">Anyone</option></select></div>
             <div class="field"><label for="fStore">Store</label><input id="fStore" name="store" type="text" class="input" maxlength="60" list="fStoreList" placeholder="e.g. MUJI" autocomplete="off"><datalist id="fStoreList"></datalist></div>
@@ -150,6 +152,7 @@
                 <label class="pill"><input type="radio" name="status" value="bought"><span>Bought</span></label>
               </div>
             </fieldset>
+            </div>
           </div>
 
           <footer class="drawer-foot">

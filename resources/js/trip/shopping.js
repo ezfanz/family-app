@@ -10,6 +10,7 @@ import { api } from './api.js';
 import { write } from './writer.js';
 import { renderFx, bindFx, liveRate } from './fx.js';
 import { renderShopTab } from './receipts.js';
+import { overviewWho, showOverviewOf } from './overview.js';
 
 const AVATAR_COLOURS = ['#2A3B8F', '#6A3E9A', '#00776F', '#1F5591', '#B7791F', '#C2255C', '#4A8410', '#8A5A00'];
 export const ROLE_LABEL = { owner: 'Owner', editor: 'Editor', viewer: 'Viewer' };
@@ -345,6 +346,7 @@ function renderFilterSummary() {
     $('filterSummary').textContent = filterActive() ? filterDescription() : 'All items';
     const count = activeFilterCount();
     $('filterTab').classList.toggle('active', count > 0);
+    $('filterTab').toggleAttribute('data-owner', isOwner());
     $('filterTabBadge').hidden = count === 0;
     $('filterTabBadge').textContent = String(count);
     $('filterTab').setAttribute('aria-label', count ? `Filter, ${count} on: ${filterDescription()}` : 'Filter and whose list');
@@ -537,7 +539,7 @@ export function bindShopping() {
             // In the drawer: only a draft until Apply.
             draftShopper = pick.dataset.shopper === 'all' ? 'all' : Number(pick.dataset.shopper);
             renderOwnerPick(draftShopper);
-            fillFilterSuggestions(draftShopper);
+            if (drawerMode() === 'list') fillFilterSuggestions(draftShopper);
             return;
         }
         if (pick && isOwner()) {
@@ -672,11 +674,20 @@ export function bindShopping() {
 }
 
 /** Put what is applied now into the drawer's fields, so closing without Apply loses nothing. */
+/** The drawer filters the List, or picks whose spending the Overview shows. */
+const drawerMode = () => (UI.shopTab === 'overview' ? 'overview' : 'list');
+
 function fillDrawerFromApplied() {
     const form = $('filterForm');
     const f = UI.filter;
-    draftShopper = selectedShopper();
+    const overview = drawerMode() === 'overview';
+    $('filterDrawerTitle').textContent = overview ? 'Overview' : 'Filter';
+    $('ownerPickTitle').textContent = overview ? 'Whose spending' : 'Whose list';
+    $('filterSummary').textContent = overview ? 'Pick whose spending to show' : (filterActive() ? filterDescription() : 'All items');
+    $('drawerListFields').hidden = overview;
+    draftShopper = overview ? overviewWho() : selectedShopper();
     if (isOwner()) renderOwnerPick(draftShopper);
+    if (overview) return;
     fillFilterSuggestions(draftShopper);
     form.elements.q.value = f.q;
     form.elements.store.value = f.store;
@@ -711,6 +722,12 @@ function bindFilter() {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+        if (drawerMode() === 'overview') {
+            drawer.close();
+            if (isOwner() && draftShopper !== null) showOverviewOf(draftShopper);
+            draftShopper = null;
+            return;
+        }
         const data = new FormData(form);
         UI.filter = {
             q: String(data.get('q') || '').trim(),
@@ -735,6 +752,13 @@ function bindFilter() {
         renderShop();
     };
     $('filterClear').addEventListener('click', () => {
+        if (drawerMode() === 'overview') {
+            drawer.close();
+            draftShopper = null;
+            showOverviewOf('all');
+            toast('Showing everyone’s spending.');
+            return;
+        }
         reset();
         toast('Filter reset. Showing all items.');
     });
