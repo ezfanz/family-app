@@ -13,8 +13,8 @@ use Illuminate\Support\Arr;
  */
 class ClaudeReceiptReader implements ReceiptReader
 {
-    /** Fields that decide eligibility; unsure ones get a second look. */
-    private const KEY_FIELDS = ['store_name', 'date', 'amount_yen'];
+    /** Fields that decide eligibility or the refund; unsure ones get a second look. */
+    private const KEY_FIELDS = ['store_name', 'date', 'amount_yen', 'tax_rate'];
 
     private const FIELDS = ['store_name', 'branch', 'date', 'time', 'amount_yen', 'tax_rate'];
 
@@ -28,7 +28,7 @@ class ClaudeReceiptReader implements ReceiptReader
         - date: purchase date as YYYY-MM-DD. Convert Japanese era years (令和8年 = 2026). Empty if unreadable.
         - time: purchase time as HH:MM, 24-hour. Empty if not printed.
         - amount_yen and amount_kind: on a tax-free (免税) receipt, prefer the before-tax total of the tax-free goods (免税対象額, 税抜合計, 免税合計) with amount_kind "pre_tax". If only the total including tax is printed (合計, 税込), give that with amount_kind "total". Use 0 and "none" if you can't find a total. Whole yen only.
-        - tax_rate: 10, or 8 for food and drink (軽減税率 / ※ marks). If both rates appear, give the rate covering the larger amount and lower its confidence.
+        - tax_rate: 10, or 8 for food and drink (軽減税率 / ※ marks). If both rates appear, compare the 8%対象 and 10%対象 amounts and give the rate with the larger amount, with confidence at most 0.6 so the traveller checks it.
         - is_receipt: false if the photo isn't a shop receipt.
         - confidence: for each field, from 0 (guess) to 1 (clearly printed). Use below 0.6 for anything blurred, cut off, folded or inferred.
 

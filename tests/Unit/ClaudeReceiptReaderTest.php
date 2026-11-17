@@ -86,6 +86,9 @@ class ClaudeReceiptReaderTest extends TestCase
         $this->assertTrue($reader->needsSecondLook(ClaudeReceiptReader::normalize($this->raw(['confidence' => ['amount_yen' => 0.5] + $this->raw()['confidence']]))));
         $this->assertTrue($reader->needsSecondLook(ClaudeReceiptReader::normalize($this->raw(['date' => '']))));
 
+        // 8% or 10% changes the refund (mixed receipts are common), so it counts too.
+        $this->assertTrue($reader->needsSecondLook(ClaudeReceiptReader::normalize($this->raw(['tax_rate' => 8, 'confidence' => ['tax_rate' => 0.6] + $this->raw()['confidence']]))));
+
         // An unsure branch alone is not worth a second, dearer reading.
         $this->assertFalse($reader->needsSecondLook(ClaudeReceiptReader::normalize($this->raw(['confidence' => ['branch' => 0.2] + $this->raw()['confidence']]))));
     }

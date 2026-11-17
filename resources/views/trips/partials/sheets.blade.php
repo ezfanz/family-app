@@ -223,7 +223,7 @@
         </div>
       </fieldset>
 
-      <fieldset class="plain field">
+      <fieldset class="plain field" data-field="tax_rate">
         <legend>Tax</legend>
         <div class="pills">
           <label class="pill"><input type="radio" name="tax_rate" value="10" checked><span>10%</span></label>

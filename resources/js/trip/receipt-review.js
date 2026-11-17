@@ -311,7 +311,7 @@ function applyReading({ fields = {}, confidence = {} }) {
     }
 
     const min = Number(S.taxRules?.reader_min_confidence) || 0.75;
-    const unsure = Object.entries({ store_name: 'store_name', branch: 'branch', date: 'date', time: 'time', amount_yen: 'pre_tax_yen' })
+    const unsure = Object.entries({ store_name: 'store_name', branch: 'branch', date: 'date', time: 'time', amount_yen: 'pre_tax_yen', tax_rate: 'tax_rate' })
         .filter(([key, field]) => fields[key] != null && (confidence[key] ?? 0) < min && !touched.has(field))
         .map(([, field]) => field);
     const missing = ['store_name', 'amount_yen'].filter((key) => fields[key] == null).map((key) => (key === 'amount_yen' ? 'pre_tax_yen' : key));
