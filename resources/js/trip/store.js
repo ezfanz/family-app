@@ -130,6 +130,8 @@ export function mergeChanges(payload) {
             S.notes.set(note.activity_id, note.note);
         }
     }
+    // Settings can change on the server (e.g. receipt reading switched on).
+    S.taxRules = payload.tax_refund || S.taxRules;
     S.serverTime = payload.server_time || S.serverTime;
 }
 

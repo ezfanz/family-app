@@ -16,7 +16,7 @@ use App\Http\Resources\ShoppingItemResource;
 use App\Http\Resources\TripResource;
 use App\Models\ActivityNote;
 use App\Models\Trip;
-use App\Services\TaxRefund\ClaudeReceiptReader;
+use App\Services\TaxRefund\TaxRefundRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -67,11 +67,7 @@ class TripController extends Controller
             'my_notes' => ActivityNoteResource::collection($myNotes),
             'receipts' => ReceiptResource::collection($trip->receipts()->visibleTo($trip, $user)->with(['photos', 'shoppingItems'])->get()),
             'my_airport_checklist' => $trip->members()->whereKey($user->id)->first()?->pivot->airport_checklist ?? [],
-            'tax_refund' => [
-                'min_pre_tax_yen' => (int) config('tax_refund.min_pre_tax_yen'),
-                'days_to_export' => (int) config('tax_refund.days_to_export'),
-                'auto_read' => ClaudeReceiptReader::isConfigured(),
-            ],
+            'tax_refund' => TaxRefundRules::forApp(),
             'server_time' => $serverTime->toIso8601String(),
         ]);
     }

@@ -14,6 +14,7 @@ use App\Http\Resources\ShoppingItemResource;
 use App\Http\Resources\TripResource;
 use App\Models\ActivityNote;
 use App\Models\Trip;
+use App\Services\TaxRefund\TaxRefundRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 
@@ -56,6 +57,7 @@ class TripChangesController extends Controller
             'ideas' => IdeaResource::collection($ideas),
             'my_notes' => ActivityNoteResource::collection($myNotes),
             'receipts' => ReceiptResource::collection($receipts),
+            'tax_refund' => TaxRefundRules::forApp(),
             'server_time' => $serverTime->toIso8601String(),
         ]);
     }

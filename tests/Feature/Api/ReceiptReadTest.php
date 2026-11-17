@@ -162,4 +162,18 @@ class ReceiptReadTest extends TestCase
         config(['tax_refund.reader' => 'manual']);
         $this->actingAs($viewer)->getJson("/api/trips/{$trip->id}")->assertJsonPath('tax_refund.auto_read', false);
     }
+
+    public function test_phones_with_a_saved_trip_hear_when_reading_is_switched_on(): void
+    {
+        ['trip' => $trip, 'viewer' => $viewer] = $this->tripFixture();
+        $since = urlencode(now()->toIso8601String());
+
+        $this->actingAs($viewer)->getJson("/api/trips/{$trip->id}/changes?since={$since}")
+            ->assertJsonPath('tax_refund.auto_read', false)
+            ->assertJsonPath('tax_refund.min_pre_tax_yen', 5000);
+
+        config(['services.anthropic.key' => 'test-key']);
+        $this->actingAs($viewer)->getJson("/api/trips/{$trip->id}/changes?since={$since}")
+            ->assertJsonPath('tax_refund.auto_read', true);
+    }
 }
