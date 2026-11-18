@@ -1,8 +1,8 @@
 /* Itinerary: header progress, day strip, now/next banner and the rail timeline. */
 
-import { S, UI, canEdit, isOwner, dayActs, allActs, dayById, othersNotesOn } from './store.js';
+import { S, UI, canEdit, isOwner, dayActs, allActs, dayById, commentsOn } from './store.js';
 import { avatar } from './shopping.js';
-import { $, esc, fmtDate, weekday, zonedNow, toMins, daysBetween, cityColor, cityLetter, mapUrl, ICON, debounceKeyed } from './util.js';
+import { $, esc, fmtDate, weekday, zonedNow, toMins, daysBetween, cityColor, cityLetter, mapUrl, ICON, debounceKeyed, uuid, toast, confirmAction } from './util.js';
 import { write } from './writer.js';
 import { isQueued } from './sync.js';
 
@@ -175,33 +175,52 @@ function ago(iso) {
     return fmtDate(String(iso).slice(0, 10));
 }
 
-const personOf = (userId) => S.shoppers.find((p) => Number(p.user_id) === Number(userId));
+const ICON_COMMENT = '<svg class="i" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>';
+
+const memberOf = (userId) => S.members.find((m) => Number(m.user_id) === Number(userId))
+    || S.shoppers.find((p) => Number(p.user_id) === Number(userId));
+
+/** Comment text, escaped, with @Name of trip members highlighted. */
+function bodyHtml(body) {
+    let html = esc(body);
+    const names = S.members.map((m) => m.name).filter(Boolean).sort((a, b) => b.length - a.length);
+    for (const name of names) {
+        const token = `@${esc(name)}`;
+        html = html.split(token).join(`<span class="mention">${token}</span>`);
+    }
+    return html;
+}
 
 /**
- * Comments: other members' notes on the stop (owners see them), then your
- * own, which you type straight into (saved as you go). One per person.
+ * Comments on a stop: a thread people post to and @mention each other in.
+ * Owners read everyone's; others read their own and ones that mention them.
  */
-function notesHtml(a, note) {
-    const others = othersNotesOn(a.id).map((n) => {
-        const person = personOf(n.user_id) || { user_id: n.user_id, name: 'Member' };
-        return `<li class="cm">
+function commentsHtml(a) {
+    const list = commentsOn(a.id).map((c) => {
+        const person = memberOf(c.user_id) || { user_id: c.user_id, name: 'Member' };
+        const mine = Number(c.user_id) === Number(S.me);
+        const waiting = isQueued(`comment:${c.id}`);
+        return `<li class="cm${mine ? ' cm-own' : ''}" data-comment="${esc(c.id)}">
             ${avatar(person, 'cm-ava')}
             <div class="cm-body">
-                <div class="cm-head"><strong>${esc(person.name)}</strong><time datetime="${esc(n.updated_at || '')}">${esc(ago(n.updated_at))}</time></div>
-                <p>${esc(n.note)}</p>
+                <div class="cm-head"><strong>${esc(mine ? 'You' : person.name)}</strong><time datetime="${esc(c.created_at || '')}">${waiting ? 'Sending…' : esc(ago(c.created_at))}</time>${mine ? '<button type="button" class="cm-del" data-act="comment-delete">Delete</button>' : ''}</div>
+                <p>${bodyHtml(c.body)}</p>
             </div>
         </li>`;
     }).join('');
-    const me = personOf(S.me) || { user_id: S.me, name: 'You' };
-    const who = isOwner() ? 'Seen by trip owners' : 'Seen by you and trip owners';
+    const me = memberOf(S.me) || { user_id: S.me, name: 'You' };
+    const draft = UI.commentDrafts?.[a.id] || '';
+    const hint = isOwner() ? 'Type @ to mention someone' : 'Type @ to mention · owners can read';
     return `<section class="cm-thread" aria-label="Comments">
-        <span class="k">Comments${others ? ` <span class="cm-count">${othersNotesOn(a.id).length + (note.trim() ? 1 : 0)}</span>` : ''}</span>
-        ${others ? `<ul class="cm-list">${others}</ul>` : ''}
-        <div class="cm cm-mine">
+        <span class="k">Comments${list ? ` <span class="cm-count">${commentsOn(a.id).length}</span>` : ''}</span>
+        ${list ? `<ul class="cm-list">${list}</ul>` : '<p class="cm-empty">No comments yet. Start the discussion.</p>'}
+        <div class="cm cm-compose" data-compose="${a.id}">
             ${avatar(me, 'cm-ava')}
             <div class="cm-body">
-                <label class="cm-head" for="note-${a.id}"><strong>You</strong><span>${esc(who)}</span></label>
-                <textarea id="note-${a.id}" class="note-input" data-note="${a.id}" rows="2" maxlength="1000" placeholder="Add a comment for this stop…">${esc(note)}</textarea>
+                <label class="sr-only" for="cm-${a.id}">Add a comment</label>
+                <textarea id="cm-${a.id}" class="cm-input" data-comment-input="${a.id}" rows="1" maxlength="1000" placeholder="Add a comment…">${esc(draft)}</textarea>
+                <ul class="mention-list" role="listbox" aria-label="Mention someone" hidden></ul>
+                <div class="cm-compose-foot"><span>${esc(hint)}</span><button type="button" class="cm-send" data-act="comment-send"${draft.trim() ? '' : ' disabled'}><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg>Send</button></div>
             </div>
         </div>
     </section>`;
@@ -213,14 +232,13 @@ function stopHtml(a, day, nn) {
     const isNow = isToday && nn.now?.id === a.id && status === 'pending';
     const isNext = isToday && nn.next?.id === a.id;
     const open = UI.open.has(a.id);
-    const note = S.notes.get(a.id) || '';
 
     const tags = [];
     if (a.meal) tags.push(`<span class="tag">${esc(a.meal)}</span>`);
     if (a.is_halal) tags.push('<span class="tag halal">Halal</span>');
     if (a.ticket) tags.push(`<span class="tag ticket">${esc(a.ticket)}</span>`);
-    const noteCount = (note.trim() ? 1 : 0) + othersNotesOn(a.id).length;
-    if (noteCount) tags.push(`<span class="tag note">${noteCount === 1 ? '1 comment' : `${noteCount} comments`}</span>`);
+    const commentCount = commentsOn(a.id).length;
+    if (commentCount) tags.push(`<span class="tag note">${ICON_COMMENT}${commentCount}<span class="sr-only"> comment${commentCount === 1 ? '' : 's'}</span></span>`);
     if (a.system_key === 'tax_refund') tags.push('<span class="tag ticket">Tax refund</span>');
     if (isQueued(`act:${a.id}`) || isQueued(`status:${a.id}`) || isQueued(`note:${a.id}`)) tags.push('<span class="tag sync">Waiting to sync</span>');
 
@@ -235,7 +253,7 @@ function stopHtml(a, day, nn) {
             ${places ? `<div><span class="k">Places</span><div class="places">${places}</div></div>` : ''}
             ${a.system_key === 'tax_refund' ? '<button type="button" class="btn primary compact" data-act="airport">Open airport checklist</button>' : ''}
             <fieldset class="plain"><legend class="k">Status</legend><div class="seg">${segs}</div></fieldset>
-            ${notesHtml(a, note)}
+            ${commentsHtml(a)}
             ${canEdit() ? '<button type="button" class="text-link" data-act="edit">Edit or delete this stop</button>' : ''}
         </div>`;
     }
@@ -322,6 +340,94 @@ const saveNote = debounceKeyed((id, note) => {
     write({ key: `note:${id}`, method: 'PUT', path: `/activities/${id}/note`, body: { note } });
 }, 700);
 
+/* ---------- Comments: send, delete, @mentions ---------- */
+
+function autoGrow(box) {
+    box.style.height = 'auto';
+    box.style.height = `${Math.min(box.scrollHeight, 180)}px`;
+}
+
+/** Members other than you whose "@Name" is in the text (they get a notification). */
+function mentionedIn(body) {
+    return S.members
+        .filter((m) => Number(m.user_id) !== Number(S.me) && m.name && body.includes(`@${m.name}`))
+        .map((m) => Number(m.user_id));
+}
+
+function showMentions(box) {
+    const list = box.parentElement.querySelector('.mention-list');
+    const before = box.value.slice(0, box.selectionStart);
+    const match = before.match(/(?:^|\s)@([^\s@]{0,24})$/);
+    if (!match) {
+        list.hidden = true;
+        return;
+    }
+    const query = match[1].toLowerCase();
+    const people = S.members
+        .filter((m) => Number(m.user_id) !== Number(S.me) && m.name.toLowerCase().includes(query))
+        .sort((a, b) => Number(!a.name.toLowerCase().startsWith(query)) - Number(!b.name.toLowerCase().startsWith(query)))
+        .slice(0, 5);
+    if (!people.length) {
+        list.hidden = true;
+        return;
+    }
+    list.innerHTML = people.map((m, i) => `<li role="option" data-mention="${m.user_id}" aria-selected="${i === 0}">${avatar(m, 'cm-ava')}<span>${esc(m.name)}</span></li>`).join('');
+    list.hidden = false;
+}
+
+function pickMention(box, option) {
+    const person = S.members.find((m) => String(m.user_id) === option.dataset.mention);
+    if (!person) return;
+    const caret = box.selectionStart;
+    const before = box.value.slice(0, caret).replace(/@([^\s@]{0,24})$/, `@${person.name} `);
+    box.value = before + box.value.slice(caret);
+    box.setSelectionRange(before.length, before.length);
+    box.focus();
+    UI.commentDrafts[box.dataset.commentInput] = box.value;
+    box.closest('.cm-compose').querySelector('[data-act="comment-send"]').disabled = false;
+    box.parentElement.querySelector('.mention-list').hidden = true;
+    autoGrow(box);
+}
+
+function sendComment(actId, rerender) {
+    const box = document.querySelector(`[data-comment-input="${actId}"]`);
+    const body = (box?.value ?? UI.commentDrafts[actId] ?? '').trim().slice(0, 1000);
+    if (!body) return;
+    const mentionIds = mentionedIn(body);
+    const comment = { id: uuid(), activity_id: actId, user_id: S.me, body, mention_ids: mentionIds, created_at: new Date().toISOString() };
+    S.comments.set(comment.id, comment);
+    UI.commentDrafts[actId] = '';
+    write({
+        key: `comment:${comment.id}`,
+        method: 'POST',
+        path: `/activities/${actId}/comments`,
+        body: { id: comment.id, body, mention_ids: mentionIds },
+        onSaved: (res) => { if (res?.data) S.comments.set(res.data.id, res.data); },
+        revert: () => { S.comments.delete(comment.id); UI.commentDrafts[actId] = body; rerender(); },
+    });
+    if (mentionIds.length) {
+        const names = S.members.filter((m) => mentionIds.includes(Number(m.user_id))).map((m) => m.name);
+        toast(`Sent. ${names.join(', ')} will get a notification.`);
+    }
+    rerender();
+}
+
+async function deleteComment(commentId, rerender) {
+    const comment = S.comments.get(commentId);
+    if (!comment) return;
+    const sure = await confirmAction({ title: 'Delete this comment?', text: 'It’s removed for everyone in the trip.', ok: 'Delete comment' });
+    if (!sure) return;
+    S.comments.delete(commentId);
+    write({
+        key: `comment:${commentId}`,
+        method: 'DELETE',
+        path: `/comments/${commentId}`,
+        revert: () => { S.comments.set(commentId, comment); rerender(); },
+    });
+    rerender();
+    toast('Comment deleted.');
+}
+
 export function bindItinerary(rerender) {
     $('days').addEventListener('click', (e) => {
         const b = e.target.closest('.daybtn');
@@ -368,6 +474,54 @@ export function bindItinerary(rerender) {
             openActForm(id);
         } else if (act === 'airport') {
             openAirport();
+        } else if (act === 'comment-send') {
+            sendComment(id, rerender);
+        } else if (act === 'comment-delete') {
+            deleteComment(el.closest('[data-comment]').dataset.comment, rerender);
+        }
+    });
+
+    // @mentions: suggest trip members while typing "@na…".
+    $('rail').addEventListener('input', (e) => {
+        const box = e.target.closest('[data-comment-input]');
+        if (!box) return;
+        const actId = box.dataset.commentInput;
+        UI.commentDrafts[actId] = box.value;
+        box.closest('.cm-compose').querySelector('[data-act="comment-send"]').disabled = !box.value.trim();
+        autoGrow(box);
+        showMentions(box);
+    });
+    $('rail').addEventListener('keydown', (e) => {
+        const box = e.target.closest('[data-comment-input]');
+        if (!box) return;
+        const list = box.parentElement.querySelector('.mention-list');
+        if (!list.hidden && (e.key === 'Enter' || e.key === 'Tab')) {
+            const first = list.querySelector('[aria-selected="true"]') || list.querySelector('[data-mention]');
+            if (first) {
+                e.preventDefault();
+                pickMention(box, first);
+                return;
+            }
+        }
+        if (!list.hidden && e.key === 'Escape') {
+            list.hidden = true;
+            return;
+        }
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            sendComment(box.dataset.commentInput, rerender);
+        }
+    });
+    // pointerdown so the box keeps focus (and the phone keyboard stays up).
+    $('rail').addEventListener('pointerdown', (e) => {
+        const option = e.target.closest('[data-mention]');
+        if (!option) return;
+        e.preventDefault();
+        pickMention(option.closest('.cm-body').querySelector('[data-comment-input]'), option);
+    });
+    $('rail').addEventListener('focusout', (e) => {
+        if (e.target.closest?.('[data-comment-input]')) {
+            setTimeout(() => { e.target.parentElement?.querySelector('.mention-list')?.setAttribute('hidden', ''); }, 150);
         }
     });
 

@@ -370,3 +370,18 @@
     <button type="button" class="btn" data-close autofocus>Cancel</button>
   </div>
 </dialog>
+
+{{-- Bell: your @mentions on this trip (filled by bell.js). --}}
+<dialog class="sheet tall" id="bellDlg" aria-labelledby="bellTitle">
+  <div class="grab" aria-hidden="true"></div>
+  <div class="sheet-head">
+    <h2 id="bellTitle">Notifications</h2>
+    <div class="bell-head-actions">
+      <button type="button" class="text-link" id="bellReadAll" hidden>Mark all read</button>
+      <button type="button" class="icon-btn" data-close aria-label="Close">{!! $close !!}</button>
+    </div>
+  </div>
+  <div class="sheet-body">
+    <ul class="bell-list" id="bellList" aria-live="polite"></ul>
+  </div>
+</dialog>

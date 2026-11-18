@@ -8,6 +8,11 @@ export const othersNotesOn = (activityId) => [...S.othersNotes.values()]
     .filter((n) => String(n.activity_id) === String(activityId) && n.note)
     .sort((a, b) => String(a.updated_at).localeCompare(String(b.updated_at)));
 
+/** Comments on a stop, oldest first. */
+export const commentsOn = (activityId) => [...S.comments.values()]
+    .filter((c) => String(c.activity_id) === String(activityId) && !c.deleted_at)
+    .sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+
 export const S = {
     trip: null,
     role: 'viewer',
@@ -22,6 +27,12 @@ export const S = {
     notes: new Map(),
     /** Other members' notes, owners only. key = "<activityId>:<userId>" */
     othersNotes: new Map(),
+    /** Comments on stops, by id. */
+    comments: new Map(),
+    /** Everyone in the trip (for @mentions): { user_id, name } */
+    members: [],
+    /** Unread bell notifications on this trip. */
+    unread: 0,
     /** Tax refund receipts I can see: mine, or everyone's for the owner. */
     receipts: new Map(),
     /** Airport checklist items I have ticked. */
@@ -37,6 +48,8 @@ export const UI = {
     view: 'plan',
     dayId: null,
     open: new Set(),
+    /** Unsent comment text per stop, so a re-render never loses it. */
+    commentDrafts: {},
     expandedRegions: new Set(),
     /** Shopping: 'all' (owner only) or a user id. */
     shopSel: null,
@@ -102,6 +115,9 @@ export function loadFull(payload) {
     S.ideas = new Map(payload.ideas.map((i) => [i.id, i]));
     S.notes = new Map(payload.my_notes.map((n) => [n.activity_id, n.note]));
     S.othersNotes = new Map((payload.others_notes || []).map((n) => [noteKey(n), n]));
+    S.comments = new Map((payload.comments || []).map((c) => [c.id, c]));
+    S.members = payload.members || S.members;
+    S.unread = Number(payload.unread_notifications) || 0;
     S.receipts = new Map((payload.receipts || []).map((r) => [r.id, r]));
     S.checklist = payload.my_airport_checklist || [];
     S.taxRules = payload.tax_refund || S.taxRules;
@@ -152,6 +168,13 @@ export function mergeChanges(payload) {
         if (note.note) S.othersNotes.set(noteKey(note), note);
         else S.othersNotes.delete(noteKey(note));
     }
+    for (const comment of payload.comments || []) {
+        if (S.pending.has(`comment:${comment.id}`)) continue;
+        if (comment.deleted_at) S.comments.delete(comment.id);
+        else S.comments.set(comment.id, comment);
+    }
+    if (payload.members) S.members = payload.members;
+    if (payload.unread_notifications != null) S.unread = Number(payload.unread_notifications) || 0;
     // Settings can change on the server (e.g. receipt reading switched on).
     S.taxRules = payload.tax_refund || S.taxRules;
     S.serverTime = payload.server_time || S.serverTime;
@@ -170,6 +193,9 @@ export function snapshot() {
         ideas: [...S.ideas.values()],
         notes: [...S.notes.entries()],
         othersNotes: [...S.othersNotes.values()],
+        comments: [...S.comments.values()],
+        members: S.members,
+        unread: S.unread,
         receipts: [...S.receipts.values()],
         checklist: S.checklist,
         taxRules: S.taxRules,
@@ -187,6 +213,9 @@ export function restore(saved) {
     S.ideas = new Map(saved.ideas.map((i) => [i.id, i]));
     S.notes = new Map(saved.notes);
     S.othersNotes = new Map((saved.othersNotes || []).map((n) => [noteKey(n), n]));
+    S.comments = new Map((saved.comments || []).map((c) => [c.id, c]));
+    S.members = saved.members || [];
+    S.unread = Number(saved.unread) || 0;
     S.receipts = new Map((saved.receipts || []).map((r) => [r.id, r]));
     S.checklist = saved.checklist || [];
     S.taxRules = saved.taxRules || S.taxRules;

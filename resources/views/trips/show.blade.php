@@ -19,6 +19,10 @@
         <div class="subtitle tnum" id="tripSub">{{ $trip->start_date->format('j M') }} – {{ $trip->end_date->format('j M') }}</div>
       </div>
       <a class="sync" id="sync" href="{{ route('trips.members.index', $trip) }}"><span class="dot" aria-hidden="true"></span><span class="txt">Loading…</span></a>
+      <button type="button" class="bell" id="bellBtn" aria-haspopup="dialog" aria-controls="bellDlg" aria-label="Notifications">
+        <svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+        <span class="bell-badge tnum" id="bellBadge" hidden></span>
+      </button>
       <a class="me" href="{{ route('account') }}" aria-label="Account and settings for {{ auth()->user()->name }}" title="Account">
         <span class="avatar solid" aria-hidden="true">{{ Str::upper(Str::substr(auth()->user()->name, 0, 2)) }}</span>
       </a>

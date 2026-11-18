@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AirportController;
 use App\Http\Controllers\Api\ExchangeRateController;
 use App\Http\Controllers\Api\IdeaController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ReceiptController;
 use App\Http\Controllers\Api\ReceiptPhotoController;
 use App\Http\Controllers\Api\ReceiptReadController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Api\ShoppingBudgetController;
 use App\Http\Controllers\Api\ShoppingImportController;
 use App\Http\Controllers\Api\ShoppingItemController;
 use App\Http\Controllers\Api\ShoppingOverviewController;
+use App\Http\Controllers\Api\StopCommentController;
 use App\Http\Controllers\Api\StopPhotoController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\TripChangesController;
@@ -44,6 +46,8 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::get('/trips/{trip}', [TripController::class, 'show'])->name('trips.show')->can('view', 'trip');
     Route::patch('/trips/{trip}', [TripController::class, 'update'])->name('trips.update')->can('update', 'trip');
     Route::get('/trips/{trip}/changes', TripChangesController::class)->name('trips.changes')->can('view', 'trip');
+    Route::get('/trips/{trip}/notifications', [NotificationController::class, 'index'])->name('trips.notifications.index')->can('view', 'trip');
+    Route::post('/trips/{trip}/notifications/read', [NotificationController::class, 'read'])->name('trips.notifications.read')->can('view', 'trip');
 
     Route::get('/trips/{trip}/members', [TripMemberController::class, 'index'])->name('trips.members.index')->can('view', 'trip');
     Route::patch('/trips/{trip}/members/{user}', [TripMemberController::class, 'update'])->name('trips.members.update')->can('manageMembers', 'trip');
@@ -55,6 +59,8 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::delete('/activities/{activity}', [ActivityController::class, 'destroy'])->name('activities.destroy');
     Route::patch('/activities/{activity}/status', [ActivityController::class, 'updateStatus'])->name('activities.status');
     Route::put('/activities/{activity}/note', [ActivityController::class, 'updateNote'])->name('activities.note');
+    Route::post('/activities/{activity}/comments', [StopCommentController::class, 'store'])->name('activities.comments.store')->middleware('throttle:60,1');
+    Route::delete('/comments/{comment}', [StopCommentController::class, 'destroy'])->name('comments.destroy');
     Route::get('/activities/{activity}/photo', [StopPhotoController::class, 'show'])->name('activities.photo.show');
     Route::post('/activities/{activity}/photo', [StopPhotoController::class, 'store'])->name('activities.photo.store')->middleware('throttle:30,1');
     Route::post('/activities/{activity}/photo/lookup', [StopPhotoController::class, 'lookup'])->name('activities.photo.lookup')->middleware('throttle:20,1');

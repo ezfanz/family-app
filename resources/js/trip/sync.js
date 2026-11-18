@@ -19,9 +19,9 @@ const VERSION = 1;
 /**
  * Format of the saved trip. Raise it to make every phone load the whole trip
  * once (2: people made owner before role changes reloaded the trip;
- * 3: owners now also keep other members' notes).
+ * 3: owners keep other members' notes; 4: comments and @mentions).
  */
-const CACHE_VERSION = 3;
+const CACHE_VERSION = 4;
 const POLL_MS = 20000;
 
 export const net = { online: navigator.onLine, flushing: false };

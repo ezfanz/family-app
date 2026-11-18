@@ -14,6 +14,7 @@ import { bindImport } from './importer.js';
 import { bindReceipts, uploadWaitingPhotos } from './receipts.js';
 import { bindCamera } from './camera.js';
 import { resetOverview } from './overview.js';
+import { bindBell, renderBell } from './bell.js';
 import { loadFx } from './fx.js';
 import { setWriterHooks } from './writer.js';
 import { net, initSync, loadCache, saveCache, clearTripStorage, flushQueue, queueLength, startPolling } from './sync.js';
@@ -68,6 +69,7 @@ export function syncStatus() {
 export function render() {
     if (!S.trip) return;
     renderHeader();
+    renderBell();
     if (UI.view === 'plan') renderPlan();
     else if (UI.view === 'shopping') renderShop();
     else renderIdeas();
@@ -191,6 +193,7 @@ export async function bootTrip(root) {
     bindShopping();
     bindReceipts();
     bindCamera();
+    bindBell({ onGo: render });
     bindIdeas();
     bindSheets(render);
     bindDayStrip();

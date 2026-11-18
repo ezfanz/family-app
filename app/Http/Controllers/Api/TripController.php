@@ -13,10 +13,13 @@ use App\Http\Resources\IdeaResource;
 use App\Http\Resources\ReceiptResource;
 use App\Http\Resources\ShopperResource;
 use App\Http\Resources\ShoppingItemResource;
+use App\Http\Resources\StopCommentResource;
 use App\Http\Resources\TripResource;
 use App\Models\ActivityNote;
+use App\Models\StopComment;
 use App\Models\Trip;
 use App\Services\TaxRefund\TaxRefundRules;
+use App\Services\TripNotifications;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -66,6 +69,10 @@ class TripController extends Controller
             'ideas' => IdeaResource::collection($trip->ideas),
             'my_notes' => ActivityNoteResource::collection($myNotes),
             'others_notes' => ActivityNoteResource::collection(ActivityNote::othersVisibleTo($trip, $user)->where('note', '!=', '')->get()),
+            'comments' => StopCommentResource::collection(StopComment::visibleTo($trip, $user)->orderBy('created_at')->get()),
+            // Everyone can @mention anyone in the trip, so everyone gets the names.
+            'members' => $trip->members()->orderBy('name')->get(['users.id', 'users.name'])->map(fn ($member): array => ['user_id' => $member->id, 'name' => $member->name])->values(),
+            'unread_notifications' => TripNotifications::unreadCount($user, $trip),
             'receipts' => ReceiptResource::collection($trip->receipts()->visibleTo($trip, $user)->with(['photos', 'shoppingItems'])->get()),
             'my_airport_checklist' => $trip->members()->whereKey($user->id)->first()?->pivot->airport_checklist ?? [],
             'tax_refund' => TaxRefundRules::forApp(),

@@ -11,10 +11,13 @@ use App\Http\Resources\IdeaResource;
 use App\Http\Resources\ReceiptResource;
 use App\Http\Resources\ShopperResource;
 use App\Http\Resources\ShoppingItemResource;
+use App\Http\Resources\StopCommentResource;
 use App\Http\Resources\TripResource;
 use App\Models\ActivityNote;
+use App\Models\StopComment;
 use App\Models\Trip;
 use App\Services\TaxRefund\TaxRefundRules;
+use App\Services\TripNotifications;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 
@@ -59,6 +62,9 @@ class TripChangesController extends Controller
             // Cleared notes come through as "" so phones drop them.
             'others_notes' => ActivityNoteResource::collection(ActivityNote::othersVisibleTo($trip, $request->user())->where('updated_at', '>=', $since)->get()),
             'receipts' => ReceiptResource::collection($receipts),
+            'comments' => StopCommentResource::collection(StopComment::withTrashed()->visibleTo($trip, $request->user())->where('updated_at', '>=', $since)->orderBy('created_at')->get()),
+            'members' => $trip->members()->orderBy('name')->get(['users.id', 'users.name'])->map(fn ($member): array => ['user_id' => $member->id, 'name' => $member->name])->values(),
+            'unread_notifications' => TripNotifications::unreadCount($request->user(), $trip),
             'tax_refund' => TaxRefundRules::forApp(),
             'server_time' => $serverTime->toIso8601String(),
         ]);
