@@ -40,7 +40,8 @@ export function bindDayStrip() {
         startLeft = strip.scrollLeft;
     });
     window.addEventListener('pointermove', (e) => {
-        if (!down) return;
+        // A lifted day tile (drag to swap) moves instead; the strip stays put.
+        if (!down || document.body.classList.contains('dragging-stop')) return;
         const dx = e.clientX - startX;
         if (Math.abs(dx) > 5) {
             moved = true;

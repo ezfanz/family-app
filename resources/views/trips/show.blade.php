@@ -44,6 +44,12 @@
         <nav class="days" id="days" aria-label="Days"></nav>
         <button type="button" class="days-nav next" id="daysNext" aria-label="Scroll days right"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
+      {{-- Editors: how drag and drop works, until they dismiss it or use it once (dragmove.js). --}}
+      <p class="drag-tip" id="dragTip" hidden>
+        <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1.5a1.5 1.5 0 0 1 3 0V11m0-1a1.5 1.5 0 0 1 3 0v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-4.6-2.2L4 14.4a1.5 1.5 0 0 1 2.3-1.9L9 15"/></svg>
+        <span><strong>Tip:</strong> hold a <b>day</b> and drop it on another day to swap their plans. Hold a <b>stop</b> to move it to another day.</span>
+        <button type="button" class="icon-btn" id="dragTipClose" aria-label="Got it, hide this tip"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </p>
       <div class="dayhead">
         <div style="min-width:0">
           <h1 id="dayTitle">Loading…</h1>

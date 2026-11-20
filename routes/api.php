@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AirportController;
+use App\Http\Controllers\Api\DaySwapController;
 use App\Http\Controllers\Api\ExchangeRateController;
 use App\Http\Controllers\Api\IdeaController;
 use App\Http\Controllers\Api\NotificationController;
@@ -45,6 +46,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
     Route::get('/trips/{trip}', [TripController::class, 'show'])->name('trips.show')->can('view', 'trip');
     Route::patch('/trips/{trip}', [TripController::class, 'update'])->name('trips.update')->can('update', 'trip');
+    Route::post('/trips/{trip}/days/swap', DaySwapController::class)->name('trips.days.swap')->can('update', 'trip');
     Route::get('/trips/{trip}/changes', TripChangesController::class)->name('trips.changes')->can('view', 'trip');
     Route::get('/trips/{trip}/notifications', [NotificationController::class, 'index'])->name('trips.notifications.index')->can('view', 'trip');
     Route::post('/trips/{trip}/notifications/read', [NotificationController::class, 'read'])->name('trips.notifications.read')->can('view', 'trip');
