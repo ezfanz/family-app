@@ -15,6 +15,7 @@ import { bindReceipts, uploadWaitingPhotos } from './receipts.js';
 import { bindCamera } from './camera.js';
 import { resetOverview } from './overview.js';
 import { bindBell, renderBell } from './bell.js';
+import { bindStopDrag } from './dragmove.js';
 import { loadFx } from './fx.js';
 import { setWriterHooks } from './writer.js';
 import { net, initSync, loadCache, saveCache, clearTripStorage, flushQueue, queueLength, startPolling } from './sync.js';
@@ -194,6 +195,7 @@ export async function bootTrip(root) {
     bindReceipts();
     bindCamera();
     bindBell({ onGo: render });
+    bindStopDrag({ onMoved: render });
     bindIdeas();
     bindSheets(render);
     bindDayStrip();

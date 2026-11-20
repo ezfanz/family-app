@@ -57,6 +57,8 @@
       </div>
       <div id="banner"></div>
       <ol class="tl" id="rail" aria-label="Stops"></ol>
+      {{-- While a stop is dragged: every day, within thumb reach (dragmove.js). --}}
+      <div class="drop-tray" id="dropTray" aria-live="polite" hidden></div>
       <div class="empty-day hidden" id="emptyDay">
         <div></div>
         <div class="track" aria-hidden="true"><span class="o"></span><span class="dash-line"></span></div>

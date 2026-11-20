@@ -1051,3 +1051,29 @@ button.ov-card:focus-visible, .ov-col:focus-visible, .ov-person:focus-visible { 
 .act-photo-text .muted { margin: 0; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 .act-photo .rv-photo-actions { margin-top: 8px; }
 .rv-mini[disabled] { opacity: .6; cursor: progress; }
+
+/* ---------- itinerary: drag a stop to another day ---------- */
+.stop .head { -webkit-touch-callout: none; }
+body.dragging-stop { -webkit-user-select: none; user-select: none; cursor: grabbing; }
+.stop.dragging > * { opacity: .35; }
+.drag-ghost { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; display: flex; align-items: center; gap: 10px; max-width: min(78vw, 320px); padding: 12px 16px; border-radius: 14px; background: var(--surface); color: var(--ink); border: 2px solid var(--action); box-shadow: 0 14px 34px rgba(0, 0, 0, .28); transform-origin: 24px 28px; animation: ghost-lift .15s ease-out; }
+.drag-ghost span { font-size: 13px; font-weight: 700; color: var(--stone); }
+.drag-ghost strong { font-size: 15px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@keyframes ghost-lift { from { scale: .92; opacity: .6; } to { scale: 1.03; opacity: 1; } }
+.drop-tray { position: fixed; left: 0; right: 0; bottom: 0; z-index: 55; padding: 14px 16px calc(16px + var(--safe-bottom)); background: var(--surface); border-top: 1px solid var(--hair); border-radius: 20px 20px 0 0; box-shadow: 0 -10px 30px rgba(0, 0, 0, .18); transform: translateY(105%); transition: transform .2s ease-out; }
+.drop-tray.open { transform: none; }
+.drop-tray[hidden] { display: none; }
+@media (min-width: 760px) { .drop-tray { left: 50%; right: auto; width: min(var(--col), 100%); margin-left: calc(min(var(--col), 100%) / -2); } }
+.drop-tray-head { margin-bottom: 10px; font-size: 14px; font-weight: 700; color: var(--stone); text-align: center; }
+.drop-tray-head.ready { color: var(--action); }
+.drop-tray-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.drop-day { display: flex; flex-direction: column; align-items: center; gap: 1px; min-height: 58px; padding: 6px 0; border: 2px solid var(--c); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; transition: transform .1s, background .1s; }
+.drop-day-n { font-size: 18px; font-weight: 800; line-height: 1.1; }
+.drop-day-c { font-size: 10px; font-weight: 700; color: var(--c); }
+.drop-day-d { font-size: 10px; color: var(--stone); }
+.drop-day.is-here { opacity: .35; border-style: dashed; }
+.drop-day.drop-hover { background: var(--c); color: #FFFFFF; transform: scale(1.08); }
+.drop-day.drop-hover .drop-day-c, .drop-day.drop-hover .drop-day-d { color: #FFFFFF; }
+#days .daybtn.drop-ok .badge { outline: 2px dashed color-mix(in srgb, var(--action) 50%, transparent); outline-offset: 3px; }
+#days .daybtn.drop-hover .badge { outline: 3px solid var(--action); outline-offset: 3px; transform: scale(1.08); }
+@media (prefers-reduced-motion: reduce) { .drop-tray { transition: none; } .drag-ghost { animation: none; } }
