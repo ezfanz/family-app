@@ -37,6 +37,17 @@ export function latestDay(days, todayNumber) {
     return Math.max(1, Math.min(days.length, todayNumber));
 }
 
+/**
+ * What a receipt adds to Spent by itself: its total, unless items still on the list carry it
+ * (linked items get the receipt total as Paid ¥, so it is never counted twice).
+ * @param {(id: string) => boolean} hasItem
+ */
+export function unlinkedReceiptYen(receipt, hasItem) {
+    if (receipt.pre_tax_yen == null) return 0;
+    if ((receipt.shopping_item_ids || []).some(hasItem)) return 0;
+    return Number(receipt.pre_tax_yen) + tax.taxOf(receipt);
+}
+
 const dayDiff = (fromIso, toIso) => Math.round((Date.parse(`${toIso}T00:00:00Z`) - Date.parse(`${fromIso}T00:00:00Z`)) / 864e5);
 
 /**
@@ -52,7 +63,11 @@ export function overviewFor(data, userId) {
     const items = data.items.filter((i) => ids.has(Number(i.user_id)));
     const receipts = data.receipts.filter((r) => ids.has(Number(r.user_id)));
 
-    const spentYen = items.reduce((sum, i) => sum + (Number(i.actual_yen) || 0), 0);
+    const itemIds = new Set(data.items.map((i) => i.id));
+    const hasItem = (id) => itemIds.has(id);
+    const receiptYen = (r) => unlinkedReceiptYen(r, hasItem);
+    const spentYen = items.reduce((sum, i) => sum + (Number(i.actual_yen) || 0), 0)
+        + receipts.reduce((sum, r) => sum + receiptYen(r), 0);
     const spentRm = toRm(spentYen);
     const budgetRm = round2(members.reduce((sum, m) => sum + (Number(m.budget_rm) || 0), 0));
     const bought = items.filter((i) => i.is_bought).length;
@@ -67,13 +82,14 @@ export function overviewFor(data, userId) {
     const yenByDay = new Array(count + 1).fill(0);
     const itemsByDay = new Array(count + 1).fill(0);
     let beforeYen = 0;
-    for (const item of items) {
-        if (item.actual_yen == null || !item.paid_at) continue;
-        const n = dayNumber(JAPAN_DAY.format(new Date(item.paid_at)));
+    const spends = items.filter((i) => i.actual_yen != null && i.paid_at).map((i) => [i.paid_at, Number(i.actual_yen)])
+        .concat(receipts.filter((r) => r.purchased_at && receiptYen(r) > 0).map((r) => [r.purchased_at, receiptYen(r)]));
+    for (const [at, yenValue] of spends) {
+        const n = dayNumber(JAPAN_DAY.format(new Date(at)));
         if (n < 1) {
-            beforeYen += Number(item.actual_yen);
+            beforeYen += yenValue;
         } else if (n <= count) {
-            yenByDay[n] += Number(item.actual_yen);
+            yenByDay[n] += yenValue;
             itemsByDay[n] += 1;
         }
     }
@@ -91,12 +107,16 @@ export function overviewFor(data, userId) {
             byCategory.set(key, (byCategory.get(key) || 0) + Number(item.actual_yen));
         }
     }
+    const unlinkedYen = receipts.reduce((sum, r) => sum + receiptYen(r), 0);
+    if (unlinkedYen > 0) byCategory.set('other', (byCategory.get('other') || 0) + unlinkedYen);
     const categories = [...byCategory]
         .sort((a, b) => b[1] - a[1])
         .map(([key, yen]) => ({ key, label: CATEGORIES[key] || 'Other', rm: toRm(yen) }));
 
     const people = userId !== null ? [] : data.members.map((m) => {
-        const mineRm = toRm(data.items.filter((i) => Number(i.user_id) === Number(m.user_id)).reduce((sum, i) => sum + (Number(i.actual_yen) || 0), 0));
+        const mine = (r) => Number(r.user_id) === Number(m.user_id);
+        const mineRm = toRm(data.items.filter(mine).reduce((sum, i) => sum + (Number(i.actual_yen) || 0), 0)
+            + data.receipts.filter(mine).reduce((sum, r) => sum + receiptYen(r), 0));
         const budget = round2(Number(m.budget_rm) || 0);
         return {
             user_id: m.user_id,

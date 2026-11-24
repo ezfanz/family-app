@@ -46,7 +46,7 @@ class ShoppingOverviewController extends Controller
         $overview = new ShoppingOverview(
             members: $members,
             items: $trip->shoppingItems()->whereIn('user_id', $visible)->get()->all(),
-            receipts: $trip->receipts()->whereIn('user_id', $visible)->get()->all(),
+            receipts: $trip->receipts()->whereIn('user_id', $visible)->withCount('shoppingItems')->get()->all(),
             ratePer100Yen: $this->rate($trip, $rates),
             startDate: $trip->start_date->toDateString(),
             endDate: $trip->end_date->toDateString(),

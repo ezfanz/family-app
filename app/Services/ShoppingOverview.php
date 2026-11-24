@@ -12,8 +12,10 @@ use Carbon\CarbonImmutable;
 /**
  * Shopping overview numbers for one person or the whole group.
  *
- * Spent = Σ Paid ¥ × rate / 100. A purchase counts towards the Japan-time day
- * its Paid ¥ was first entered. resources/js/trip/overviewcalc.js mirrors these
+ * Spent = (Σ Paid ¥ + Σ totals of receipts not linked to any item) × rate / 100.
+ * Linked receipts already flow into their items' Paid ¥ (ReceiptPaidSync), so they
+ * are not counted twice. An item counts towards the Japan-time day its Paid ¥ was
+ * first entered; an unlinked receipt towards its purchase day, under "Other". resources/js/trip/overviewcalc.js mirrors these
  * rules so the screen works offline; keep the two in step.
  */
 class ShoppingOverview
@@ -97,7 +99,8 @@ class ShoppingOverview
         $items = array_values(array_filter($this->items, fn (ShoppingItem $i): bool => in_array((int) $i->user_id, $ids, true)));
         $receipts = array_values(array_filter($this->receipts, fn (Receipt $r): bool => in_array((int) $r->user_id, $ids, true)));
 
-        $spentYen = array_sum(array_map(fn (ShoppingItem $i): int => (int) $i->actual_yen, $items));
+        $spentYen = array_sum(array_map(fn (ShoppingItem $i): int => (int) $i->actual_yen, $items))
+            + array_sum(array_map(fn (Receipt $r): int => $this->unlinkedReceiptYen($r), $receipts));
         $spentRm = $this->toRm($spentYen);
         $budgetRm = round(array_sum(array_column($members, 'budget_rm')), 2);
         $bought = count(array_filter($items, fn (ShoppingItem $i): bool => $i->is_bought));
@@ -106,7 +109,7 @@ class ShoppingOverview
         $qualifying = array_filter($receipts, fn (Receipt $r): bool => ! in_array($this->tax->statusOf($r, $groups), [ReceiptStatus::Captured, ReceiptStatus::NotEligible], true));
         $refundYen = $this->tax->totals($receipts)['expected'];
 
-        [$days, $beforeTripRm] = $this->days($items);
+        [$days, $beforeTripRm] = $this->days($items, $receipts);
 
         return [
             'user_id' => $userId,
@@ -127,16 +130,30 @@ class ShoppingOverview
             'before_trip_rm' => $beforeTripRm,
             'axis_max' => self::axisMax(max([0, ...array_column($days, 'rm')])),
             'selected_day' => self::latestDay($days, $this->dayNumber($this->today)),
-            'categories' => $this->categories($items),
+            'categories' => $this->categories($items, $receipts),
             'people' => $userId === null ? $this->people() : [],
         ];
     }
 
     /**
+     * What a receipt adds to Spent by itself: its total, unless linked items already carry it.
+     * Receipts loaded without a shopping_items_count are treated as unlinked.
+     */
+    public function unlinkedReceiptYen(Receipt $receipt): int
+    {
+        if ($receipt->pre_tax_yen === null || (int) ($receipt->shopping_items_count ?? 0) > 0) {
+            return 0;
+        }
+
+        return (int) $receipt->pre_tax_yen + $this->tax->taxOf($receipt);
+    }
+
+    /**
      * @param  list<ShoppingItem>  $items
+     * @param  list<Receipt>  $receipts
      * @return array{0: list<array{n: int, date: string, rm: float, items: int, future: bool}>, 1: float}
      */
-    private function days(array $items): array
+    private function days(array $items, array $receipts): array
     {
         $count = $this->dayNumber($this->endDate);
         $today = $this->dayNumber($this->today);
@@ -144,15 +161,25 @@ class ShoppingOverview
         $itemsByDay = array_fill(1, max(1, $count), 0);
         $beforeYen = 0;
 
+        $spends = [];
         foreach ($items as $item) {
-            if ($item->actual_yen === null || $item->paid_at === null) {
-                continue;
+            if ($item->actual_yen !== null && $item->paid_at !== null) {
+                $spends[] = [CarbonImmutable::parse($item->paid_at), (int) $item->actual_yen];
             }
-            $n = $this->dayNumber(CarbonImmutable::parse($item->paid_at)->setTimezone($this->timezone)->toDateString());
+        }
+        foreach ($receipts as $receipt) {
+            $yen = $this->unlinkedReceiptYen($receipt);
+            if ($yen > 0 && $receipt->purchased_at !== null) {
+                $spends[] = [CarbonImmutable::parse($receipt->purchased_at), $yen];
+            }
+        }
+
+        foreach ($spends as [$at, $yen]) {
+            $n = $this->dayNumber($at->setTimezone($this->timezone)->toDateString());
             if ($n < 1) {
-                $beforeYen += (int) $item->actual_yen;
+                $beforeYen += $yen;
             } elseif ($n <= $count) {
-                $yenByDay[$n] += (int) $item->actual_yen;
+                $yenByDay[$n] += $yen;
                 $itemsByDay[$n]++;
             }
         }
@@ -175,9 +202,10 @@ class ShoppingOverview
      * Categories with spending, largest first.
      *
      * @param  list<ShoppingItem>  $items
+     * @param  list<Receipt>  $receipts
      * @return list<array{key: string, label: string, rm: float}>
      */
-    private function categories(array $items): array
+    private function categories(array $items, array $receipts): array
     {
         $yen = [];
         foreach ($items as $item) {
@@ -185,6 +213,11 @@ class ShoppingOverview
                 $key = $item->category->value;
                 $yen[$key] = ($yen[$key] ?? 0) + (int) $item->actual_yen;
             }
+        }
+        $receiptYen = array_sum(array_map(fn (Receipt $r): int => $this->unlinkedReceiptYen($r), $receipts));
+        if ($receiptYen > 0) {
+            $other = ShoppingCategory::Other->value;
+            $yen[$other] = ($yen[$other] ?? 0) + $receiptYen;
         }
         arsort($yen);
 
@@ -203,11 +236,15 @@ class ShoppingOverview
     private function people(): array
     {
         $items = $this->items;
+        $receipts = $this->receipts;
 
-        return array_map(function (array $member) use ($items): array {
+        return array_map(function (array $member) use ($items, $receipts): array {
             $spentRm = $this->toRm(array_sum(array_map(
                 fn (ShoppingItem $i): int => (int) $i->user_id === $member['user_id'] ? (int) $i->actual_yen : 0,
                 $items,
+            )) + array_sum(array_map(
+                fn (Receipt $r): int => (int) $r->user_id === $member['user_id'] ? $this->unlinkedReceiptYen($r) : 0,
+                $receipts,
             )));
             $budgetRm = round($member['budget_rm'], 2);
 

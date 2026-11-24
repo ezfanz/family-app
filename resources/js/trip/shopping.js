@@ -1,6 +1,7 @@
 /*
  * Shopping, after the E-Itinerary design: everyone keeps their own list and budget.
- * Balance = budget − spent, where spent is what was actually paid (Paid ¥ × rate).
+ * Balance = budget − spent, where spent is what was actually paid: Paid ¥, plus the
+ * totals of receipts not linked to any item on the list, × rate.
  * The trip owner (admin) also gets "Everyone" totals and can open anyone's list.
  */
 
@@ -11,6 +12,7 @@ import { write } from './writer.js';
 import { renderFx, bindFx, liveRate } from './fx.js';
 import { renderShopTab } from './receipts.js';
 import { overviewWho, showOverviewOf } from './overview.js';
+import { unlinkedReceiptYen } from './overviewcalc.js';
 
 const AVATAR_COLOURS = ['#2A3B8F', '#6A3E9A', '#00776F', '#1F5591', '#B7791F', '#C2255C', '#4A8410', '#8A5A00'];
 export const ROLE_LABEL = { owner: 'Owner', editor: 'Editor', viewer: 'Viewer' };
@@ -59,9 +61,14 @@ function itemsOf(userId) {
     return shoppingList().filter((i) => Number(i.user_id) === Number(userId));
 }
 
+/** Receipts for one person, or everyone's I can see (null). */
+function receiptsOf(userId = null) {
+    return [...S.receipts.values()].filter((r) => userId === null || Number(r.user_id) === Number(userId));
+}
+
 /** Money for one person or the whole group, as in the design's money() helper. */
-export function money(budget, items) {
-    let paidYen = 0;
+export function money(budget, items, receipts = []) {
+    let paidYen = receipts.reduce((sum, r) => sum + unlinkedReceiptYen(r, (id) => S.items.has(id)), 0);
     let leftYen = 0;
     let bought = 0;
     for (const item of items) {
@@ -117,10 +124,10 @@ function renderOwnerPick(sel) {
 function renderAll() {
     let budget = 0;
     S.shoppers.forEach((p) => { budget += Number(p.budget_rm) || 0; });
-    $('allTotals').innerHTML = totalsHtml(money(budget, shoppingList()));
+    $('allTotals').innerHTML = totalsHtml(money(budget, shoppingList(), receiptsOf()));
 
     $('shopPeople').innerHTML = S.shoppers.map((p) => {
-        const m = money(Number(p.budget_rm) || 0, itemsOf(p.user_id));
+        const m = money(Number(p.budget_rm) || 0, itemsOf(p.user_id), receiptsOf(p.user_id));
         return `<button type="button" class="person-card" data-shopper="${p.user_id}" aria-label="${esc(`${p.name}: spent ${rm(m.spent)} of ${rm(m.budget)}. Open list.`)}">
             ${avatar(p)}
             <span class="pc-main">
@@ -408,7 +415,7 @@ function renderPersonList(person) {
 }
 
 function renderPersonTotals(person) {
-    const m = money(Number(person.budget_rm) || 0, itemsOf(person.user_id));
+    const m = money(Number(person.budget_rm) || 0, itemsOf(person.user_id), receiptsOf(person.user_id));
     $('personTotals').innerHTML = totalsHtml(m);
     const toBuy = m.count - m.bought;
     let leftLine = '';
@@ -425,7 +432,7 @@ function renderPersonTotals(person) {
 
 function renderPerson(person) {
     const editable = canManageShoppingOf(person.user_id);
-    const m = money(Number(person.budget_rm) || 0, itemsOf(person.user_id));
+    const m = money(Number(person.budget_rm) || 0, itemsOf(person.user_id), receiptsOf(person.user_id));
     $('personHead').innerHTML = `${avatar(person, 'lg')}
         <div><div class="ph-name">${esc(displayName(person))}</div>
         <div class="muted">${ROLE_LABEL[person.role] || person.role} · ${m.count} item${m.count === 1 ? '' : 's'} · ${m.bought} bought</div></div>`;
@@ -770,5 +777,5 @@ function bindFilter() {
 }
 
 export function computeTotals() {
-    return money(S.shoppers.reduce((sum, p) => sum + (Number(p.budget_rm) || 0), 0), shoppingList());
+    return money(S.shoppers.reduce((sum, p) => sum + (Number(p.budget_rm) || 0), 0), shoppingList(), receiptsOf());
 }

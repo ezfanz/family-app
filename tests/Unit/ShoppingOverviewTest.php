@@ -73,6 +73,8 @@ class ShoppingOverviewTest extends TestCase
         $receipt = function (int $owner, string $store, string $at, int $pre, int $rate = 10, ReceiptStage $stage = ReceiptStage::Checked): Receipt {
             $r = new Receipt(['store_name' => $store, 'branch' => 'Namba', 'purchased_at' => $at, 'pre_tax_yen' => $pre, 'tax_rate' => $rate, 'stage' => $stage]);
             $r->user_id = $owner;
+            // The design's receipts are for items on the list, so they add nothing beyond Paid ¥.
+            $r->shopping_items_count = 1;
 
             return $r;
         };
