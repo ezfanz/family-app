@@ -250,6 +250,37 @@ class ReceiptApiTest extends TestCase
         $this->assertTrue($second->is_bought);
     }
 
+    public function test_lines_read_off_a_receipt_go_on_the_owners_list_for_the_chosen_person(): void
+    {
+        ['trip' => $trip, 'editor' => $editor] = $this->tripFixture();
+        $receipt = Receipt::factory()->for($trip)->create(['user_id' => $editor->id, 'store_name' => 'GU', 'pre_tax_yen' => null, 'stage' => ReceiptStage::Captured]);
+        $shirt = (string) Str::uuid();
+        $snack = (string) Str::uuid();
+        $payload = [
+            'pre_tax_yen' => 3000,
+            'tax_rate' => 10,
+            'new_items_for' => 'Ipan',
+            'new_items' => [
+                ['id' => $shirt, 'name' => 'T-shirt', 'details' => 'Tシャツ', 'qty' => 1, 'price_yen' => 2000],
+                ['id' => $snack, 'name' => 'KitKat Matcha', 'qty' => 2, 'price_yen' => 1000, 'reduced_rate' => true],
+            ],
+        ];
+
+        $this->actingAs($editor)->patchJson("/api/receipts/{$receipt->id}", $payload)
+            ->assertOk()
+            ->assertJsonCount(2, 'data.shopping_item_ids');
+        // Retrying the same save does not add the items twice.
+        $this->actingAs($editor)->patchJson("/api/receipts/{$receipt->id}", $payload)->assertOk();
+
+        $this->assertSame(2, ShoppingItem::query()->whereKey([$shirt, $snack])->count());
+        $shirtItem = ShoppingItem::findOrFail($shirt);
+        $this->assertSame([$editor->id, 'Ipan', 'GU', true], [$shirtItem->user_id, $shirtItem->for_whom, $shirtItem->store, $shirtItem->is_bought]);
+        // ¥3,300 receipt total shared 2:1.
+        $this->assertSame(2200, $shirtItem->actual_yen);
+        $this->assertSame(1100, ShoppingItem::findOrFail($snack)->actual_yen);
+        $this->assertSame('snacks_food', ShoppingItem::findOrFail($snack)->category->value);
+    }
+
     public function test_split_keeps_the_total_exact(): void
     {
         $this->assertSame([3333, 3334, 3333], ReceiptPaidSync::split(10000, [

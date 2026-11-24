@@ -265,6 +265,25 @@
         <div class="pills" id="rvOwners"></div>
       </fieldset>
 
+      {{-- Lines Claude read off the receipt: added to the owner's shopping list on save. --}}
+      <section class="rv-add" id="rvAdd" aria-labelledby="rvAddTitle" hidden>
+        <label class="switch-row" for="rvAddOn">
+          <span class="acct-who">
+            <strong id="rvAddTitle">Add to shopping list</strong>
+            <span id="rvAddNote"></span>
+          </span>
+          <span class="switch">
+            <input type="checkbox" id="rvAddOn" role="switch" checked>
+            <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+          </span>
+        </label>
+        <div class="rv-add-body" id="rvAddBody">
+          <div class="field"><label for="rvAddFor">For who</label><input id="rvAddFor" type="text" class="input" maxlength="80" list="rvAddForList" autocomplete="off" placeholder="e.g. Kakak"><datalist id="rvAddForList"></datalist></div>
+          <div class="rv-add-tools"><span class="muted tnum" id="rvAddCount"></span><button type="button" class="rv-ai-more" id="rvAddAll"></button></div>
+          <ul class="rv-add-list" id="rvAddList"></ul>
+        </div>
+      </section>
+
       <div class="field">
         <div class="rv-label">Link to shopping list<span class="hint">Optional</span></div>
         <div class="rv-links" id="rvLinks"></div>
@@ -272,7 +291,7 @@
           <summary class="rv-link-add"><svg class="i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Link item</summary>
           <div class="rv-pick-list" id="rvPickList"></div>
         </details>
-        <p class="muted rv-link-note">Linked items are ticked as bought. With one item linked, its Paid ¥ is filled in from this receipt.</p>
+        <p class="muted rv-link-note">Linked items are ticked as bought and share this receipt’s total as their Paid ¥.</p>
       </div>
 
       <p class="rv-reminder"><svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Tax-free goods are for personal use and must leave Japan with you, unused.</span></p>

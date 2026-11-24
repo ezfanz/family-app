@@ -55,6 +55,14 @@ class StoreReceiptRequest extends FormRequest
             'refund_received_yen' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:1000000'],
             'shopping_item_ids' => ['sometimes', 'array', 'max:50'],
             'shopping_item_ids.*' => ['uuid'],
+            'new_items' => ['sometimes', 'array', 'max:40'],
+            'new_items.*.id' => ['required', 'uuid'],
+            'new_items.*.name' => ['required', 'string', 'max:160'],
+            'new_items.*.details' => ['nullable', 'string', 'max:160'],
+            'new_items.*.qty' => ['sometimes', 'integer', 'min:1', 'max:999'],
+            'new_items.*.price_yen' => ['nullable', 'integer', 'min:0', 'max:10000000'],
+            'new_items.*.reduced_rate' => ['sometimes', 'boolean'],
+            'new_items_for' => ['sometimes', 'nullable', 'string', 'max:80'],
         ];
     }
 

@@ -8,10 +8,10 @@
  */
 
 import { S, isOwner, canManageShoppingOf } from './store.js';
-import { $, esc, yen, rm, fmtDate, toast } from './util.js';
+import { $, esc, yen, rm, fmtDate, toast, uuid } from './util.js';
 import { api, apiUrl } from './api.js';
 import { write } from './writer.js';
-import { rate } from './shopping.js';
+import { rate, forWhoNames } from './shopping.js';
 import * as tax from './taxcalc.js';
 import { openCamera } from './camera.js';
 import { scanPhotos, warmScanner } from './scanner.js';
@@ -19,6 +19,10 @@ import { queuePhoto, localPhotoUrl } from './photo-queue.js';
 
 let editingId = null;
 let linked = [];
+/** Receipt lines (by index) the person unticked in "Add to shopping list". */
+let addSkipped = new Set();
+/** Whether "For who" was typed, so changing whose receipt it is leaves it alone. */
+let addForTyped = false;
 let onChange = () => {};
 
 const minimum = () => Number(S.taxRules?.min_pre_tax_yen) || 5000;
@@ -129,6 +133,101 @@ function renderLinks() {
         : '<p class="muted" style="margin:8px 0 0">Nothing on this shopping list yet.</p>';
 }
 
+/* ---------- Add the lines read off the receipt to the shopping list ---------- */
+
+const lineName = (line) => String(line.name_en || line.name_ja || '').trim().slice(0, 160);
+const sameName = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+
+/** Lines from the reading, each marked when a linked item already has its name. */
+function addLines() {
+    const reading = S.receipts.get(editingId)?.reading;
+    const names = linked.map((id) => S.items.get(id)?.name).filter(Boolean);
+    return (reading?.items || [])
+        .map((line, index) => ({ line, index, name: lineName(line), onList: names.some((n) => sameName(n, lineName(line))) }))
+        .filter((row) => row.name);
+}
+
+const ownerName = () => S.shoppers.find((p) => Number(p.user_id) === Number(radio('owner') || S.receipts.get(editingId)?.user_id))?.name || '';
+
+/** Lines that will be added on save. */
+function linesToAdd() {
+    if (!$('rvAddOn').checked) return [];
+    return addLines().filter((row) => !row.onList && !addSkipped.has(row.index));
+}
+
+function renderAdd() {
+    const rows = addLines();
+    const fresh = rows.filter((row) => !row.onList);
+    $('rvAdd').hidden = rows.length === 0;
+    if (!rows.length) return;
+
+    if (!addForTyped) $('rvAddFor').value = ownerName();
+    $('rvAddForList').innerHTML = forWhoNames().map((v) => `<option value="${esc(v)}"></option>`).join('');
+    $('rvAddBody').hidden = !$('rvAddOn').checked || fresh.length === 0;
+
+    const picked = linesToAdd().length;
+    const who = $('rvAddFor').value.trim();
+    $('rvAddNote').textContent = !fresh.length
+        ? 'Everything on this receipt is on the list'
+        : $('rvAddOn').checked
+            ? `${picked} item${picked === 1 ? '' : 's'} go on ${who ? `the list for ${who}` : 'the list'}, ticked as bought`
+            : 'Off: only the receipt is saved';
+    $('rvAddCount').textContent = `${picked} of ${fresh.length} selected`;
+    const allOn = fresh.every((row) => !addSkipped.has(row.index));
+    $('rvAddAll').textContent = allOn ? 'Clear all' : 'Select all';
+    $('rvAddAll').hidden = fresh.length < 2;
+
+    $('rvAddList').innerHTML = rows.map(({ line, index, name, onList }) => {
+        const japanese = line.name_en && line.name_ja ? `<small lang="ja">${esc(line.name_ja)}</small>` : '';
+        const qty = line.qty > 1 ? `<span class="rv-ai-qty">×${line.qty}</span>` : '';
+        const price = Number(line.price_yen) > 0 ? `<span>${yen(line.price_yen)}</span>` : '';
+        const side = onList ? '<span class="rv-add-done">On the list</span>' : `${qty}${price}`;
+        return `<li><label class="rv-add-row${onList ? ' done' : ''}">
+            <input type="checkbox" data-add-line="${index}" ${onList || !addSkipped.has(index) ? 'checked' : ''} ${onList ? 'disabled' : ''}>
+            <span class="rv-ai-name"><strong>${esc(name)}</strong>${japanese}</span>
+            <span class="rv-ai-price tnum">${side}</span>
+        </label></li>`;
+    }).join('');
+}
+
+/**
+ * Put the chosen lines on the owner's list now (works offline) and link them.
+ * @return {object[]} what the server needs to create the same items
+ */
+function addChosenLines(ownerId, storeName) {
+    const forWhom = $('rvAddFor').value.trim();
+    let sortOrder = Math.max(0, ...[...S.items.values()].map((i) => Number(i.sort_order) || 0));
+    return linesToAdd().map(({ line, name }) => {
+        const price = Math.round(Number(line.price_yen));
+        const item = {
+            id: uuid(),
+            name,
+            details: line.name_en && line.name_ja ? String(line.name_ja).slice(0, 160) : null,
+            qty: Math.min(999, Math.max(1, Math.round(Number(line.qty)) || 1)),
+            price_yen: price > 0 ? Math.min(10_000_000, price) : null,
+            reduced_rate: Boolean(line.reduced_rate),
+        };
+        sortOrder += 1;
+        S.items.set(item.id, {
+            id: item.id,
+            user_id: ownerId,
+            name: item.name,
+            details: item.details,
+            store: storeName,
+            for_whom: forWhom || null,
+            category: item.reduced_rate ? 'snacks_food' : 'other',
+            qty: item.qty,
+            estimated_yen: item.price_yen ?? 0,
+            actual_yen: item.price_yen,
+            is_bought: true,
+            paid_at: new Date().toISOString(),
+            sort_order: sortOrder,
+        });
+        linked.push(item.id);
+        return item;
+    });
+}
+
 function fillStoreSuggestions() {
     const names = new Set([...S.receipts.values()].map((r) => r.store_name).concat([...S.items.values()].map((i) => i.store)).filter(Boolean));
     $('rvStoreList').innerHTML = [...names].sort((a, b) => a.localeCompare(b)).map((name) => `<option value="${esc(name)}"></option>`).join('');
@@ -149,6 +248,9 @@ export function openReview(receiptId) {
     if (!receipt || !canManageShoppingOf(receipt.user_id)) return;
     editingId = receiptId;
     linked = [...(receipt.shopping_item_ids || [])];
+    addSkipped = new Set();
+    addForTyped = false;
+    $('rvAddOn').checked = true;
 
     form().reset();
     $('rvStore').value = receipt.store_name || '';
@@ -169,6 +271,7 @@ export function openReview(receiptId) {
     renderLinks();
     fillStoreSuggestions();
     renderLive();
+    renderAdd();
     $('rvDlg').showModal();
     const willRead = S.taxRules?.auto_read && isBlank(receipt);
     if (receipt.reading?.items?.length || receipt.reading?.summary) {
@@ -197,6 +300,8 @@ function save() {
         return;
     }
     const before = { ...receipt };
+    const newItems = addChosenLines(Number(next.user_id), next.store_name);
+    const forWhom = $('rvAddFor').value.trim();
     const body = {
         store_name: next.store_name,
         branch: next.branch,
@@ -207,6 +312,10 @@ function save() {
         shopping_item_ids: linked,
     };
     if (Number(next.user_id) !== Number(receipt.user_id)) body.user_id = next.user_id;
+    if (newItems.length) {
+        body.new_items = newItems;
+        body.new_items_for = forWhom || null;
+    }
 
     const saved = { ...next, stage: receipt.stage === 'captured' ? 'checked' : receipt.stage, shopping_item_ids: [...linked] };
     S.receipts.set(receipt.id, saved);
@@ -219,9 +328,15 @@ function save() {
         path: `/receipts/${receipt.id}`,
         body,
         onSaved: (data) => { if (data?.data) S.receipts.set(receipt.id, data.data); onChange(); },
-        revert: () => { S.receipts.set(receipt.id, before); onChange(); },
+        revert: () => {
+            S.receipts.set(receipt.id, before);
+            newItems.forEach((item) => S.items.delete(item.id));
+            onChange();
+        },
     });
-    toast('Receipt saved.');
+    toast(newItems.length
+        ? `Receipt saved. ${newItems.length} item${newItems.length === 1 ? '' : 's'} added to the list${forWhom ? ` for ${forWhom}` : ''}.`
+        : 'Receipt saved.');
 }
 
 /**
@@ -420,6 +535,7 @@ async function autoRead(receiptId) {
         const { filled, flagged } = applyReading(result);
         if (filled || result.items?.length) {
             doneCard(result, flagged);
+            renderAdd();
         } else {
             aiCard('warn', { title: 'Couldn’t read this receipt clearly', sub: 'Type the store and amount below, or retake the photo in better light.' });
         }
@@ -454,12 +570,22 @@ export function bindReview(hooks) {
         if (e.target.name === 'owner') {
             linked = [];
             renderLinks();
+            renderAdd();
         }
         if (e.target.closest('#rvPickList')) {
             linked = [...$('rvPickList').querySelectorAll('input:checked')].map((input) => input.value);
             renderLinks();
+            renderAdd();
             $('rvPick').open = true;
         }
+        const line = e.target.closest('[data-add-line]');
+        if (line) {
+            const index = Number(line.dataset.addLine);
+            if (line.checked) addSkipped.delete(index);
+            else addSkipped.add(index);
+            renderAdd();
+        }
+        if (e.target.id === 'rvAddOn') renderAdd();
         renderLive();
     });
     $('rvLinks').addEventListener('click', (e) => {
@@ -467,6 +593,17 @@ export function bindReview(hooks) {
         if (!chip) return;
         linked = linked.filter((id) => id !== chip.dataset.unlink);
         renderLinks();
+        renderAdd();
+    });
+    $('rvAddFor').addEventListener('input', () => {
+        addForTyped = true;
+        renderAdd();
+    });
+    $('rvAddAll').addEventListener('click', () => {
+        const fresh = addLines().filter((row) => !row.onList);
+        const allOn = fresh.every((row) => !addSkipped.has(row.index));
+        addSkipped = allOn ? new Set(fresh.map((row) => row.index)) : new Set();
+        renderAdd();
     });
     form().addEventListener('submit', (e) => {
         e.preventDefault();

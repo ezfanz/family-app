@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Enums\ReceiptStage;
+use App\Enums\ShoppingCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReceiptRequest;
 use App\Http\Requests\UpdateReceiptRequest;
@@ -135,6 +136,12 @@ class ReceiptController extends Controller
 
         $receipt->save();
 
+        if (($input['new_items'] ?? []) !== []) {
+            $newIds = $this->addItemsFromReceipt($receipt, $input['new_items'], $input['new_items_for'] ?? null);
+            $current = $input['shopping_item_ids'] ?? $receipt->shoppingItems()->pluck('shopping_items.id')->all();
+            $input['shopping_item_ids'] = array_values(array_unique([...$current, ...$newIds]));
+        }
+
         if (array_key_exists('shopping_item_ids', $input)) {
             $this->linkShoppingItems($receipt, $input['shopping_item_ids']);
         }
@@ -143,6 +150,51 @@ class ReceiptController extends Controller
         if (array_intersect(['pre_tax_yen', 'tax_rate', 'shopping_item_ids'], array_keys($input)) !== []) {
             ReceiptPaidSync::fromConfig()->sync($receipt);
         }
+    }
+
+    /**
+     * Put the lines read off the receipt on the owner's shopping list, bought and
+     * for the given person. Client ids make retries idempotent.
+     *
+     * @param  list<array{id: string, name: string, details?: string|null, qty?: int, price_yen?: int|null, reduced_rate?: bool}>  $lines
+     * @return list<string>
+     */
+    private function addItemsFromReceipt(Receipt $receipt, array $lines, ?string $forWhom): array
+    {
+        $forWhom = trim((string) $forWhom) === '' ? null : trim((string) $forWhom);
+        $sortOrder = (int) ShoppingItem::query()->where('trip_id', $receipt->trip_id)->max('sort_order');
+        $ids = [];
+
+        foreach ($lines as $line) {
+            $existing = ShoppingItem::withTrashed()->find($line['id']);
+            if ($existing !== null) {
+                abort_unless($existing->trip_id === $receipt->trip_id && (int) $existing->user_id === (int) $receipt->user_id, 409, 'That id is already in use.');
+                $ids[] = $existing->id;
+
+                continue;
+            }
+
+            $price = isset($line['price_yen']) ? (int) $line['price_yen'] : null;
+            $item = new ShoppingItem([
+                'name' => trim($line['name']),
+                'details' => isset($line['details']) && trim($line['details']) !== '' ? trim($line['details']) : null,
+                'store' => $receipt->store_name,
+                'for_whom' => $forWhom,
+                'category' => ($line['reduced_rate'] ?? false) ? ShoppingCategory::SnacksAndFood : ShoppingCategory::Other,
+                'qty' => $line['qty'] ?? 1,
+                'estimated_yen' => $price ?? 0,
+                'actual_yen' => $price !== null && $price > 0 ? $price : null,
+                'is_bought' => true,
+            ]);
+            $item->id = $line['id'];
+            $item->trip_id = $receipt->trip_id;
+            $item->user_id = $receipt->user_id;
+            $item->sort_order = ++$sortOrder;
+            $item->save();
+            $ids[] = $item->id;
+        }
+
+        return $ids;
     }
 
     /**

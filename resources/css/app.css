@@ -1094,3 +1094,18 @@ body.dragging-stop { -webkit-user-select: none; user-select: none; cursor: grabb
 .ghost-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .ghost-target { font-style: normal; font-size: 13px; font-weight: 800; color: var(--action); }
 .ghost-target[hidden] { display: none; }
+
+/* Check receipt: add the lines Claude read to the shopping list. */
+.rv-add { padding: 14px; border: 1px solid var(--hair); border-radius: 14px; background: var(--surface); }
+.rv-add[hidden], .rv-add-body[hidden] { display: none; }
+.rv-add:has(#rvAddOn:checked) { border-color: color-mix(in srgb, var(--action) 35%, var(--hair)); background: color-mix(in srgb, var(--action) 5%, var(--surface)); }
+.rv-add-body { display: grid; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--hair); }
+.rv-add-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; }
+.rv-add-tools .rv-ai-more { margin: 0; }
+.rv-add-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.rv-add-row { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 14px; border: 1px solid var(--hair); border-radius: 10px; background: var(--surface); cursor: pointer; }
+.rv-add-row input { width: 22px; height: 22px; margin: 0; accent-color: var(--action); flex: none; }
+.rv-add-row .rv-ai-name { flex: 1; }
+.rv-add-row:has(input:not(:checked):not(:disabled)) { opacity: .6; }
+.rv-add-row.done { cursor: default; background: var(--soft); }
+.rv-add-done { font-size: 12px; font-weight: 700; color: var(--done); }
