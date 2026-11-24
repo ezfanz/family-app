@@ -10,7 +10,7 @@ use App\Http\Resources\ReceiptResource;
 use App\Models\Receipt;
 use App\Models\ShoppingItem;
 use App\Models\Trip;
-use App\Services\TaxRefund\TaxRefundCalculator;
+use App\Services\ReceiptPaidSync;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -138,11 +138,15 @@ class ReceiptController extends Controller
         if (array_key_exists('shopping_item_ids', $input)) {
             $this->linkShoppingItems($receipt, $input['shopping_item_ids']);
         }
+
+        // A new amount, tax rate or set of links flows into the items' Paid ¥ and so the budget.
+        if (array_intersect(['pre_tax_yen', 'tax_rate', 'shopping_item_ids'], array_keys($input)) !== []) {
+            ReceiptPaidSync::fromConfig()->sync($receipt);
+        }
     }
 
     /**
      * Link items from the receipt owner's shopping list and tick them as bought.
-     * With a single linked item and no price yet, its "Paid ¥" becomes the receipt total.
      *
      * @param  list<string>  $itemIds
      */
@@ -160,15 +164,8 @@ class ReceiptController extends Controller
 
         $receipt->shoppingItems()->sync($items->modelKeys());
 
-        $paid = $receipt->pre_tax_yen !== null
-            ? $receipt->pre_tax_yen + TaxRefundCalculator::fromConfig()->taxOf($receipt)
-            : null;
-
         foreach ($items as $item) {
             $item->is_bought = true;
-            if ($items->count() === 1 && $item->actual_yen === null && $paid !== null) {
-                $item->actual_yen = $paid;
-            }
             $item->save();
         }
     }

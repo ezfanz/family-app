@@ -224,13 +224,42 @@ function save() {
     toast('Receipt saved.');
 }
 
-/** Mirror the server: linked items are bought; one linked item gets the receipt total as Paid ¥. */
+/**
+ * Split a total so the shares add up to it exactly: by what each line already shows
+ * as paid (when all have a price), else by estimate, else evenly.
+ * Mirrors App\Services\ReceiptPaidSync::split(); keep the two in step.
+ */
+export function splitTotal(total, lines) {
+    if (!lines.length) return [];
+    const paid = lines.map((l) => Math.max(0, Number(l.paid) || 0));
+    const est = lines.map((l) => Math.max(0, Number(l.estimated) || 0));
+    let weights = lines.map(() => 1);
+    if (!paid.includes(0)) weights = paid;
+    else if (est.reduce((a, b) => a + b, 0) > 0) weights = est;
+    const sum = weights.reduce((a, b) => a + b, 0);
+    let running = 0;
+    let given = 0;
+    return weights.map((w) => {
+        running += w;
+        const upTo = Math.round((total * running) / sum);
+        const share = upTo - given;
+        given = upTo;
+        return share;
+    });
+}
+
+/** Mirror the server: linked items are bought and share the receipt total as Paid ¥. */
 function markItemsBought(receipt) {
-    const items = linked.map((id) => S.items.get(id)).filter(Boolean);
-    for (const item of items) {
+    const items = linked.map((id) => S.items.get(id)).filter(Boolean)
+        .sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0) || String(a.id).localeCompare(String(b.id)));
+    const total = receipt.pre_tax_yen == null ? null : Number(receipt.pre_tax_yen) + tax.taxOf(receipt);
+    const shares = total == null ? [] : splitTotal(total, items.map((i) => ({ paid: i.actual_yen, estimated: i.estimated_yen })));
+    items.forEach((item, index) => {
         item.is_bought = true;
-        if (items.length === 1 && item.actual_yen == null) item.actual_yen = receipt.pre_tax_yen + tax.taxOf(receipt);
-    }
+        if (total == null) return;
+        item.actual_yen = shares[index];
+        if (!item.paid_at) item.paid_at = new Date().toISOString();
+    });
 }
 
 function remove() {

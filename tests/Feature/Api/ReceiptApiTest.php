@@ -9,6 +9,7 @@ use App\Models\Receipt;
 use App\Models\ShoppingItem;
 use App\Models\Trip;
 use App\Models\User;
+use App\Services\ReceiptPaidSync;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -212,6 +213,54 @@ class ReceiptApiTest extends TestCase
             'purchased_at' => '2026-11-22T12:00:00+09:00',
             'shopping_item_ids' => [$other->id],
         ])->assertUnprocessable()->assertJsonValidationErrors('shopping_item_ids');
+    }
+
+    public function test_changing_the_receipt_total_updates_the_linked_items_paid_amount(): void
+    {
+        ['trip' => $trip, 'editor' => $editor, 'item' => $item] = $this->tripFixture();
+        $item->update(['actual_yen' => 1000]);
+        $receipt = Receipt::factory()->for($trip)->create(['user_id' => $editor->id, 'pre_tax_yen' => 5000, 'tax_rate' => 10]);
+        $receipt->shoppingItems()->attach($item);
+
+        $this->actingAs($editor)->patchJson("/api/receipts/{$receipt->id}", ['pre_tax_yen' => 8000])->assertOk();
+
+        $this->assertSame(8800, $item->refresh()->actual_yen);
+
+        $this->actingAs($editor)->patchJson("/api/receipts/{$receipt->id}", ['stage' => 'customs_confirmed'])->assertOk();
+
+        $this->assertSame(8800, $item->refresh()->actual_yen);
+    }
+
+    public function test_a_receipt_total_is_shared_across_several_linked_items(): void
+    {
+        ['trip' => $trip, 'editor' => $editor, 'item' => $item] = $this->tripFixture();
+        $item->update(['estimated_yen' => 3000, 'actual_yen' => null, 'sort_order' => 1]);
+        $second = ShoppingItem::factory()->for($trip)->create(['user_id' => $editor->id, 'estimated_yen' => 1000, 'actual_yen' => null, 'sort_order' => 2]);
+
+        $this->actingAs($editor)->postJson('/api/receipts', [
+            'trip_id' => $trip->id,
+            'purchased_at' => '2026-11-22T12:00:00+09:00',
+            'pre_tax_yen' => 10000,
+            'tax_rate' => 10,
+            'shopping_item_ids' => [$item->id, $second->id],
+        ])->assertCreated();
+
+        $this->assertSame(8250, $item->refresh()->actual_yen);
+        $this->assertSame(2750, $second->refresh()->actual_yen);
+        $this->assertTrue($second->is_bought);
+    }
+
+    public function test_split_keeps_the_total_exact(): void
+    {
+        $this->assertSame([3333, 3334, 3333], ReceiptPaidSync::split(10000, [
+            ['paid' => null, 'estimated' => 0],
+            ['paid' => null, 'estimated' => 0],
+            ['paid' => null, 'estimated' => 0],
+        ]));
+        $this->assertSame([2000, 8000], ReceiptPaidSync::split(10000, [
+            ['paid' => 100, 'estimated' => 900],
+            ['paid' => 400, 'estimated' => 100],
+        ]));
     }
 
     public function test_airport_checklist_is_saved_per_person(): void
