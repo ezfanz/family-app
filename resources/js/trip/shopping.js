@@ -10,7 +10,7 @@ import { $, esc, yen, rm, debounce, debounceKeyed, toast, confirmAction } from '
 import { api } from './api.js';
 import { write } from './writer.js';
 import { renderFx, bindFx, liveRate } from './fx.js';
-import { renderShopTab } from './receipts.js';
+import { renderShopTab, receiptFilterChoices, receiptFilterCount, receiptFilterDescription } from './receipts.js';
 import { overviewWho, showOverviewOf } from './overview.js';
 import { unlinkedReceiptYen } from './overviewcalc.js';
 
@@ -349,14 +349,16 @@ function activeFilterCount() {
     return [f.q, f.forWho, f.store, f.status !== 'all'].filter(Boolean).length;
 }
 
-function renderFilterSummary() {
-    $('filterSummary').textContent = filterActive() ? filterDescription() : 'All items';
-    const count = activeFilterCount();
+export function renderFilterSummary() {
+    const onReceipts = UI.shopTab === 'receipts';
+    const description = onReceipts ? receiptFilterDescription() : filterDescription();
+    $('filterSummary').textContent = onReceipts ? description : (filterActive() ? description : 'All items');
+    const count = onReceipts ? receiptFilterCount() : activeFilterCount();
     $('filterTab').classList.toggle('active', count > 0);
     $('filterTab').toggleAttribute('data-owner', isOwner());
     $('filterTabBadge').hidden = count === 0;
     $('filterTabBadge').textContent = String(count);
-    $('filterTab').setAttribute('aria-label', count ? `Filter, ${count} on: ${filterDescription()}` : 'Filter and whose list');
+    $('filterTab').setAttribute('aria-label', count ? `Filter, ${count} on: ${description}` : (onReceipts ? 'Filter receipts' : 'Filter and whose list'));
 }
 
 /** Owner on "Everyone": matching items from every member's list, grouped by person. */
@@ -683,20 +685,35 @@ export function bindShopping() {
 }
 
 /** Put what is applied now into the drawer's fields, so closing without Apply loses nothing. */
-/** The drawer filters the List, or picks whose spending the Overview shows. */
-const drawerMode = () => (UI.shopTab === 'overview' ? 'overview' : 'list');
+/** The drawer filters the List or Receipts, or picks whose spending the Overview shows. */
+const drawerMode = () => (['overview', 'receipts'].includes(UI.shopTab) ? UI.shopTab : 'list');
+
+/** Receipts: names and statuses to pick from, with the applied ones selected. */
+function fillReceiptFields() {
+    const { names, statuses } = receiptFilterChoices();
+    $('fRcFor').innerHTML = '<option value="all">Anyone</option>'
+        + names.map(([key, label]) => `<option value="${esc(key)}"${UI.receiptForWho === key ? ' selected' : ''}>${key === UNASSIGNED ? esc(label) : `For ${esc(label)}`}</option>`).join('');
+    $('fRcStatus').innerHTML = statuses.map(([key, label]) =>
+        `<label class="pill"><input type="radio" name="rc_status" value="${esc(key)}"${UI.receiptFilter === key ? ' checked' : ''}><span>${esc(label)}</span></label>`).join('');
+}
 
 function fillDrawerFromApplied() {
     const form = $('filterForm');
     const f = UI.filter;
-    const overview = drawerMode() === 'overview';
+    const mode = drawerMode();
+    const overview = mode === 'overview';
+    const receipts = mode === 'receipts';
     $('filterDrawerTitle').textContent = overview ? 'Overview' : 'Filter';
-    $('ownerPickTitle').textContent = overview ? 'Whose spending' : 'Whose list';
-    $('filterSummary').textContent = overview ? 'Pick whose spending to show' : (filterActive() ? filterDescription() : 'All items');
-    $('drawerListFields').hidden = overview;
+    $('ownerPickTitle').textContent = overview ? 'Whose spending' : receipts ? 'Whose receipts' : 'Whose list';
+    $('filterSummary').textContent = overview
+        ? 'Pick whose spending to show'
+        : receipts ? receiptFilterDescription() : (filterActive() ? filterDescription() : 'All items');
+    $('drawerListFields').hidden = mode !== 'list';
+    $('drawerReceiptFields').hidden = !receipts;
     draftShopper = overview ? overviewWho() : selectedShopper();
     if (isOwner()) renderOwnerPick(draftShopper);
-    if (overview) return;
+    if (receipts) fillReceiptFields();
+    if (mode !== 'list') return;
     fillFilterSuggestions(draftShopper);
     form.elements.q.value = f.q;
     form.elements.store.value = f.store;
@@ -737,6 +754,17 @@ function bindFilter() {
             draftShopper = null;
             return;
         }
+        if (drawerMode() === 'receipts') {
+            const picked = new FormData(form);
+            UI.receiptForWho = String(picked.get('rc_for') || 'all');
+            UI.receiptFilter = String(picked.get('rc_status') || 'all');
+            if (isOwner() && draftShopper !== null) UI.shopSel = draftShopper;
+            drawer.close();
+            draftShopper = null;
+            renderShop();
+            renderFilterSummary();
+            return;
+        }
         const data = new FormData(form);
         UI.filter = {
             q: String(data.get('q') || '').trim(),
@@ -766,6 +794,16 @@ function bindFilter() {
             draftShopper = null;
             showOverviewOf('all');
             toast('Showing everyone’s spending.');
+            return;
+        }
+        if (drawerMode() === 'receipts') {
+            UI.receiptForWho = 'all';
+            UI.receiptFilter = 'all';
+            drawer.close();
+            draftShopper = null;
+            renderShop();
+            renderFilterSummary();
+            toast('Filter reset. Showing all receipts.');
             return;
         }
         reset();

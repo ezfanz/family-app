@@ -152,7 +152,15 @@
               <nav class="chips chips-wrap" id="shopChips" aria-label="Whose shopping"></nav>
             </section>
 
-            {{-- List only (hidden on Overview) --}}
+            {{-- Receipts only --}}
+            <div class="drawer-list-fields" id="drawerReceiptFields" hidden>
+            <div class="field"><label for="fRcFor">For who</label><select id="fRcFor" name="rc_for" class="input"><option value="all">Anyone</option></select></div>
+            <fieldset class="plain field"><legend>Status</legend>
+              <div class="pills" id="fRcStatus"></div>
+            </fieldset>
+            </div>
+
+            {{-- List only (hidden on Overview and Receipts) --}}
             <div class="drawer-list-fields" id="drawerListFields">
             <div class="field"><label for="fQ">Search</label><input id="fQ" name="q" type="search" class="input" maxlength="80" placeholder="Item, store or details" autocomplete="off"></div>
             <div class="field"><label for="fFor">For who</label><select id="fFor" name="for_who" class="input"><option value="">Anyone</option></select></div>

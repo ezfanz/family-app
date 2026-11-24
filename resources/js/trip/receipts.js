@@ -8,7 +8,7 @@ import { S, UI, canManageShoppingOf, isOwner } from './store.js';
 import { $, esc, yen, rm, fmtDate, weekday, toast, uuid } from './util.js';
 import { apiUrl } from './api.js';
 import { write } from './writer.js';
-import { rate, selectedShopper, avatar, displayName, ROLE_LABEL, renderShop, forWhoKey, forWhoLabel, UNASSIGNED } from './shopping.js';
+import { rate, selectedShopper, avatar, displayName, ROLE_LABEL, renderShop, forWhoKey, forWhoLabel, UNASSIGNED, renderFilterSummary } from './shopping.js';
 import * as tax from './taxcalc.js';
 import { queuePhoto, flushPhotos, localPhotoUrl, waitingReceiptIds, onPhotosChanged, restoreLocalUrls } from './photo-queue.js';
 import { openCamera } from './camera.js';
@@ -132,6 +132,32 @@ function forWhoOf(receipt) {
         if (!named.has(key)) named.set(key, key === UNASSIGNED ? 'Not assigned' : forWhoLabel(item.for_whom));
     }
     return named.size ? named : new Map([[UNASSIGNED, 'Not assigned']]);
+}
+
+/**
+ * Choices for the Filter drawer on Receipts: names on the receipts in view and the status filters.
+ * @return {{ names: [string, string][], statuses: [string, string][] }}
+ */
+export function receiptFilterChoices() {
+    const names = new Map();
+    for (const receipt of receiptsInView()) {
+        for (const [key, label] of forWhoOf(receipt)) names.set(key, label);
+    }
+    const sorted = [...names].sort(([a, x], [b, y]) => (a === UNASSIGNED) - (b === UNASSIGNED) || x.localeCompare(y));
+    return { names: sorted, statuses: FILTERS };
+}
+
+/** How many receipt filters are on (shown on the Filter tab). */
+export const receiptFilterCount = () => (UI.receiptFilter !== 'all') + (UI.receiptForWho !== 'all');
+
+/** "For Kakak · Eligible", or "All receipts". */
+export function receiptFilterDescription() {
+    const { names, statuses } = receiptFilterChoices();
+    const parts = [];
+    const name = names.find(([key]) => key === UI.receiptForWho);
+    if (UI.receiptForWho !== 'all') parts.push(name && name[0] !== UNASSIGNED ? `For ${name[1]}` : 'Not assigned');
+    if (UI.receiptFilter !== 'all') parts.push(statuses.find(([key]) => key === UI.receiptFilter)?.[1] || '');
+    return parts.filter(Boolean).join(' · ') || 'All receipts';
 }
 
 const matchesForWho = (receipt) => UI.receiptForWho === 'all' || forWhoOf(receipt).has(UI.receiptForWho);
@@ -294,6 +320,7 @@ export function renderShopTab() {
     if (UI.shopTab === 'overview') renderOverview();
     else if (UI.shopTab === 'receipts') renderReceipts();
     else $('shopLede').textContent = 'Barang kirim for family back home';
+    renderFilterSummary();
 }
 
 let markingId = null;
@@ -405,12 +432,14 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
         if (chip && chip.closest('#rcFilters')) {
             UI.receiptFilter = chip.dataset.filter;
             renderReceipts();
+            renderFilterSummary();
             return;
         }
         const forChip = e.target.closest('[data-rc-for]');
         if (forChip) {
             UI.receiptForWho = forChip.dataset.rcFor;
             renderReceipts();
+            renderFilterSummary();
             return;
         }
         const mark = e.target.closest('[data-act="mark-refunded"]');
