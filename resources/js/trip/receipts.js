@@ -8,7 +8,7 @@ import { S, UI, canManageShoppingOf, isOwner } from './store.js';
 import { $, esc, yen, rm, fmtDate, weekday, toast, uuid } from './util.js';
 import { apiUrl } from './api.js';
 import { write } from './writer.js';
-import { rate, selectedShopper, avatar, displayName, ROLE_LABEL, renderShop } from './shopping.js';
+import { rate, selectedShopper, avatar, displayName, ROLE_LABEL, renderShop, forWhoKey, forWhoLabel, UNASSIGNED } from './shopping.js';
 import * as tax from './taxcalc.js';
 import { queuePhoto, flushPhotos, localPhotoUrl, waitingReceiptIds, onPhotosChanged, restoreLocalUrls } from './photo-queue.js';
 import { openCamera } from './camera.js';
@@ -123,6 +123,39 @@ function renderFilters() {
         `<button type="button" class="chip rc-chip" data-filter="${key}" aria-pressed="${UI.receiptFilter === key}">${label}</button>`).join('');
 }
 
+/** "For who" of a receipt, from its linked items; receipts without a name are "Not assigned". */
+function forWhoOf(receipt) {
+    const items = (receipt.shopping_item_ids || []).map((id) => S.items.get(id)).filter(Boolean);
+    const named = new Map();
+    for (const item of items) {
+        const key = forWhoKey(item.for_whom);
+        if (!named.has(key)) named.set(key, key === UNASSIGNED ? 'Not assigned' : forWhoLabel(item.for_whom));
+    }
+    return named.size ? named : new Map([[UNASSIGNED, 'Not assigned']]);
+}
+
+const matchesForWho = (receipt) => UI.receiptForWho === 'all' || forWhoOf(receipt).has(UI.receiptForWho);
+
+/** Name chips (as on the List), shown once a receipt is linked to an item for someone. */
+function renderForChips(receipts) {
+    const nav = $('rcForChips');
+    const counts = new Map();
+    for (const receipt of receipts) {
+        for (const [key, label] of forWhoOf(receipt)) {
+            const entry = counts.get(key) || { label, count: 0 };
+            entry.count += 1;
+            counts.set(key, entry);
+        }
+    }
+    const useful = [...counts.keys()].some((key) => key !== UNASSIGNED);
+    nav.classList.toggle('hidden', !useful);
+    if (!useful || (UI.receiptForWho !== 'all' && !counts.has(UI.receiptForWho))) UI.receiptForWho = 'all';
+    if (!useful) return;
+    const sorted = [...counts].sort(([a, x], [b, y]) => (a === UNASSIGNED) - (b === UNASSIGNED) || x.label.localeCompare(y.label));
+    const chip = (key, label, count) => `<button type="button" class="chip for-chip${key === UNASSIGNED ? ' none' : ''}" data-rc-for="${esc(key)}" aria-pressed="${UI.receiptForWho === key}">${esc(label)}<span class="chip-count tnum">${count}</span></button>`;
+    nav.innerHTML = chip('all', 'All', receipts.length) + sorted.map(([key, { label, count }]) => chip(key, label, count)).join('');
+}
+
 function renderList(receipts) {
     const groups = tax.groupTotals(receipts);
     const sorted = [...receipts].sort((a, b) => new Date(a.purchased_at) - new Date(b.purchased_at));
@@ -141,7 +174,7 @@ function renderList(receipts) {
         const first = members[0];
         const rows = members
             .map((r) => [r, tax.statusOf(r, groups, minimum())])
-            .filter(([, status]) => UI.receiptFilter === 'all' || status === UI.receiptFilter || (UI.receiptFilter === 'customs_confirmed' && status === 'not_received'));
+            .filter(([r, status]) => matchesForWho(r) && (UI.receiptFilter === 'all' || status === UI.receiptFilter || (UI.receiptFilter === 'customs_confirmed' && status === 'not_received')));
         if (!rows.length) continue;
 
         const day = tax.dayOf(first);
@@ -250,6 +283,7 @@ export function renderReceipts() {
     $('rcActions').classList.toggle('hidden', sel !== 'all' && !canManageShoppingOf(sel));
     renderSummary(receipts);
     renderFilters();
+    renderForChips(receipts);
     renderList(receipts);
 }
 
@@ -326,6 +360,7 @@ async function saveSnapped(blobs) {
         await queuePhoto(receipt.id, index + 1, blob);
     }
     UI.receiptFilter = 'all';
+    UI.receiptForWho = 'all';
     renderReceipts();
     write({
         key: `receipt:${receipt.id}`,
@@ -369,6 +404,12 @@ export function bindReceipts({ onSnap, onAirport } = {}) {
         const chip = e.target.closest('[data-filter]');
         if (chip && chip.closest('#rcFilters')) {
             UI.receiptFilter = chip.dataset.filter;
+            renderReceipts();
+            return;
+        }
+        const forChip = e.target.closest('[data-rc-for]');
+        if (forChip) {
+            UI.receiptForWho = forChip.dataset.rcFor;
             renderReceipts();
             return;
         }

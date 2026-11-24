@@ -38,6 +38,7 @@
   </div>
 
   <nav class="chips rc-filters" id="rcFilters" aria-label="Filter receipts"></nav>
+  <nav class="chips for-chips hidden" id="rcForChips" aria-label="Filter receipts by who they are for"></nav>
 
   <div id="rcGroups"></div>
   <p class="rc-empty hidden" id="rcEmpty">No receipts here.</p>

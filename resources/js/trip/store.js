@@ -62,6 +62,8 @@ export const UI = {
     ovDay: null,
     /** Receipts filter chip: 'all', 'eligible', 'customs_confirmed', 'refunded', 'not_eligible'. */
     receiptFilter: 'all',
+    /** Receipts → "for who" chip: 'all', a for-who key, or '__none__'. */
+    receiptForWho: 'all',
     /** Itinerary: 'all' or a city name; the day strip only shows that city's days. */
     city: 'all',
     /** Shopping search & filter form: applies to the list in view and to "Everyone" results. */

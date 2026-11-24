@@ -209,14 +209,14 @@ function qtyHtml(item, editable) {
 
 /* ---------- "For who" groups and filter ---------- */
 
-const UNASSIGNED = '__none__';
+export const UNASSIGNED = '__none__';
 
 /** "For Mak", "for mak " and "Mak" are the same person. */
 export function forWhoLabel(value) {
     const text = String(value ?? '').trim().replace(/^for\s+/i, '').replace(/\s+/g, ' ');
     return text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
 }
-const forWhoKey = (value) => forWhoLabel(value).toLowerCase() || UNASSIGNED;
+export const forWhoKey = (value) => forWhoLabel(value).toLowerCase() || UNASSIGNED;
 
 /** Groups in display order: names A–Z, "Not assigned" last. */
 function forWhoGroups(items) {
